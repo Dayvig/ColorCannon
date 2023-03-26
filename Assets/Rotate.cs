@@ -17,12 +17,8 @@ public class Rotate : MonoBehaviour
     private float shotTimer;
     public GameObject bullet;
 
-    private float enemyTimer = 0.0f;
-    private float enemySpawn = 1.0f;
     public GameObject enemy;
     
-    private float xBounds = 3;
-    private float yBounds = 5;
     public SpriteRenderer barrel;
 
     public GameModel.GameColor playerColor;
@@ -47,7 +43,6 @@ public class Rotate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        EnemyUpdate();
         DoubleClickUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
@@ -81,41 +76,6 @@ public class Rotate : MonoBehaviour
         }
 
     }
-
-    void EnemyUpdate()
-    {
-        enemyTimer += Time.deltaTime;
-        if (enemyTimer > enemySpawn)
-        {
-            int EdgeToSpawnFrom = Random.Range(0, 4);
-            Vector3 startPos;
-            switch (EdgeToSpawnFrom)
-            {
-                case 0:
-                    startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
-                    break;
-                case 1:
-                    startPos = new Vector3(xBounds, Random.Range(yBounds, -yBounds), 0);
-                    break;
-                case 2:
-                    startPos = new Vector3(Random.Range(xBounds, -xBounds), -yBounds, 0);
-                    break;
-                case 3:
-                    startPos = new Vector3(-xBounds, Random.Range(yBounds, -yBounds), 0);
-                    break;
-                default:
-                    startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
-                    break;
-            }
-            GameObject newEnemy = Instantiate(enemy, startPos, Quaternion.identity);
-            EnemyBehavior enemyScript = newEnemy.GetComponent<EnemyBehavior>();
-            GameModel.GameColor RandomEnemyColor = colorOrder[(int) Random.Range(0, 3)];
-            enemyScript.initialize(transform.position, RandomEnemyColor);
-            enemyScript.SetColor(modelGame.ColorToColor(RandomEnemyColor));
-            enemyTimer = 0.0f;
-        }
-    }
-
     private void nextColor()
     {
         colorPlace++;

@@ -667,6 +667,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1793738074}
   - component: {fileID: 1793738073}
+  - component: {fileID: 1793738075}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -700,3 +701,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1793738075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793738072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccc4ff58060ee8a4a93d43aa01a442de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Enemies:
+  - {fileID: 7963215952173959544, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
+  EnemyScripts:
+  - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
+  Level: 1
+  baseGlobalWaveNumber: 10
+  baseGlobalWaveSpacing: 4
+  baseNumChunks: 3
+  currentColors: 
+  modelGame: {fileID: 0}
+  ALL: 00000000010000000200000003000000

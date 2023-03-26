@@ -21,6 +21,14 @@ public class WaveSpawningSystem : MonoBehaviour
     public List<GameModel.GameColor> currentColors = new List<GameModel.GameColor>();
     private int currentWaveIndex = 0;
 
+    private float enemyTimer = 0.0f;
+    private float xBounds = 3;
+    private float yBounds = 5;
+    
+    public GameModel modelGame;
+
+
+
     public enum SpawnLocations
     {
         TOP,
@@ -32,9 +40,54 @@ public class WaveSpawningSystem : MonoBehaviour
     public int[] ALL =
         {0, 1, 2, 3};
 
+    //================================================  Enemy Spawning ===============================================
+    
+    void EnemyUpdate()
+    {
+        enemyTimer -= Time.deltaTime;
+        if (enemyTimer <= 0.0f)
+        {
+            int EdgeToSpawnFrom = currentWave[currentWaveIndex].locationsToSpawn[Random.Range(0, currentWave[currentWaveIndex].locationsToSpawn.Length)];
+            Vector3 startPos;
+            switch (EdgeToSpawnFrom)
+            {
+                case 0:
+                    startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
+                    break;
+                case 1:
+                    startPos = new Vector3(xBounds, Random.Range(yBounds, -yBounds), 0);
+                    break;
+                case 2:
+                    startPos = new Vector3(Random.Range(xBounds, -xBounds), -yBounds, 0);
+                    break;
+                case 3:
+                    startPos = new Vector3(-xBounds, Random.Range(yBounds, -yBounds), 0);
+                    break;
+                default:
+                    startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
+                    break;
+            }
+            GameObject newEnemy = Instantiate(currentWave[currentWaveIndex].body, startPos, Quaternion.identity);
+            EnemyBehavior enemyScript = newEnemy.GetComponent<EnemyBehavior>();
+            GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
+            enemyScript.initialize(transform.position, enemyColor);
+            enemyScript.SetColor(modelGame.ColorToColor(enemyColor));
+            enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
+            currentWaveIndex++;
+        }
+    }
+
+    void Update()
+    {
+        EnemyUpdate();
+    }
+    
+    
     
     void Start()
     {
+        modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
+        
         addStartingChunks();
         globalWaveNumber = baseGlobalWaveNumber;
         globalWaveSpacing = baseGlobalWaveSpacing;
@@ -42,6 +95,8 @@ public class WaveSpawningSystem : MonoBehaviour
         
         generateWave();
         initializeColorsForTestingPurposes();
+        
+        enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
     }
 
     void addStartingChunks()
@@ -199,11 +254,11 @@ public class WaveSpawningSystem : MonoBehaviour
     
     public class WaveObject
     {
-        private GameObject body;
-        private EnemyBehavior script;
+        public GameObject body;
+        public EnemyBehavior script;
         public GameModel.GameColor color;
-        private float delayUntilNext;
-        private int[] locationsToSpawn;
+        public float delayUntilNext;
+        public int[] locationsToSpawn;
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc)
         {
