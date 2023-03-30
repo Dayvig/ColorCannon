@@ -715,12 +715,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Enemies:
   - {fileID: 7963215952173959544, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
+  - {fileID: 1188993737071851457, guid: 9ff31550497e51a4d9373446218fbdd3, type: 3}
+  - {fileID: 8381754567029053299, guid: dc9ec591092bb8d47832b371e8d35f15, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
+  - {fileID: 4426717571338806905, guid: 9ff31550497e51a4d9373446218fbdd3, type: 3}
+  - {fileID: 8543703624683406463, guid: dc9ec591092bb8d47832b371e8d35f15, type: 3}
   Level: 1
   baseGlobalWaveNumber: 10
-  baseGlobalWaveSpacing: 4
+  baseGlobalWaveSpacing: 0.8
   baseNumChunks: 3
   currentColors: 
   modelGame: {fileID: 0}
+  player: {fileID: 1149456161}
   ALL: 00000000010000000200000003000000
+  TOPBOTTOM: 0000000001000000
+  LEFTRIGHT: 0200000003000000

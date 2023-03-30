@@ -63,7 +63,6 @@ public class Bullet : MonoBehaviour
             EnemyBehavior enemy = col.gameObject.GetComponent<EnemyBehavior>();
             if (enemy.enemyColor == bulletColor)
             {
-                Debug.Log("Player hit Enemy");
                 Destroy(col.gameObject);
                 Destroy(this.gameObject);
             }

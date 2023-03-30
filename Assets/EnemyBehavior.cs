@@ -9,12 +9,12 @@ public class EnemyBehavior : MonoBehaviour
     public Vector3 destination;
     public Vector3 currentPos;
     public float moveSpeed;
-    private float SPEED = 1.0f;
+    private float SPEED = 0.6f;
 
     public GameModel.GameColor enemyColor;
     public SpriteRenderer rend;
-
-    public void initialize(Vector3 des, GameModel.GameColor color)
+    
+    public virtual void initialize(Vector3 des, GameModel.GameColor color)
     {
         currentPos = transform.position;
         destination = des;
@@ -29,6 +29,11 @@ public class EnemyBehavior : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate()
+    {
+        Move();
+    }
+
+    public virtual void Move()
     {
         transform.position = Vector3.MoveTowards(currentPos, destination, Time.deltaTime * moveSpeed);
         currentPos = transform.position;

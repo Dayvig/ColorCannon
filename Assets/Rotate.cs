@@ -25,7 +25,7 @@ public class Rotate : MonoBehaviour
     public GameModel modelGame;
 
     public float mouseTimer = 0.0f;
-    private float dClickInterval = 0.4f;
+    private float dClickInterval = 0.3f;
     public int clicks = 0;
 
     private GameModel.GameColor[] colorOrder =
@@ -101,14 +101,13 @@ public class Rotate : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-            if (clicks == 1){ 
-                nextColor();
-                clicks = 0;
-            }
-            else
-            {
-                clicks++;
-                mouseTimer = 0.0f;
+            clicks++;
+            mouseTimer = 0.0f;
+            if (clicks > 1){
+                if (mouseTimer != -1.0f)
+                {
+                    nextColor();
+                }
             }
         }
     }
