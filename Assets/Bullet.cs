@@ -15,11 +15,13 @@ public class Bullet : MonoBehaviour
 
     public GameModel.GameColor bulletColor;
     public GameModel modelGame;
-    
+    private GameManager gameManager;
+
     // Start is called before the first frame update
     void Start()
     {
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     public void initialize(float rotation, float speed, GameModel.GameColor color)
@@ -40,7 +42,7 @@ public class Bullet : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void BulletUpdate()
     {
         positionTarget += flight;
         positionCurrent = Vector3.Lerp(
@@ -50,8 +52,8 @@ public class Bullet : MonoBehaviour
         transform.position = positionCurrent;
         if (positionCurrent.x > xBounds || positionCurrent.x < -xBounds ||
             positionCurrent.y > yBounds || positionCurrent.y < -yBounds)
-        {
-            Destroy(this.gameObject);
+        { 
+            Die();
         }
     }
     
@@ -63,9 +65,14 @@ public class Bullet : MonoBehaviour
             EnemyBehavior enemy = col.gameObject.GetComponent<EnemyBehavior>();
             if (enemy.enemyColor == bulletColor)
             {
-                Destroy(col.gameObject);
-                Destroy(this.gameObject);
+                enemy.Die();
+                Die();
             }
         }
+    }
+
+    private void Die()
+    {
+        gameManager.markedForDeathBullets.Add(this);
     }
 }

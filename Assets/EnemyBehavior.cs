@@ -13,6 +13,12 @@ public class EnemyBehavior : MonoBehaviour
 
     public GameModel.GameColor enemyColor;
     public SpriteRenderer rend;
+    private GameManager gameManager;
+
+    void Start()
+    {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
     
     public virtual void initialize(Vector3 des, GameModel.GameColor color)
     {
@@ -28,7 +34,7 @@ public class EnemyBehavior : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    public void EnemyUpdate()
     {
         Move();
     }
@@ -49,7 +55,12 @@ public class EnemyBehavior : MonoBehaviour
         if (col.gameObject.CompareTag("Player"))
         {
             Debug.Log("Enemy hit player");
-            Destroy(this.gameObject);
+            Die();
         }
+    }
+
+    public void Die()
+    {
+        gameManager.markedForDeathEnemies.Add(this);
     }
 }

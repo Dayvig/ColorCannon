@@ -13,13 +13,13 @@ public class WaveSpawningSystem : MonoBehaviour
     public int baseGlobalWaveNumber;
     public float baseGlobalWaveSpacing;
     public int baseNumChunks;
-    private int globalWaveNumber;
-    private float globalWaveSpacing;
+    private static int globalWaveNumber;
+    private static float globalWaveSpacing;
     private int numChunks;
-    List<int> availableChunks = new List<int>();
-    public List<WaveObject> currentWave = new List<WaveObject>();
+    List<Chunk> availableChunks = new List<Chunk>();
+    public static List<WaveObject> currentWave = new List<WaveObject>();
     public List<GameModel.GameColor> currentColors = new List<GameModel.GameColor>();
-    private int currentWaveIndex = 0;
+    public int currentWaveIndex = 0;
 
     private float enemyTimer = 0.0f;
     private float xBounds = 3;
@@ -27,8 +27,8 @@ public class WaveSpawningSystem : MonoBehaviour
     
     public GameModel modelGame;
     public GameObject player;
-
-
+    public GameManager gameManager;
+    public static UIManager uiManager;
 
     public enum SpawnLocations
     {
@@ -41,15 +41,16 @@ public class WaveSpawningSystem : MonoBehaviour
     public int[] ALL =
         {0, 1, 2, 3};
 
-    public int[] TOPBOTTOM = {0, 1};
-    public int[] LEFTRIGHT = {2, 3};
+    public static int[] TOPBOTTOM = {0, 1};
+    public static int[] LEFTRIGHT = {2, 3};
+    
 
     //================================================  Enemy Spawning ===============================================
     
-    void EnemyUpdate()
+    public void EnemyUpdate()
     {
         enemyTimer -= Time.deltaTime;
-        if (enemyTimer <= 0.0f)
+        if (enemyTimer <= 0.0f && currentWaveIndex < currentWave.Count-1)
         {
             WaveObject enemy = currentWave[currentWaveIndex];
             int EdgeToSpawnFrom = enemy.locationsToSpawn[Random.Range(0, enemy.locationsToSpawn.Length)];
@@ -72,27 +73,26 @@ public class WaveSpawningSystem : MonoBehaviour
                     startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
                     break;
             }
+
             GameObject newEnemy = Instantiate(currentWave[currentWaveIndex].body, startPos, Quaternion.identity);
             EnemyBehavior enemyScript = newEnemy.GetComponent<EnemyBehavior>();
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
             enemyScript.initialize(player.transform.position, enemyColor);
             enemyScript.SetColor(modelGame.ColorToColor(enemyColor));
+            gameManager.activeEnemies.Add(enemyScript);
             enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
-            currentWaveIndex++;
+            if (currentWaveIndex < currentWave.Count-1){
+                currentWaveIndex++;
+            }
         }
     }
 
-    void Update()
-    {
-        EnemyUpdate();
-    }
-    
-    
-    
     void Start()
     {
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
-        
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        uiManager = GameObject.Find("GameManager").GetComponent<UIManager>();
+
         addStartingChunks();
         globalWaveNumber = baseGlobalWaveNumber;
         globalWaveSpacing = baseGlobalWaveSpacing;
@@ -107,101 +107,71 @@ public class WaveSpawningSystem : MonoBehaviour
     void addStartingChunks()
     {
         //Basic Red wave
-        availableChunks.Add(0);
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.RED}));
         
         //Basic Yellow wave
-        availableChunks.Add(1);
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW}));
         
         //Basic Blue wave
-        availableChunks.Add(2);
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.BLUE}));
         
         //Basic Red and Yellow wave
-        availableChunks.Add(3);
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW, GameModel.GameColor.RED}));
         
         //Basic Red and Blue wave
-        availableChunks.Add(4);
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.RED, GameModel.GameColor.BLUE}));
         
         //Basic Yellow and Blue wave
-        availableChunks.Add(5);
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE}));
         
         //Basic Red Fast wave
-        availableChunks.Add(6);
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.RED}));
         
         //Basic Yellow Fast wave
-        availableChunks.Add(7);
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.YELLOW}));
         
         //Basic Blue Fast wave
-        availableChunks.Add(8);
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.BLUE}));
         
         //Basic Red Ninja Wave
-        availableChunks.Add(9);
+        availableChunks.Add(new NinjaChunk(new[]{GameModel.GameColor.RED}));
         
         //Basic Blue Ninja Wave
-        availableChunks.Add(10);
+        availableChunks.Add(new NinjaChunk(new[]{GameModel.GameColor.BLUE}));
         
         //Basic Blue Ninja Wave
-        availableChunks.Add(11);
+        availableChunks.Add(new NinjaChunk(new[]{GameModel.GameColor.YELLOW}));
 
     }
     
-    public int returnRandomChunk()
+    public Chunk returnRandomChunk()
     {
         return availableChunks[Random.Range(0, availableChunks.Count)];
     }
 
     public void generateWave()
     {
+        uiManager.WipePreviewImages();
         for (int i = 0; i < numChunks; i++)
         {
-            addChunk(returnRandomChunk());
+            Chunk nextChunk = returnRandomChunk();
+            uiManager.SetupChunkPreview(nextChunk);
+            nextChunk.Generate();
         }
     }
 
-    public void addChunk(int chunk)
+    public void SetupNextWave()
     {
-        switch (chunk)
-        {
-            case 0:
-                generateBasicChunk(GameModel.GameColor.RED);
-                break;
-            case 1:
-                generateBasicChunk(GameModel.GameColor.BLUE);
-                break;
-            case 2:
-                generateBasicChunk(GameModel.GameColor.YELLOW);
-                break;
-            case 3:
-                generateBasicTwoColorChunk(GameModel.GameColor.RED, GameModel.GameColor.YELLOW);
-                break;
-            case 4:
-                generateBasicTwoColorChunk(GameModel.GameColor.RED, GameModel.GameColor.BLUE);
-                break;
-            case 5:
-                generateBasicTwoColorChunk(GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW);
-                break;
-            case 6:
-                generateBasicFastChunk(GameModel.GameColor.RED);
-                break;
-            case 7:
-                generateBasicFastChunk(GameModel.GameColor.YELLOW);
-                break;
-            case 8:
-                generateBasicFastChunk(GameModel.GameColor.BLUE);
-                break;
-            case 9:
-                generateBasicNinjaChunk(GameModel.GameColor.RED);
-                break;
-            case 10:
-                generateBasicNinjaChunk(GameModel.GameColor.BLUE);
-                break;
-            case 11:
-                generateBasicNinjaChunk(GameModel.GameColor.YELLOW);
-                break;
-            default:
-                Debug.Log("Failed to generate proper chunk");
-                generateBasicChunk(GameModel.GameColor.RED);
-                break;
-        }
+        uiManager.WipePreviewImages();
+        clearWave();
+        generateWave();
+        Level++;
+    }
+
+    private void clearWave()
+    {
+        currentWave.Clear();
+        currentWaveIndex = 0;
     }
 
     void initializeColorsForTestingPurposes()
@@ -214,50 +184,110 @@ public class WaveSpawningSystem : MonoBehaviour
     
     //============================================================ Wave Chunk Behaviors ============================================
 
-    void generateBasicChunk(GameModel.GameColor color)
+    public abstract class Chunk
     {
-        Debug.Log("Basic Chunk Added");
-        for (int i = 0; i < globalWaveNumber; i++)
+        public WaveSpawningSystem spawningSystem;
+        public GameModel.GameColor[] colors = {GameModel.GameColor.RED};
+        public Sprite image;
+
+        public Chunk(GameModel.GameColor[] spawnColors)
         {
-            currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], color, globalWaveSpacing, TOPBOTTOM));
+            colors = spawnColors;
+            spawningSystem = GameObject.Find("GameManager").GetComponent<WaveSpawningSystem>();
         }
-    }
-    
-    void generateBasicFastChunk(GameModel.GameColor color)
-    {
-        Debug.Log("Basic Fast Chunk Added");
-        for (int i = 0; i < globalWaveNumber; i++)
-        {
-            currentWave.Add(new WaveObject(Enemies[1], EnemyScripts[1], color, globalWaveSpacing, TOPBOTTOM));
-        }
-    }
-    
-    void generateBasicNinjaChunk(GameModel.GameColor color)
-    {
-        Debug.Log("Basic Fast Chunk Added");
-        for (int i = 0; i < globalWaveNumber; i++)
-        {
-            currentWave.Add(new WaveObject(Enemies[2], EnemyScripts[2], color, globalWaveSpacing, LEFTRIGHT));
-        }
+        public abstract void Generate();
     }
 
-    void generateBasicTwoColorChunk(GameModel.GameColor color1, GameModel.GameColor color2)
-    {
-        Debug.Log("Basic Red/Blue Chunk Added");
-        for (int i = 0; i < globalWaveNumber; i++)
+    public class BasicChunk : Chunk
+    { 
+        public override void Generate()
         {
-            int rand = Random.Range(0, 2);
-            if (rand == 1)
+            Debug.Log("Basic Chunk Added");
+            if (colors.Length == 1)
             {
-                currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], color1, globalWaveSpacing, TOPBOTTOM));
+                for (int i = 0; i < globalWaveNumber; i++)
+                {
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0], globalWaveSpacing, TOPBOTTOM));
+                }
             }
             else
             {
-                currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], color2, globalWaveSpacing, TOPBOTTOM));
+                int rand = Random.Range(0, colors.Length);
+                {
+                    for (int i = 0; i < globalWaveNumber; i++)
+                    {
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], globalWaveSpacing, TOPBOTTOM));
+                    }
+                }
             }
         }
-    }
 
+        public BasicChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            image = uiManager.EnemySprites[0];
+        }
+    }
+    
+    public class FastChunk : Chunk
+    {
+        public override void Generate()
+        {
+            Debug.Log("Fast Chunk Added");
+            if (colors.Length == 1)
+            {
+                for (int i = 0; i < globalWaveNumber; i++)
+                {
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0], globalWaveSpacing, TOPBOTTOM));
+                }
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                {
+                    for (int i = 0; i < globalWaveNumber; i++)
+                    {
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], globalWaveSpacing, TOPBOTTOM));
+                    }
+                }
+            }
+        }
+
+        public FastChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            image = uiManager.EnemySprites[1];
+        }
+    }
+    
+    public class NinjaChunk : Chunk
+    {
+        public override void Generate()
+        {
+            Debug.Log("Ninja Chunk Added");
+            if (colors.Length == 1)
+            {
+                for (int i = 0; i < globalWaveNumber; i++)
+                {
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], globalWaveSpacing, LEFTRIGHT));
+                }
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                {
+                    for (int i = 0; i < globalWaveNumber; i++)
+                    {
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], globalWaveSpacing, TOPBOTTOM));
+                    }
+                }
+            }
+        }
+
+        public NinjaChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            image = uiManager.EnemySprites[2];
+        }
+    }
+    
     // ========================================================= End of Chunks =================================================================
     
     public class WaveObject

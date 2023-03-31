@@ -5,7 +5,7 @@ using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
-public class Rotate : MonoBehaviour
+public class Player : MonoBehaviour
 {
     private float rotationCurrent = 0;
     private float rotationTarget = 0;
@@ -23,6 +23,7 @@ public class Rotate : MonoBehaviour
 
     public GameModel.GameColor playerColor;
     public GameModel modelGame;
+    public GameManager gameManager;
 
     public float mouseTimer = 0.0f;
     private float dClickInterval = 0.3f;
@@ -36,12 +37,13 @@ public class Rotate : MonoBehaviour
     void Start()
     {
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playerColor = colorOrder[colorPlace];
         barrel.color = modelGame.ColorToColor(playerColor);
     }
     
     // Update is called once per frame
-    void Update()
+    public void PlayerUpdate()
     {
         DoubleClickUpdate();
         Vector3 currentPos = gameObject.transform.position;
@@ -72,6 +74,7 @@ public class Rotate : MonoBehaviour
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
             bulletScript.initialize(rotationTarget, bulletSpeed, playerColor);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+            gameManager.activeBullets.Add(bulletScript);
             shotTimer = 0.0f;
         }
 
