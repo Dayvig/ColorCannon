@@ -97,8 +97,10 @@ public class WaveSpawningSystem : MonoBehaviour
         globalWaveNumber = baseGlobalWaveNumber;
         globalWaveSpacing = baseGlobalWaveSpacing;
         numChunks = baseNumChunks;
-        
+
+        gameManager.addStartingUpgrades();
         generateWave();
+        generateUpgrades();
         initializeColorsForTestingPurposes();
         
         enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
@@ -157,6 +159,15 @@ public class WaveSpawningSystem : MonoBehaviour
             Chunk nextChunk = returnRandomChunk();
             uiManager.SetupChunkPreview(nextChunk);
             nextChunk.Generate();
+        }
+    }
+
+    public void generateUpgrades()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            GameManager.Upgrade nextUpgrade = gameManager.getRandomUpgrade();
+            uiManager.SetupUpgradePreview(nextUpgrade);
         }
     }
 

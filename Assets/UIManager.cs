@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +10,14 @@ public class UIManager : MonoBehaviour
     public GameObject UpcomingPanel;
     public Transform PreviewPanel;
     public GameObject ChunkPreview;
+    public GameObject UpgradePreview;
     public GameObject PreviewImage;
+    public GameObject UpgradePanel;
+    public Transform UpgradePreviewPanel;
     
     public GameModel modelGame;
     public GameManager gameManager;
-    
+
     void Start(){
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>(); 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -31,11 +35,13 @@ public class UIManager : MonoBehaviour
     public void activatePostWaveUI()
     {
         UpcomingPanel.SetActive(true);
+        UpgradePanel.SetActive(true);
     }
 
     public void deactivatePostWaveUI()
     {
         UpcomingPanel.SetActive(false);
+        UpgradePanel.SetActive(false);
     }
     
     public void SetupChunkPreview(WaveSpawningSystem.Chunk c)
@@ -50,6 +56,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void SetupUpgradePreview(GameManager.Upgrade u)
+    {
+        GameObject newUpgradePreview = Instantiate(UpgradePreview, UpgradePreviewPanel);
+        newUpgradePreview.GetComponent<UpgradeButton>().upp = u;
+        Image upgradeImage = newUpgradePreview.transform.GetChild(0).GetComponent<Image>();
+        upgradeImage.sprite = modelGame.UpgradeImageFromType(u.type);
+        upgradeImage.color = modelGame.ColorToColor(u.color);
+        newUpgradePreview.GetComponent<UpgradeButton>().initialize(u);
+    }
+
     void SetColor(Image i, Color c)
     {
         i.color = c;
@@ -58,6 +74,10 @@ public class UIManager : MonoBehaviour
     public void WipePreviewImages()
     {
         for (int i = 0; i < PreviewPanel.childCount; i++)
+        {
+            PreviewPanel.GetChild(i).gameObject.SetActive(false);
+        }
+        for (int i = 0; i < UpgradePreviewPanel.childCount; i++)
         {
             PreviewPanel.GetChild(i).gameObject.SetActive(false);
         }
