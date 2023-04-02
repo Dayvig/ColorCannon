@@ -92,7 +92,10 @@ public class WaveSpawningSystem : MonoBehaviour
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("GameManager").GetComponent<UIManager>();
+    }
 
+    public void initialize()
+    {
         addStartingChunks();
         globalWaveNumber = baseGlobalWaveNumber;
         globalWaveSpacing = baseGlobalWaveSpacing;
@@ -100,7 +103,7 @@ public class WaveSpawningSystem : MonoBehaviour
 
         gameManager.addStartingUpgrades();
         generateWave();
-        generateUpgrades();
+        gameManager.GenerateUpgrades();
         initializeColorsForTestingPurposes();
         
         enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
@@ -179,21 +182,14 @@ public class WaveSpawningSystem : MonoBehaviour
         nextChunk.Generate();
     }
 
-    public void generateUpgrades()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            GameManager.Upgrade nextUpgrade = gameManager.getRandomUpgrade();
-            uiManager.SetupUpgradePreview(nextUpgrade);
-        }
-    }
+
 
     public void SetupNextWave()
     {
         uiManager.WipePreviewImages();
         clearWave();
         generateWave();
-        generateUpgrades();
+        gameManager.GenerateUpgrades();
         Level++;
     }
 

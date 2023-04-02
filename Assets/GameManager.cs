@@ -22,6 +22,21 @@ public class GameManager : MonoBehaviour
         SHOTSIZE,
         PIERCING
     }
+    
+    public class Upgrade
+    {
+        private String name;
+        public GameManager.UpgradeType type;
+        public GameModel.GameColor color;
+        public Sprite image;
+        
+        public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType, GameModel.GameColor upgradeColor)
+        {
+            name = upgradeName;
+            type = upgradeType;
+            color = upgradeColor;
+        }
+    }
 
     public List<EnemyBehavior> activeEnemies = new List<EnemyBehavior>();
     public List<Bullet> activeBullets = new List<Bullet>();
@@ -68,6 +83,7 @@ public class GameManager : MonoBehaviour
         uiManager.activatePostWaveUI();
         gameModel = GetComponent<GameModel>();
         
+        spawningSystem.initialize();
         //addStartingUpgrades();
     }
 
@@ -100,6 +116,14 @@ public class GameManager : MonoBehaviour
         possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.BLUE));
         //Yellow Shot Spread
         possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.YELLOW));
+        
+        //Red Shot Spread
+        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.RED));
+        //Blue Shot Spread
+        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.BLUE));
+        //Yellow Shot Spread
+        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.YELLOW));
+
     }
 
     public Upgrade getRandomUpgrade()
@@ -115,9 +139,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GenerateUpgrades()
+    public void GenerateUpgrades()
     {
-        
+        for (int i = 0; i < 3; i++)
+        {
+            Upgrade nextUpgrade = getRandomUpgrade();
+            uiManager.SetupUpgradePreview(nextUpgrade);
+        }
     }
 
     void Update()
@@ -181,19 +209,5 @@ public class GameManager : MonoBehaviour
     void PausedUpdate()
     {
         
-    }
-    public class Upgrade
-    {
-        private String name;
-        public GameManager.UpgradeType type;
-        public GameModel.GameColor color;
-        public Sprite image;
-        
-        public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType, GameModel.GameColor upgradeColor)
-        {
-            name = upgradeName;
-            type = upgradeType;
-            color = upgradeColor;
-        }
     }
 }

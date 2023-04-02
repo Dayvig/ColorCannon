@@ -143,7 +143,7 @@ public class EnemyBehavior : MonoBehaviour
         if (!isMultiColor && bullet.bulletColor == enemyColor)
         {
             Die();
-            bullet.Die();
+            bullet.TakeHit();
         }
         else
         {
@@ -156,7 +156,7 @@ public class EnemyBehavior : MonoBehaviour
                 }
                 enemyColor = SetMixedColor(enemyColors);
                 SetColor(modelGame.ColorToColor(enemyColor));
-                bullet.Die();
+                bullet.TakeHit();
             }
         }
     }

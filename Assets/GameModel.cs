@@ -24,6 +24,7 @@ public class GameModel : MonoBehaviour
     [Range(1.05f, 10f)] public float rapidFireMultiplier;
     [Range(1.05f, 10f)] public float shotSizeMultiplier;
     [Range(1, 10)] public int numShotsUpgrade;
+    [Range(1, 10)] public int piercingUpgrade;
     [Range(20, 180)] 
     public float spreadAngleMax;
 
@@ -82,6 +83,8 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[2];
             case GameManager.UpgradeType.ATTACKSPEED:
                 return UpgradeImages[3];
+            case GameManager.UpgradeType.PIERCING:
+                return UpgradeImages[4];
             default:
                 return UpgradeImages[3];
         }

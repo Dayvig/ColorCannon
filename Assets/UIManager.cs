@@ -82,4 +82,12 @@ public class UIManager : MonoBehaviour
             UpgradePreviewPanel.GetChild(i).gameObject.SetActive(false);
         }
     }
+
+    public void WipeUpgrades()
+    {
+        for (int i = 0; i < UpgradePreviewPanel.childCount; i++)
+        {
+            UpgradePreviewPanel.GetChild(i).gameObject.SetActive(false);
+        }
+    }
 }

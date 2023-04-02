@@ -16,6 +16,7 @@ public class Bullet : MonoBehaviour
     public GameModel.GameColor bulletColor;
     public GameModel modelGame;
     private GameManager gameManager;
+    private int piercing = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,7 @@ public class Bullet : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    public void initialize(float rotation, float speed, GameModel.GameColor color)
+    public void initialize(float rotation, float speed, GameModel.GameColor color, int pierce)
     {
         rotation = -(rotation * (Mathf.PI / 180));
         
@@ -34,6 +35,7 @@ public class Bullet : MonoBehaviour
 
         positionCurrent = this.transform.position;
         bulletColor = color;
+        piercing = pierce;
     }
 
     public void SetColor(Color c)
@@ -64,6 +66,15 @@ public class Bullet : MonoBehaviour
             Debug.Assert(col.gameObject.GetComponent<EnemyBehavior>() != null);
             EnemyBehavior enemy = col.gameObject.GetComponent<EnemyBehavior>();
             enemy.touchBullet(this);
+        }
+    }
+
+    public void TakeHit()
+    {
+        piercing--;
+        if (piercing <= 0)
+        {
+            Die();
         }
     }
     

@@ -16,12 +16,16 @@ public class Player : MonoBehaviour
     public float baseBulletSpeed = 0.01f;
     [Range(0.5f, 2f)]
     public float baseBulletSize = 1f;
-
-    [Range(1, 5)] public int baseNumShots;
+    [Range(1, 10)] 
+    public int basePiercing = 1;
+    [Range(1, 5)] 
+    public int baseNumShots;
+    
     public float shotSpeed;
     public float bulletSpeed;
     public float bulletSize;
     public int numShots;
+    public int piercing;
     
     private float shotTimer;
     public GameObject bullet;
@@ -94,7 +98,7 @@ public class Player : MonoBehaviour
             GameObject newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
             newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-            bulletScript.initialize(rotationTarget, bulletSpeed, playerColor);
+            bulletScript.initialize(rotationTarget, bulletSpeed, playerColor, piercing);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             gameManager.activeBullets.Add(bulletScript);
         }
@@ -110,7 +114,7 @@ public class Player : MonoBehaviour
                 GameObject newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
                 newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-                bulletScript.initialize(rotationTarget + angleOffSet, bulletSpeed, playerColor);
+                bulletScript.initialize(rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
                 gameManager.activeBullets.Add(bulletScript);
             }
@@ -136,6 +140,7 @@ public class Player : MonoBehaviour
         bulletSize = FinalShotSize(playerColor);
         shotSpeed = FinalRateOfFire(playerColor);
         numShots = FinalNumShots(playerColor);
+        piercing = FinalPiercing(playerColor);
     }
 
     public float FinalShotSpeed(GameModel.GameColor currentColor)
@@ -186,6 +191,19 @@ public class Player : MonoBehaviour
             }
         }
         return numShots;
+    }
+    
+    public int FinalPiercing(GameModel.GameColor currentColor)
+    {
+        piercing = basePiercing;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.PIERCING))
+            {
+                piercing += modelGame.piercingUpgrade;
+            }
+        }
+        return piercing;
     }
     
     void DoubleClickUpdate()
