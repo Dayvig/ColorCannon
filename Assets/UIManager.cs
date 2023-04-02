@@ -73,14 +73,8 @@ public class UIManager : MonoBehaviour
 
     public void WipePreviewImages()
     {
-        for (int i = 0; i < PreviewPanel.childCount; i++)
-        {
-            PreviewPanel.GetChild(i).gameObject.SetActive(false);
-        }
-        for (int i = 0; i < UpgradePreviewPanel.childCount; i++)
-        {
-            UpgradePreviewPanel.GetChild(i).gameObject.SetActive(false);
-        }
+        WipeWave();
+        WipeUpgrades();
     }
 
     public void WipeUpgrades()
@@ -88,6 +82,14 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < UpgradePreviewPanel.childCount; i++)
         {
             UpgradePreviewPanel.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+    
+    public void WipeWave()
+    {
+        for (int i = 0; i < PreviewPanel.childCount; i++)
+        {
+            PreviewPanel.GetChild(i).gameObject.SetActive(false);
         }
     }
 }

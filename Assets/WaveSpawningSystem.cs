@@ -30,6 +30,8 @@ public class WaveSpawningSystem : MonoBehaviour
     public GameManager gameManager;
     public static UIManager uiManager;
 
+    private int recusionProtection = 0;
+
     public enum SpawnLocations
     {
         TOP,
@@ -129,23 +131,24 @@ public class WaveSpawningSystem : MonoBehaviour
         //Basic Yellow and Blue wave
         availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE}));
         
-        //Basic Red Fast wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.RED}));
-        
-        //Basic Yellow Fast wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.YELLOW}));
-        
-        //Basic Blue Fast wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.BLUE}));
-        
-        //Basic Red Ninja Wave
-        availableChunks.Add(new NinjaChunk(new[]{GameModel.GameColor.RED}));
-        
-        //Basic Blue Ninja Wave
-        availableChunks.Add(new NinjaChunk(new[]{GameModel.GameColor.BLUE}));
-        
-        //Basic Blue Ninja Wave
-        availableChunks.Add(new NinjaChunk(new[]{GameModel.GameColor.YELLOW}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        //Orange or Purple Fast Wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
 
     }
     
@@ -153,33 +156,49 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         return availableChunks[Random.Range(0, availableChunks.Count)];
     }
+    
+    public Chunk returnRandomChunk(int lessthan)
+    {
+        Chunk nextChunk = availableChunks[Random.Range(0, availableChunks.Count)];
+        if (nextChunk.difficulty <= lessthan)
+        {
+            return nextChunk;
+        }
+        recusionProtection++;
+        if (recusionProtection <= 100)
+        {
+            return returnRandomChunk(lessthan);
+        }
+        Debug.Log("Tried to access a chunk that didn't exist");
+        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE});
+    }
+    
+    public Chunk returnRandomChunk(int floor, int ceiling)
+    {
+        Chunk nextChunk = availableChunks[Random.Range(0, availableChunks.Count)];
+        if (nextChunk.difficulty >= floor && nextChunk.difficulty <= ceiling)
+        {
+            return nextChunk;
+        }
+        recusionProtection++;
+        if (recusionProtection <= 100)
+        {
+            return returnRandomChunk(floor, ceiling);
+        }
+        Debug.Log("Tried to access a chunk that didn't exist");
+        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE});
+    }
 
     public void generateWave()
     {
         uiManager.WipePreviewImages();
         for (int i = 0; i < numChunks; i++)
         {
-            /*
-            Chunk nextChunk = returnRandomChunk();
+            recusionProtection = 0;
+            Chunk nextChunk = returnRandomChunk(10);
             uiManager.SetupChunkPreview(nextChunk);
             nextChunk.Generate();
-            */
         }
-        Chunk nextChunk = new BasicChunk(new[]{GameModel.GameColor.ORANGE});
-        uiManager.SetupChunkPreview(nextChunk);
-        nextChunk.Generate();
-        
-        nextChunk = new BasicChunk(new[]{GameModel.GameColor.PURPLE});
-        uiManager.SetupChunkPreview(nextChunk);
-        nextChunk.Generate();
-        
-        nextChunk = new BasicChunk(new[]{GameModel.GameColor.GREEN});
-        uiManager.SetupChunkPreview(nextChunk);
-        nextChunk.Generate();
-
-        nextChunk = new BasicChunk(new[]{GameModel.GameColor.WHITE});
-        uiManager.SetupChunkPreview(nextChunk);
-        nextChunk.Generate();
     }
 
 
@@ -215,6 +234,8 @@ public class WaveSpawningSystem : MonoBehaviour
         public GameModel.GameColor[] colors = {GameModel.GameColor.RED};
         public Sprite image;
         public bool isMultiColor;
+        public int difficulty;
+        public int baseDifficulty;
 
         public Chunk(GameModel.GameColor[] spawnColors)
         {
@@ -222,10 +243,18 @@ public class WaveSpawningSystem : MonoBehaviour
             spawningSystem = GameObject.Find("GameManager").GetComponent<WaveSpawningSystem>();
         }
         public abstract void Generate();
+        public virtual void SetDifficulty(GameModel.GameColor[] spawnColors)
+        {
+            difficulty = baseDifficulty + spawnColors.Length;
+            if (isMultiColor)
+            {
+                difficulty *= 2;
+            }
+        }
     }
 
     public class BasicChunk : Chunk
-    { 
+    {
         public override void Generate()
         {
             Debug.Log("Basic Chunk Added");
@@ -247,10 +276,11 @@ public class WaveSpawningSystem : MonoBehaviour
                 }
             }
         }
-
         public BasicChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
+            baseDifficulty = 1;
             image = uiManager.EnemySprites[0];
+            SetDifficulty(spawnColors);
         }
     }
     
@@ -280,7 +310,9 @@ public class WaveSpawningSystem : MonoBehaviour
 
         public FastChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
+            baseDifficulty = 3;
             image = uiManager.EnemySprites[1];
+            SetDifficulty(spawnColors);
         }
     }
     
@@ -310,7 +342,9 @@ public class WaveSpawningSystem : MonoBehaviour
 
         public NinjaChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
+            baseDifficulty = 2;
             image = uiManager.EnemySprites[2];
+            SetDifficulty(spawnColors);
         }
     }
     
