@@ -99,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ren: {fileID: 6466563719531180968}
   bulletColor: 0
+  modelGame: {fileID: 0}
 --- !u!50 &5659267133269794804
 Rigidbody2D:
   serializedVersion: 4

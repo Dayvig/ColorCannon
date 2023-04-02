@@ -12,12 +12,50 @@ public class EnemyBehavior : MonoBehaviour
     private float SPEED = 0.6f;
 
     public GameModel.GameColor enemyColor;
+    public List<GameModel.GameColor> enemyColors = new List<GameModel.GameColor>();
+    private bool isMultiColor;
     public SpriteRenderer rend;
     private GameManager gameManager;
+    private GameModel modelGame;
 
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
+    }
+
+    private GameModel.GameColor SetMixedColor(List<GameModel.GameColor> colors)
+    {
+        if (colors.Count == 0)
+        {
+            Debug.Log("empty color array");
+            return GameModel.GameColor.RED;
+        }
+        if (colors.Count == 1)
+        {
+            return colors[0];
+        }
+        if (colors.Count == 2)
+        {
+            if (colors.Contains(GameModel.GameColor.RED) && colors.Contains(GameModel.GameColor.BLUE))
+            {
+                return GameModel.GameColor.PURPLE;
+            }
+            if (colors.Contains(GameModel.GameColor.RED) && colors.Contains(GameModel.GameColor.YELLOW))
+            {
+                return GameModel.GameColor.ORANGE;
+            }
+            if (colors.Contains(GameModel.GameColor.BLUE) && colors.Contains(GameModel.GameColor.YELLOW))
+            {
+                return GameModel.GameColor.GREEN;
+            }
+        }
+        if (colors.Count == 3)
+        {
+            return GameModel.GameColor.WHITE;
+        }
+        Debug.Log("Something went wrong");
+        return GameModel.GameColor.RED;
     }
     
     public virtual void initialize(Vector3 des, GameModel.GameColor color)
@@ -25,7 +63,48 @@ public class EnemyBehavior : MonoBehaviour
         currentPos = transform.position;
         destination = des;
         moveSpeed = SPEED;
-        enemyColor = color;
+        initializeMixedColor(color);
+        if (isMultiColor)
+        {
+            enemyColor = SetMixedColor(enemyColors);
+        }
+        else
+        {
+            enemyColor = color;
+        }
+    }
+
+    private void initializeMixedColor(GameModel.GameColor color)
+    {
+        if (color.Equals(GameModel.GameColor.ORANGE))
+        {
+            enemyColors.Add(GameModel.GameColor.RED);
+            enemyColors.Add(GameModel.GameColor.YELLOW);
+            isMultiColor = true;
+        }
+        else if (color.Equals(GameModel.GameColor.PURPLE))
+        {
+            enemyColors.Add(GameModel.GameColor.RED);
+            enemyColors.Add(GameModel.GameColor.BLUE);
+            isMultiColor = true;
+        }
+        else if (color.Equals(GameModel.GameColor.GREEN))
+        {
+            enemyColors.Add(GameModel.GameColor.BLUE);
+            enemyColors.Add(GameModel.GameColor.YELLOW);
+            isMultiColor = true;
+        }
+        else if (color.Equals(GameModel.GameColor.WHITE))
+        {
+            enemyColors.Add(GameModel.GameColor.RED);
+            enemyColors.Add(GameModel.GameColor.YELLOW);
+            enemyColors.Add(GameModel.GameColor.BLUE);
+            isMultiColor = true;
+        }
+        else
+        {
+            isMultiColor = false;
+        }
     }
 
     void setDestination(Vector3 dest)
@@ -56,6 +135,29 @@ public class EnemyBehavior : MonoBehaviour
         {
             Debug.Log("Enemy hit player");
             Die();
+        }
+    }
+
+    public void touchBullet(Bullet bullet)
+    {
+        if (!isMultiColor && bullet.bulletColor == enemyColor)
+        {
+            Die();
+            bullet.Die();
+        }
+        else
+        {
+            if (enemyColors.Contains(bullet.bulletColor))
+            {
+                enemyColors.Remove(bullet.bulletColor);
+                if (enemyColors.Count == 0)
+                {
+                    Die();
+                }
+                enemyColor = SetMixedColor(enemyColors);
+                SetColor(modelGame.ColorToColor(enemyColor));
+                bullet.Die();
+            }
         }
     }
 

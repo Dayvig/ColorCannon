@@ -9,7 +9,7 @@ public class GameModel : MonoBehaviour
 
     public enum GameColor
     {
-        RED, YELLOW, BLUE
+        RED, YELLOW, BLUE, ORANGE, PURPLE, GREEN, WHITE
     }
 
     public enum UIColor
@@ -19,6 +19,14 @@ public class GameModel : MonoBehaviour
     }
 
     public List<Sprite> UpgradeImages = new List<Sprite>();
+
+    [Range(1.05f, 10f)] public float shotSpeedMultiplier;
+    [Range(1.05f, 10f)] public float rapidFireMultiplier;
+    [Range(1.05f, 10f)] public float shotSizeMultiplier;
+    [Range(1, 10)] public int numShotsUpgrade;
+    [Range(20, 180)] 
+    public float spreadAngleMax;
+
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +44,14 @@ public class GameModel : MonoBehaviour
                 return Color.blue;
             case GameColor.YELLOW:
                 return Color.yellow;
+            case GameColor.ORANGE:
+                return new Color(1f, 0.65f, 0.15f);
+            case GameColor.GREEN:
+                return new Color(0f, 0.65f, 0.15f);
+            case GameColor.PURPLE:
+                return new Color(0.5f, 0f, 1f);
+            case GameColor.WHITE:
+                return Color.white;
             default:
                 return Color.gray;
         }

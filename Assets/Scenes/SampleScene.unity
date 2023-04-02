@@ -926,8 +926,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 822b6a3f17d256d4591a120ecbf6ef87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseShotSpeed: 0.5
+  baseBulletSpeed: 0.01
+  baseBulletSize: 1
+  baseNumShots: 1
   shotSpeed: 0.5
   bulletSpeed: 0.01
+  bulletSize: 0
+  numShots: 1
   bullet: {fileID: 6390445730411973746, guid: 4118752c98fe1c4449ee2180bf946349, type: 3}
   enemy: {fileID: 7963215952173959544, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   barrel: {fileID: 457242024}
@@ -1271,6 +1277,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 56d811aac53d83a4ab519094265c3657, type: 3}
   - {fileID: 21300000, guid: c244c3c82bc3fbc4c8c1b43005aa7615, type: 3}
   - {fileID: 21300000, guid: 15ec24f293fc8df4689704e2ea8a05ee, type: 3}
+  shotSpeedMultiplier: 1.185
+  rapidFireMultiplier: 1.366
+  shotSizeMultiplier: 1.49
+  numShotsUpgrade: 2
+  spreadAngleMax: 90
 --- !u!4 &1793738074
 Transform:
   m_ObjectHideFlags: 0
@@ -1299,12 +1310,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Enemies:
   - {fileID: 7963215952173959544, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
-  - {fileID: 1188993737071851457, guid: 9ff31550497e51a4d9373446218fbdd3, type: 3}
-  - {fileID: 8381754567029053299, guid: dc9ec591092bb8d47832b371e8d35f15, type: 3}
+  - {fileID: 9124210647007902113, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
+  - {fileID: 3234621261998620790, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
-  - {fileID: 4426717571338806905, guid: 9ff31550497e51a4d9373446218fbdd3, type: 3}
-  - {fileID: 8543703624683406463, guid: dc9ec591092bb8d47832b371e8d35f15, type: 3}
+  - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
+  - {fileID: 3324503796375360378, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
   Level: 1
   baseGlobalWaveNumber: 10
   baseGlobalWaveSpacing: 0.8

@@ -49,6 +49,12 @@ public class GameManager : MonoBehaviour
         if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
         {
             uiManager.deactivatePostWaveUI();
+            if (selectedUpgrade != null)
+            {
+                player.upgrades.Add(selectedUpgrade);
+            }
+            selectedUpgrade = null;
+            player.configureWeapon();
         }
         currentState = nextState;
     }

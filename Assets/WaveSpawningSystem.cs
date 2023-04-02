@@ -156,10 +156,27 @@ public class WaveSpawningSystem : MonoBehaviour
         uiManager.WipePreviewImages();
         for (int i = 0; i < numChunks; i++)
         {
+            /*
             Chunk nextChunk = returnRandomChunk();
             uiManager.SetupChunkPreview(nextChunk);
             nextChunk.Generate();
+            */
         }
+        Chunk nextChunk = new BasicChunk(new[]{GameModel.GameColor.ORANGE});
+        uiManager.SetupChunkPreview(nextChunk);
+        nextChunk.Generate();
+        
+        nextChunk = new BasicChunk(new[]{GameModel.GameColor.PURPLE});
+        uiManager.SetupChunkPreview(nextChunk);
+        nextChunk.Generate();
+        
+        nextChunk = new BasicChunk(new[]{GameModel.GameColor.GREEN});
+        uiManager.SetupChunkPreview(nextChunk);
+        nextChunk.Generate();
+
+        nextChunk = new BasicChunk(new[]{GameModel.GameColor.WHITE});
+        uiManager.SetupChunkPreview(nextChunk);
+        nextChunk.Generate();
     }
 
     public void generateUpgrades()
@@ -176,6 +193,7 @@ public class WaveSpawningSystem : MonoBehaviour
         uiManager.WipePreviewImages();
         clearWave();
         generateWave();
+        generateUpgrades();
         Level++;
     }
 
@@ -200,6 +218,7 @@ public class WaveSpawningSystem : MonoBehaviour
         public WaveSpawningSystem spawningSystem;
         public GameModel.GameColor[] colors = {GameModel.GameColor.RED};
         public Sprite image;
+        public bool isMultiColor;
 
         public Chunk(GameModel.GameColor[] spawnColors)
         {

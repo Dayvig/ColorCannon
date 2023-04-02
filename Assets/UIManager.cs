@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
         }
         for (int i = 0; i < UpgradePreviewPanel.childCount; i++)
         {
-            PreviewPanel.GetChild(i).gameObject.SetActive(false);
+            UpgradePreviewPanel.GetChild(i).gameObject.SetActive(false);
         }
     }
 }

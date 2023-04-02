@@ -63,16 +63,14 @@ public class Bullet : MonoBehaviour
         {
             Debug.Assert(col.gameObject.GetComponent<EnemyBehavior>() != null);
             EnemyBehavior enemy = col.gameObject.GetComponent<EnemyBehavior>();
-            if (enemy.enemyColor == bulletColor)
-            {
-                enemy.Die();
-                Die();
-            }
+            enemy.touchBullet(this);
         }
     }
-
-    private void Die()
+    
+    public void Die()
     {
         gameManager.markedForDeathBullets.Add(this);
     }
+    
+    
 }
