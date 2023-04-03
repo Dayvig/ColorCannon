@@ -52,7 +52,16 @@ public class UIManager : MonoBehaviour
             GameObject newChunkPreviewImage = Instantiate(PreviewImage, newChunkPreview.transform);
             Image enemyImage = newChunkPreviewImage.GetComponent<Image>();
             enemyImage.sprite = c.image;
-            enemyImage.color = modelGame.ColorToColor(c.colors[k]);
+            Color newColor = modelGame.ColorToColor(c.colors[k]);
+            if (!c.isDarkened)
+            {
+                enemyImage.color = newColor;
+            }
+            else
+            {
+                float div = modelGame.darkenedColorDivisor;
+                enemyImage.color = new Color(newColor.r / div, newColor.g / div, newColor.b / div, newColor.a);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,6 +20,7 @@ public class WaveSpawningSystem : MonoBehaviour
     List<Chunk> availableChunks = new List<Chunk>();
     public static List<WaveObject> currentWave = new List<WaveObject>();
     public List<GameModel.GameColor> currentColors = new List<GameModel.GameColor>();
+    public List<int> chunkDifficulties = new List<int>();
     public int currentWaveIndex = 0;
 
     private float enemyTimer = 0.0f;
@@ -79,7 +81,8 @@ public class WaveSpawningSystem : MonoBehaviour
             GameObject newEnemy = Instantiate(currentWave[currentWaveIndex].body, startPos, Quaternion.identity);
             EnemyBehavior enemyScript = newEnemy.GetComponent<EnemyBehavior>();
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
-            enemyScript.initialize(player.transform.position, enemyColor);
+            bool darkEnemy = currentWave[currentWaveIndex].darkened;
+            enemyScript.initialize(player.transform.position, enemyColor, darkEnemy);
             enemyScript.SetColor(modelGame.ColorToColor(enemyColor));
             gameManager.activeEnemies.Add(enemyScript);
             enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
@@ -102,6 +105,11 @@ public class WaveSpawningSystem : MonoBehaviour
         globalWaveNumber = baseGlobalWaveNumber;
         globalWaveSpacing = baseGlobalWaveSpacing;
         numChunks = baseNumChunks;
+        for (int i = 0; i < numChunks; i++)
+        {
+            chunkDifficulties.Add((i+1));
+            Debug.Log(chunkDifficulties[i]);
+        }
 
         gameManager.addStartingUpgrades();
         generateWave();
@@ -122,6 +130,15 @@ public class WaveSpawningSystem : MonoBehaviour
         //Basic Blue wave
         availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.BLUE}));
         
+        //Basic Red Dark wave
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.RED}, true));
+        
+        //Basic Yellow Dark wave
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW}, true));
+        
+        //Basic Blue Dark wave
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.BLUE}, true));
+        
         //Basic Red and Yellow wave
         availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW, GameModel.GameColor.RED}));
         
@@ -131,25 +148,19 @@ public class WaveSpawningSystem : MonoBehaviour
         //Basic Yellow and Blue wave
         availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE}));
         
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
-        //Orange or Purple Fast Wave
-        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        /*
+        //Basic Orange wave
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.ORANGE}));
+        
+        //Basic Purple wave
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.PURPLE}));
+        
+        //Basic Green wave
+        availableChunks.Add(new BasicChunk(new[]{GameModel.GameColor.GREEN}));
 
+        //Basic Fast Orange and purple wave
+        availableChunks.Add(new FastChunk(new[]{GameModel.GameColor.ORANGE, GameModel.GameColor.PURPLE}));
+        */
     }
     
     public Chunk returnRandomChunk()
@@ -170,7 +181,7 @@ public class WaveSpawningSystem : MonoBehaviour
             return returnRandomChunk(lessthan);
         }
         Debug.Log("Tried to access a chunk that didn't exist");
-        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE});
+        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE}, false);
     }
     
     public Chunk returnRandomChunk(int floor, int ceiling)
@@ -186,16 +197,17 @@ public class WaveSpawningSystem : MonoBehaviour
             return returnRandomChunk(floor, ceiling);
         }
         Debug.Log("Tried to access a chunk that didn't exist");
-        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE});
+
+        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE}, false);
     }
 
     public void generateWave()
     {
         uiManager.WipePreviewImages();
-        for (int i = 0; i < numChunks; i++)
+        for (int i = 0; i < chunkDifficulties.Count; i++)
         {
             recusionProtection = 0;
-            Chunk nextChunk = returnRandomChunk(10);
+            Chunk nextChunk = returnRandomChunk(chunkDifficulties[i]);
             uiManager.SetupChunkPreview(nextChunk);
             nextChunk.Generate();
         }
@@ -207,9 +219,30 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         uiManager.WipePreviewImages();
         clearWave();
+        IncreaseDifficulty();
         generateWave();
         gameManager.GenerateUpgrades();
+    }
+
+    public void IncreaseDifficulty()
+    {
         Level++;
+        if (Level % 6 == 0)
+        {
+            double sum = 0;
+            for (int k = 0; k < chunkDifficulties.Count; k++)
+            {
+                sum += chunkDifficulties[k];
+            }
+            numChunks++;
+            chunkDifficulties.Add((int)Math.Ceiling((sum/chunkDifficulties.Count)));
+        }
+        int rand = Random.Range(0, chunkDifficulties.Count);
+        chunkDifficulties[rand] = (int)Math.Ceiling(chunkDifficulties[rand] * 1.5f);
+        for (int i = 0; i < chunkDifficulties.Count; i++)
+        {
+            Debug.Log(chunkDifficulties[i]);
+        }
     }
 
     private void clearWave()
@@ -236,11 +269,27 @@ public class WaveSpawningSystem : MonoBehaviour
         public bool isMultiColor;
         public int difficulty;
         public int baseDifficulty;
+        public bool isDarkened;
 
+        public Chunk(GameModel.GameColor[] spawnColors, bool dark)
+        {
+            colors = spawnColors;
+            spawningSystem = GameObject.Find("GameManager").GetComponent<WaveSpawningSystem>();
+            isMultiColor = (colors.Contains(GameModel.GameColor.ORANGE) ||
+                            colors.Contains(GameModel.GameColor.GREEN) ||
+                            colors.Contains(GameModel.GameColor.PURPLE) ||
+                            colors.Contains(GameModel.GameColor.WHITE));
+            isDarkened = dark;
+        }
         public Chunk(GameModel.GameColor[] spawnColors)
         {
             colors = spawnColors;
             spawningSystem = GameObject.Find("GameManager").GetComponent<WaveSpawningSystem>();
+            isMultiColor = (colors.Contains(GameModel.GameColor.ORANGE) ||
+                            colors.Contains(GameModel.GameColor.GREEN) ||
+                            colors.Contains(GameModel.GameColor.PURPLE) ||
+                            colors.Contains(GameModel.GameColor.WHITE));
+            isDarkened = false;
         }
         public abstract void Generate();
         public virtual void SetDifficulty(GameModel.GameColor[] spawnColors)
@@ -249,6 +298,19 @@ public class WaveSpawningSystem : MonoBehaviour
             if (isMultiColor)
             {
                 difficulty *= 2;
+                if (difficulty <= 6)
+                {
+                    difficulty = 6;
+                }
+            }
+
+            if (isDarkened)
+            {
+                difficulty *= 2;
+                if (difficulty <= 4)
+                {
+                    difficulty = 4;
+                }
             }
         }
     }
@@ -257,12 +319,15 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate()
         {
-            Debug.Log("Basic Chunk Added");
+            Debug.Log("Basic Chunk Added: Difficulty - "+difficulty + " / "+ String.Join("",
+                new List<GameModel.GameColor>(colors)
+                    .ConvertAll(i => i.ToString())
+                    .ToArray())+ " | "+isDarkened);
             if (colors.Length == 1)
             {
                 for (int i = 0; i < globalWaveNumber; i++)
                 {
-                    currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0], globalWaveSpacing, TOPBOTTOM));
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0], globalWaveSpacing, TOPBOTTOM, isDarkened));
                 }
             }
             else
@@ -271,14 +336,20 @@ public class WaveSpawningSystem : MonoBehaviour
                 {
                     for (int i = 0; i < globalWaveNumber; i++)
                     {
-                        currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], globalWaveSpacing, TOPBOTTOM));
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], globalWaveSpacing, TOPBOTTOM, isDarkened));
                     }
                 }
             }
         }
+        public BasicChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
+        {
+            baseDifficulty = 0;
+            image = uiManager.EnemySprites[0];
+            SetDifficulty(spawnColors);
+        }
         public BasicChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
-            baseDifficulty = 1;
+            baseDifficulty = 0;
             image = uiManager.EnemySprites[0];
             SetDifficulty(spawnColors);
         }
@@ -288,12 +359,12 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate()
         {
-            Debug.Log("Fast Chunk Added");
+            Debug.Log("Fast Chunk Added: Difficulty - "+difficulty);
             if (colors.Length == 1)
             {
                 for (int i = 0; i < globalWaveNumber; i++)
                 {
-                    currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0], globalWaveSpacing, TOPBOTTOM));
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0], globalWaveSpacing, TOPBOTTOM, isDarkened));
                 }
             }
             else
@@ -302,12 +373,18 @@ public class WaveSpawningSystem : MonoBehaviour
                 {
                     for (int i = 0; i < globalWaveNumber; i++)
                     {
-                        currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], globalWaveSpacing, TOPBOTTOM));
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], globalWaveSpacing, TOPBOTTOM, isDarkened));
                     }
                 }
             }
         }
 
+        public FastChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
+        {
+            baseDifficulty = 3;
+            image = uiManager.EnemySprites[1];
+            SetDifficulty(spawnColors);
+        }
         public FastChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
             baseDifficulty = 3;
@@ -320,12 +397,12 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate()
         {
-            Debug.Log("Ninja Chunk Added");
+            Debug.Log("Ninja Chunk Added: Difficulty - "+difficulty);
             if (colors.Length == 1)
             {
                 for (int i = 0; i < globalWaveNumber; i++)
                 {
-                    currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], globalWaveSpacing, LEFTRIGHT));
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], globalWaveSpacing, LEFTRIGHT, isDarkened));
                 }
             }
             else
@@ -334,12 +411,18 @@ public class WaveSpawningSystem : MonoBehaviour
                 {
                     for (int i = 0; i < globalWaveNumber; i++)
                     {
-                        currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], globalWaveSpacing, TOPBOTTOM));
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], globalWaveSpacing, TOPBOTTOM, isDarkened));
                     }
                 }
             }
         }
 
+        public NinjaChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
+        {
+            baseDifficulty = 2;
+            image = uiManager.EnemySprites[2];
+            SetDifficulty(spawnColors);
+        }
         public NinjaChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
             baseDifficulty = 2;
@@ -357,14 +440,16 @@ public class WaveSpawningSystem : MonoBehaviour
         public GameModel.GameColor color;
         public float delayUntilNext;
         public int[] locationsToSpawn;
+        public bool darkened;
         
-        public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc)
+        public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark)
         {
             body = enemyObject;
             script = enemyScript;
             color = col;
             delayUntilNext = delay;
             locationsToSpawn = loc;
+            darkened = dark;
         }
     }
 }

@@ -16,7 +16,10 @@ public class EnemyBehavior : MonoBehaviour
     private bool isMultiColor;
     public SpriteRenderer rend;
     private GameManager gameManager;
-    private GameModel modelGame;
+    public GameModel modelGame;
+
+    public bool isDarkened;
+    public List<Bullet> immuneBullets = new List<Bullet>();
 
     void Start()
     {
@@ -58,7 +61,7 @@ public class EnemyBehavior : MonoBehaviour
         return GameModel.GameColor.RED;
     }
     
-    public virtual void initialize(Vector3 des, GameModel.GameColor color)
+    public virtual void initialize(Vector3 des, GameModel.GameColor color, bool dark)
     {
         currentPos = transform.position;
         destination = des;
@@ -72,6 +75,8 @@ public class EnemyBehavior : MonoBehaviour
         {
             enemyColor = color;
         }
+
+        isDarkened = dark;
     }
 
     private void initializeMixedColor(GameModel.GameColor color)
@@ -126,7 +131,14 @@ public class EnemyBehavior : MonoBehaviour
     
     public void SetColor(Color c)
     {
-        rend.color = c;
+        if (!isDarkened)
+        {
+            rend.color = c;
+        }
+        else
+        {
+            rend.color = new Color(c.r / 1.5f, c.g / 1.5f, c.b / 1.5f, c.a);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -140,10 +152,18 @@ public class EnemyBehavior : MonoBehaviour
 
     public void touchBullet(Bullet bullet)
     {
-        if (!isMultiColor && bullet.bulletColor == enemyColor)
+        if (immuneBullets.Count > 0 && immuneBullets.Contains(bullet))
         {
-            Die();
-            bullet.TakeHit();
+            return;
+        }
+        if (!isMultiColor)
+        {
+            if (bullet.bulletColor == enemyColor)
+            {
+                TakeHit();
+                immuneBullets.Add(bullet);
+                bullet.TakeHit();
+            }
         }
         else
         {
@@ -158,6 +178,19 @@ public class EnemyBehavior : MonoBehaviour
                 SetColor(modelGame.ColorToColor(enemyColor));
                 bullet.TakeHit();
             }
+        }
+    }
+
+    public void TakeHit()
+    {
+        if (isDarkened)
+        {
+            isDarkened = false;
+            SetColor(modelGame.ColorToColor(enemyColor));
+        }
+        else
+        {
+            Die();
         }
     }
 

@@ -29,6 +29,9 @@ public class GameModel : MonoBehaviour
     public float spreadAngleMax;
 
 
+    public float darkenedColorDivisor = 1.5f;
+
+
     // Start is called before the first frame update
     void Start()
     {

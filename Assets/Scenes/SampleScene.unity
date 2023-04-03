@@ -1718,9 +1718,10 @@ MonoBehaviour:
   shotSpeedMultiplier: 1.185
   rapidFireMultiplier: 1.366
   shotSizeMultiplier: 1.49
-  numShotsUpgrade: 2
+  numShotsUpgrade: 1
   piercingUpgrade: 1
   spreadAngleMax: 60
+  darkenedColorDivisor: 1.5
 --- !u!4 &1793738074
 Transform:
   m_ObjectHideFlags: 0
@@ -1760,6 +1761,7 @@ MonoBehaviour:
   baseGlobalWaveSpacing: 0.8
   baseNumChunks: 3
   currentColors: 
+  chunkDifficulties: 
   currentWaveIndex: 0
   modelGame: {fileID: 1793738073}
   player: {fileID: 1149456161}

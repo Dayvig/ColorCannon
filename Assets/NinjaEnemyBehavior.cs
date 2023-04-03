@@ -20,9 +20,9 @@ public class NinjaEnemyBehavior : EnemyBehavior
 
     public Behavior ninjaBehavior;
 
-    public override void initialize(Vector3 des, GameModel.GameColor color)
+    public override void initialize(Vector3 des, GameModel.GameColor color, bool darkened)
     {
-        base.initialize(des, color);
+        base.initialize(des, color, darkened);
         ninjaBehavior = Behavior.SNEAK;
         
     }

@@ -22,9 +22,9 @@ public class FastEnemyBehavior : EnemyBehavior
 
     public Behavior fastBehavior;
 
-    public override void initialize(Vector3 des, GameModel.GameColor color)
+    public override void initialize(Vector3 des, GameModel.GameColor color, bool darkened)
     {
-        base.initialize(des, color);
+        base.initialize(des, color, darkened);
         fastBehavior = Behavior.WINDUP;
         
         //Sets rotation to look at player
