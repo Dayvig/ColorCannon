@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     private Vector3 actualRotation;
     [Range(1f, 0.1f)]
     public float baseShotSpeed = 0.5f;
-    [Range(0.005f, 0.1f)]
+    [Range(0.001f, 1f)]
     public float baseBulletSpeed = 0.01f;
     [Range(0.5f, 2f)]
     public float baseBulletSize = 1f;
@@ -73,6 +73,15 @@ public class Player : MonoBehaviour
                 rotationTarget = angle;
             }
         }
+        if (Input.touchCount == 1)
+        {
+            Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+            {
+                float angle = ((180 / Mathf.PI) * Mathf.Atan2(touchPos.y -currentPos.y,
+                    touchPos.x - currentPos.x)) - 90;
+                rotationTarget = angle;
+            }
+        }
         /*
         actualRotation = Vector3.Lerp(
             new Vector3(0, 0, rotationCurrent),
@@ -91,14 +100,48 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void SingleFire(GameModel.GameColor gameColor)
+    {
+        GameObject newBulletObject = null;
+        foreach (Bullet b in gameManager.inactiveBullets)
+        {
+            //some conditional later
+            newBulletObject = b.gameObject;
+            gameManager.inactiveBullets.Remove(b);
+            break;
+        }
+        if (newBulletObject == null)
+        {
+            newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+        }
+            
+        newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
+        Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
+        bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing);
+        bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+        gameManager.activeBullets.Add(bulletScript);
+    }
+
     private void SpreadFire(GameModel.GameColor gameColor, int numShots)
     {
         if (numShots == 1)
         {
-            GameObject newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+            GameObject newBulletObject = null;
+            foreach (Bullet b in gameManager.inactiveBullets)
+            {
+                //some conditional later
+                newBulletObject = b.gameObject;
+                gameManager.inactiveBullets.Remove(b);
+                break;
+            }
+            if (newBulletObject == null)
+            {
+                newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+            }
+            
             newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-            bulletScript.initialize(rotationTarget, bulletSpeed, playerColor, piercing);
+            bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             gameManager.activeBullets.Add(bulletScript);
         }
@@ -111,10 +154,21 @@ public class Player : MonoBehaviour
                 float angleOffSet =
                     ((((float) s / (numShots + (1 - (2 * (numShots % 2))))) * modelGame.spreadAngleMax) -
                      (modelGame.spreadAngleMax / 2));
-                GameObject newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+                GameObject newBulletObject = null;
+                foreach (Bullet b in gameManager.inactiveBullets)
+                {
+                    //some conditional later
+                    newBulletObject = b.gameObject;
+                    gameManager.inactiveBullets.Remove(b);
+                    break;
+                }
+                if (newBulletObject == null)
+                {
+                    newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+                }
                 newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-                bulletScript.initialize(rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing);
+                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
                 gameManager.activeBullets.Add(bulletScript);
             }
@@ -206,6 +260,7 @@ public class Player : MonoBehaviour
         return piercing;
     }
     
+    Vector3 tapPos = new Vector3(0f, 0f, 0f);
     void DoubleClickUpdate()
     {
         if (mouseTimer >= 0.0f)
@@ -219,14 +274,43 @@ public class Player : MonoBehaviour
             clicks = 0;
         }
         if (Input.GetMouseButtonUp(0))
-        {
-            clicks++;
-            mouseTimer = 0.0f;
-            if (clicks > 1){
+        {   
+            if (clicks == 0)
+            {
+                tapPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            }
+            else if (clicks > 1){
+                
                 if (mouseTimer != -1.0f)
                 {
                     nextColor();
                 }
+            }
+            clicks++;
+            mouseTimer = 0.0f;
+        }
+
+        //touch control
+        if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Began)
+        {
+            tapPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+            if (clicks > 0)
+            {
+                nextColor();
+            }
+        }
+        if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Ended)
+        {
+            Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+            if (Vector3.Distance(tapPos, newPos) < 1f)
+            {
+                clicks++;
+                mouseTimer = 0f;
+            }
+            else
+            {
+                mouseTimer = -1.0f;
+                clicks = 0;
             }
         }
     }

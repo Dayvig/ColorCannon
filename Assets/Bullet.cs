@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private float xSpeed;
-    private float ySpeed;
-    private Vector3 flight;
+    public float xSpeed;
+    public float ySpeed;
+    public Vector3 flight;
     private float xBounds = 3;
     private float yBounds = 5;
     private Vector3 positionTarget;
@@ -17,15 +17,17 @@ public class Bullet : MonoBehaviour
     public GameModel modelGame;
     private GameManager gameManager;
     private int piercing = 1;
+    private CircleCollider2D thisCollider;
 
     // Start is called before the first frame update
     void Start()
     {
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        thisCollider = GetComponent<CircleCollider2D>();
     }
 
-    public void initialize(float rotation, float speed, GameModel.GameColor color, int pierce)
+    public void initialize(Vector3 initialPos, float rotation, float speed, GameModel.GameColor color, int pierce)
     {
         rotation = -(rotation * (Mathf.PI / 180));
         
@@ -33,9 +35,12 @@ public class Bullet : MonoBehaviour
         ySpeed = Mathf.Cos(rotation);
         flight = new Vector3(xSpeed, ySpeed, 0).normalized * speed;
 
-        positionCurrent = this.transform.position;
+        transform.position = initialPos;
+        positionCurrent = initialPos;
+        positionTarget = initialPos;
         bulletColor = color;
         piercing = pierce;
+        gameObject.SetActive(true);
     }
 
     public void SetColor(Color c)
@@ -52,6 +57,11 @@ public class Bullet : MonoBehaviour
             positionTarget, 
             Time.deltaTime * 30.0f);
         transform.position = positionCurrent;
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(positionTarget, thisCollider.radius);
+        foreach (Collider2D c in hitColliders)
+        {
+            TriggerCollisions(c);
+        }
         if (positionCurrent.x > xBounds || positionCurrent.x < -xBounds ||
             positionCurrent.y > yBounds || positionCurrent.y < -yBounds)
         { 
@@ -59,7 +69,7 @@ public class Bullet : MonoBehaviour
         }
     }
     
-    private void OnTriggerEnter2D(Collider2D col)
+    private void TriggerCollisions(Collider2D col)
     {
         if (col.gameObject.CompareTag("Enemy"))
         {

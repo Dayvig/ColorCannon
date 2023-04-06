@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     public List<Bullet> activeBullets = new List<Bullet>();
     public List<EnemyBehavior> markedForDeathEnemies = new List<EnemyBehavior>();
     public List<Bullet> markedForDeathBullets = new List<Bullet>();
+    public List<Bullet> inactiveBullets = new List<Bullet>();
     public Player player;
     public UIManager uiManager;
     public WaveSpawningSystem spawningSystem;
@@ -148,6 +150,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        switch (currentState)
+        {
+            case GameState.WAVE:
+                WaveFixedUpdate();
+                break;
+        }
+        Trash();
+    }
+
     void Update()
     {
         switch (currentState)
@@ -165,19 +178,25 @@ public class GameManager : MonoBehaviour
                 WaveUpdate();
                 break;
         }
-        
+        Trash();
+    }
+
+    void Trash()
+    {
         //Take out the TREASSH
         foreach (EnemyBehavior ded in markedForDeathEnemies)
         {
             //TODO: Add object pooling
             activeEnemies.Remove(ded);
-            Destroy(ded.gameObject);
+            spawningSystem.inactiveEnemies.Add(ded);
+            ded.gameObject.SetActive(false);
         }
 
         foreach (Bullet ded in markedForDeathBullets)
         {
             activeBullets.Remove(ded);
-            Destroy(ded.gameObject);
+            inactiveBullets.Add(ded);
+            ded.gameObject.SetActive(false);
         }
         markedForDeathEnemies.Clear();
         markedForDeathBullets.Clear();
@@ -187,6 +206,14 @@ public class GameManager : MonoBehaviour
     {
         player.PlayerUpdate();
         spawningSystem.EnemyUpdate();
+        if ((spawningSystem.currentWaveIndex == WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count == 0))
+        {
+            SetState(GameState.POSTWAVE);
+        }
+    }
+
+    void WaveFixedUpdate()
+    {
         foreach (EnemyBehavior enemy in activeEnemies)
         {
             enemy.EnemyUpdate();
@@ -194,10 +221,6 @@ public class GameManager : MonoBehaviour
         foreach (Bullet bullet in activeBullets)
         {
             bullet.BulletUpdate();
-        }
-        if ((spawningSystem.currentWaveIndex == WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count == 0))
-        {
-            SetState(GameState.POSTWAVE);
         }
     }
 
