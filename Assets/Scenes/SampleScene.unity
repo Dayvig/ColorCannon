@@ -1087,7 +1087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseShotSpeed: 0.5
-  baseBulletSpeed: 0.01
+  baseBulletSpeed: 0.044
   baseBulletSize: 1
   basePiercing: 1
   baseNumShots: 1
@@ -1103,6 +1103,7 @@ MonoBehaviour:
   modelGame: {fileID: 0}
   gameManager: {fileID: 0}
   mouseTimer: 0
+  dClickInterval: 0.1
   clicks: 0
 --- !u!212 &1149456163
 SpriteRenderer:
@@ -1759,14 +1760,20 @@ MonoBehaviour:
   Level: 1
   baseGlobalWaveNumber: 10
   baseGlobalWaveSpacing: 0.8
+  baseTutorialSpacing: 4
+  baseGlobalWaveSpeed: 0
   baseNumChunks: 3
   inactiveEnemies: []
   currentColors: 
   chunkDifficulties: 
   currentWaveIndex: 0
+  currentMechanics: 
+  newMechanics: 
   modelGame: {fileID: 1793738073}
   player: {fileID: 1149456161}
   gameManager: {fileID: 0}
+  basicMechanics: 01000000020000000300000004000000
+  medMechanics: 05000000
   ALL: 00000000010000000200000003000000
 --- !u!114 &1793738076
 MonoBehaviour:

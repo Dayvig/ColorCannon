@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
     public GameManager gameManager;
 
     public float mouseTimer = 0.0f;
-    private float dClickInterval = 0.3f;
+    public float dClickInterval;
     public int clicks = 0;
 
     private GameModel.GameColor[] colorOrder =
@@ -139,10 +139,10 @@ public class Player : MonoBehaviour
                 newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
             }
             
-            newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
             bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+            newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             gameManager.activeBullets.Add(bulletScript);
         }
         else
@@ -263,6 +263,7 @@ public class Player : MonoBehaviour
     Vector3 tapPos = new Vector3(0f, 0f, 0f);
     void DoubleClickUpdate()
     {
+        
         if (mouseTimer >= 0.0f)
         {
             mouseTimer += Time.deltaTime;
@@ -272,7 +273,7 @@ public class Player : MonoBehaviour
         {
             mouseTimer = -1.0f;
             clicks = 0;
-        }
+        }/*
         if (Input.GetMouseButtonUp(0))
         {   
             if (clicks == 0)
@@ -288,7 +289,7 @@ public class Player : MonoBehaviour
             }
             clicks++;
             mouseTimer = 0.0f;
-        }
+        }*/
 
         //touch control
         if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Began)

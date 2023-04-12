@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
             uiManager.SetupUpgradePreview(nextUpgrade);
         }
     }
-
+    
     private void FixedUpdate()
     {
         switch (currentState)
@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
         }
         Trash();
     }
-
+    
     void Update()
     {
         switch (currentState)

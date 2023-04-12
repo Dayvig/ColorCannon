@@ -84,6 +84,7 @@ public class EnemyBehavior : MonoBehaviour
         isDarkened = dark;
         enemyType = type;
         gameObject.SetActive(true);
+        immuneBullets.Clear();
     }
 
     private void initializeMixedColor(GameModel.GameColor color)
