@@ -171,7 +171,13 @@ public class EnemyBehavior : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Enemy hit player");
+            Debug.Assert(col.GetComponent<Player>() != null, "Player doesn't have correct component");
+            Player player = col.GetComponent<Player>();
+            player.lives--;
+            if (player.lives < 0)
+            {
+                gameManager.SetState(GameManager.GameState.LOSE);
+            }
             Die();
         }
     }

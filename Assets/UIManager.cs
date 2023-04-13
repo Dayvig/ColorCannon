@@ -8,12 +8,16 @@ public class UIManager : MonoBehaviour
 {
     public List<Sprite> EnemySprites = new List<Sprite>();
     public GameObject UpcomingPanel;
-    public Transform PreviewPanel;
+    public Transform PreviewPanelRow1;
+    public Transform PreviewPanelRow2;
+    public Transform PreviewPanelRow3;
     public GameObject ChunkPreview;
     public GameObject UpgradePreview;
     public GameObject PreviewImage;
     public GameObject UpgradePanel;
     public Transform UpgradePreviewPanel;
+    public GameObject WinPanel;
+    public GameObject LosePanel;
     
     public GameModel modelGame;
     public GameManager gameManager;
@@ -21,6 +25,7 @@ public class UIManager : MonoBehaviour
     void Start(){
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>(); 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        deactivateWinLoseUI();
     }
 
     public void WaveUIUpdate()
@@ -30,6 +35,22 @@ public class UIManager : MonoBehaviour
 
     public void PostWaveUIUpdate()
     {
+    }
+
+    public void activateWinScreen()
+    {
+        WinPanel.SetActive(true);   
+    }
+    
+    public void activateLoseScreen()
+    {
+        LosePanel.SetActive(true);
+    }
+
+    public void deactivateWinLoseUI()
+    {
+        WinPanel.SetActive(false);
+        LosePanel.SetActive(false);
     }
 
     public void activatePostWaveUI()
@@ -44,9 +65,21 @@ public class UIManager : MonoBehaviour
         UpgradePanel.SetActive(false);
     }
     
-    public void SetupChunkPreview(WaveSpawningSystem.Chunk c)
+    public void SetupChunkPreview(WaveSpawningSystem.Chunk c, int row)
     {
-        GameObject newChunkPreview = Instantiate(ChunkPreview, PreviewPanel);
+        GameObject newChunkPreview;
+        if (row == 1)
+        {
+            newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow1);
+        }
+        else if (row == 2)
+        {
+            newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow2);
+        }
+        else
+        {
+            newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow3);
+        }
         for (int k = 0; k < c.colors.Length; k++)
         {
             GameObject newChunkPreviewImage = Instantiate(PreviewImage, newChunkPreview.transform);
@@ -96,9 +129,17 @@ public class UIManager : MonoBehaviour
     
     public void WipeWave()
     {
-        for (int i = 0; i < PreviewPanel.childCount; i++)
+        for (int i = 0; i < PreviewPanelRow1.childCount; i++)
         {
-            PreviewPanel.GetChild(i).gameObject.SetActive(false);
+            PreviewPanelRow1.GetChild(i).gameObject.SetActive(false);
+        }
+        for (int i = 0; i < PreviewPanelRow2.childCount; i++)
+        {
+            PreviewPanelRow2.GetChild(i).gameObject.SetActive(false);
+        }
+        for (int i = 0; i < PreviewPanelRow3.childCount; i++)
+        {
+            PreviewPanelRow3.GetChild(i).gameObject.SetActive(false);
         }
     }
 }

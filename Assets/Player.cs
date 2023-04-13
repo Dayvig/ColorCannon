@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
@@ -20,12 +21,15 @@ public class Player : MonoBehaviour
     public int basePiercing = 1;
     [Range(1, 5)] 
     public int baseNumShots;
+    [Range(1, 10)] 
+    public int baseLives;
     
     public float shotSpeed;
     public float bulletSpeed;
     public float bulletSize;
     public int numShots;
     public int piercing;
+    public int lives;
     
     private float shotTimer;
     public GameObject bullet;
@@ -33,6 +37,7 @@ public class Player : MonoBehaviour
     public GameObject enemy;
     
     public SpriteRenderer barrel;
+    public SpriteRenderer[] lifeShields;
 
     public GameModel.GameColor playerColor;
     public GameModel modelGame;
@@ -55,6 +60,7 @@ public class Player : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playerColor = colorOrder[colorPlace];
         barrel.color = modelGame.ColorToColor(playerColor);
+        lives = baseLives;
         configureWeapon();
     }
     
@@ -62,6 +68,7 @@ public class Player : MonoBehaviour
     public void PlayerUpdate()
     {
         DoubleClickUpdate();
+        LifeUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
         if (Input.GetMouseButton(0))
@@ -97,6 +104,14 @@ public class Player : MonoBehaviour
         {
             SpreadFire(playerColor, numShots);
             shotTimer = 0.0f;
+        }
+    }
+
+    private void LifeUpdate()
+    {
+        for (int i = lifeShields.Length-1; i >= 0; i--)
+        {
+            lifeShields[i].enabled = (lives >= i+1);
         }
     }
 

@@ -21,7 +21,7 @@ public class WaveSpawningSystem : MonoBehaviour
     private static float globalWaveSpeed;
     public static float tutorialSpacing;
     private int numChunks;
-    List<Chunk> availableChunks = new List<Chunk>();
+    public List<Chunk> availableChunks = new List<Chunk>();
     public static List<WaveObject> currentWave = new List<WaveObject>();
     public List<EnemyBehavior> inactiveEnemies = new List<EnemyBehavior>();
     public List<GameModel.GameColor> currentColors = new List<GameModel.GameColor>();
@@ -155,6 +155,7 @@ public class WaveSpawningSystem : MonoBehaviour
         generateFirstWave();
         
         enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
+        Level = 1;
     }
 
     void addStartingChunks()
@@ -367,7 +368,19 @@ public class WaveSpawningSystem : MonoBehaviour
         {
             recusionProtection = 0;
             Chunk nextChunk = returnRandomChunk(chunkDifficulties[i]);
-            uiManager.SetupChunkPreview(nextChunk);
+            if (i < 4)
+            {
+                uiManager.SetupChunkPreview(nextChunk, 1);
+            }
+            else if (i < 8)
+            {
+                uiManager.SetupChunkPreview(nextChunk, 2);
+            }
+            else
+            {
+                Debug.Log("Eg");
+                uiManager.SetupChunkPreview(nextChunk, 3);
+            }
             bool isTutorial = false;
             foreach (Mechanic m in newMechanics)
             {
@@ -392,10 +405,10 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         uiManager.WipePreviewImages();
         Chunk nextChunk = new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW});
-        uiManager.SetupChunkPreview(nextChunk);
+        uiManager.SetupChunkPreview(nextChunk, 1);
 
         currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.RED,  
-            tutorialSpacing,
+            tutorialSpacing/2,
             TOPBOTTOM, false, WaveObject.Type.BASIC));
 
         currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.BLUE,  
@@ -413,6 +426,7 @@ public class WaveSpawningSystem : MonoBehaviour
 
     public void SetupNextWave()
     {
+        Debug.Log("Next Wave =================");
         uiManager.WipePreviewImages();
         clearWave();
         IncreaseDifficulty();
@@ -423,6 +437,10 @@ public class WaveSpawningSystem : MonoBehaviour
     public void IncreaseDifficulty()
     {
         Level++;
+        if (Level > 30){
+            gameManager.SetState(GameManager.GameState.WIN);
+            return;
+        }
         //every sixth wave, adds an extra chunk
         if (Level % 6 == 0)
         {
@@ -469,10 +487,6 @@ public class WaveSpawningSystem : MonoBehaviour
         }
         int rand = Random.Range(0, chunkDifficulties.Count);
         chunkDifficulties[rand] = (int)Math.Ceiling(chunkDifficulties[rand] * 1.5f);
-        for (int i = 0; i < chunkDifficulties.Count; i++)
-        {
-            Debug.Log(chunkDifficulties[i]);
-        }
     }
 
     void addRandomMechanic(int level)
@@ -528,7 +542,7 @@ public class WaveSpawningSystem : MonoBehaviour
         }
     }
 
-    private void clearWave()
+    public void clearWave()
     {
         currentWave.Clear();
         currentWaveIndex = 0;

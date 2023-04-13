@@ -12,7 +12,9 @@ public class GameManager : MonoBehaviour
     {
         WAVE,
         PAUSED,
-        POSTWAVE
+        POSTWAVE,
+        WIN,
+        LOSE
     }
 
     public enum UpgradeType
@@ -56,6 +58,10 @@ public class GameManager : MonoBehaviour
 
     public void SetState(GameState nextState)
     {
+        if (!(nextState == GameState.WIN || nextState == GameState.LOSE))
+        {
+            uiManager.deactivateWinLoseUI();
+        }
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
             spawningSystem.SetupNextWave();
@@ -73,7 +79,35 @@ public class GameManager : MonoBehaviour
             selectedUpgrade = null;
             player.configureWeapon();
         }
+
+        if (nextState == GameState.WIN && currentState != GameState.WIN)
+        {
+            uiManager.deactivatePostWaveUI();
+            WipeAllEnemiesAndBullets();
+            uiManager.activateWinScreen();
+        }
+        
+        if (nextState == GameState.LOSE && currentState != GameState.LOSE)
+        {
+            uiManager.deactivatePostWaveUI();
+            WipeAllEnemiesAndBullets();
+            uiManager.activateLoseScreen();
+        }
         currentState = nextState;
+    }
+
+    private void WipeAllEnemiesAndBullets()
+    {
+        foreach (EnemyBehavior e in activeEnemies)
+        {
+            e.Die();
+        }
+
+        foreach (Bullet b in activeBullets)
+        {
+            b.Die();
+        }
+        Trash();
     }
     
     void Start()
@@ -165,6 +199,10 @@ public class GameManager : MonoBehaviour
     {
         switch (currentState)
         {
+            case GameState.WIN:
+                break;
+            case GameState.LOSE:
+                break;
             case GameState.WAVE:
                 WaveUpdate();
                 break;
@@ -232,5 +270,35 @@ public class GameManager : MonoBehaviour
     void PausedUpdate()
     {
         
+    }
+
+    public void PlayAgain()
+    {
+        spawningSystem.chunkDifficulties.Clear();
+        spawningSystem.basicMechanics.Clear();
+        spawningSystem.currentMechanics.Clear();
+        spawningSystem.newMechanics.Clear();
+        spawningSystem.medMechanics.Clear();
+        spawningSystem.availableChunks.Clear();
+        spawningSystem.clearWave();
+        spawningSystem.basicMechanics = new List<WaveSpawningSystem.Mechanic>
+        {
+            WaveSpawningSystem.Mechanic.DARK,
+            WaveSpawningSystem.Mechanic.FAST,
+            WaveSpawningSystem.Mechanic.NINJA,
+            WaveSpawningSystem.Mechanic.TWOCOLOR
+        };
+        spawningSystem.medMechanics = new List<WaveSpawningSystem.Mechanic>
+        {
+            WaveSpawningSystem.Mechanic.THREECOLOR
+        };
+        spawningSystem.initialize();
+        player.lives = player.baseLives;
+        player.upgrades.Clear();
+        player.configureWeapon();
+
+        SetState(GameState.POSTWAVE);
+        uiManager.activatePostWaveUI();
+        GenerateUpgrades();
     }
 }
