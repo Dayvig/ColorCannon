@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
         SHOTS,
         SHOTSPEED,
         SHOTSIZE,
-        PIERCING
+        PIERCING,
+        SHIELDS
     }
     
     public class Upgrade
@@ -38,6 +39,12 @@ public class GameManager : MonoBehaviour
             name = upgradeName;
             type = upgradeType;
             color = upgradeColor;
+        }
+        public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType)
+        {
+            name = upgradeName;
+            type = upgradeType;
+            color = GameModel.GameColor.NONE;
         }
     }
 
@@ -74,7 +81,14 @@ public class GameManager : MonoBehaviour
             uiManager.deactivatePostWaveUI();
             if (selectedUpgrade != null)
             {
-                player.upgrades.Add(selectedUpgrade);
+                if (selectedUpgrade.type == UpgradeType.SHIELDS)
+                {
+                    player.lives = player.baseLives;
+                }
+                else
+                {
+                    player.upgrades.Add(selectedUpgrade);
+                }
             }
             selectedUpgrade = null;
             player.configureWeapon();
@@ -159,7 +173,11 @@ public class GameManager : MonoBehaviour
         possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.BLUE));
         //Yellow Shot Spread
         possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.YELLOW));
-
+        
+        //Shield Recharge
+        possibleUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE));
+        //Shield Recharge
+        possibleUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE));
     }
 
     public Upgrade getRandomUpgrade()

@@ -9,7 +9,7 @@ public class GameModel : MonoBehaviour
 
     public enum GameColor
     {
-        RED, YELLOW, BLUE, ORANGE, PURPLE, GREEN, WHITE
+        RED, YELLOW, BLUE, ORANGE, PURPLE, GREEN, WHITE, NONE
     }
 
     public enum UIColor
@@ -88,6 +88,8 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[3];
             case GameManager.UpgradeType.PIERCING:
                 return UpgradeImages[4];
+            case GameManager.UpgradeType.SHIELDS:
+                return UpgradeImages[5];
             default:
                 return UpgradeImages[3];
         }

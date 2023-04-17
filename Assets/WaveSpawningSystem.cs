@@ -88,10 +88,10 @@ public class WaveSpawningSystem : MonoBehaviour
                     startPos = new Vector3(Random.Range(xBounds, -xBounds), -yBounds, 0);
                     break;
                 case 2:
-                    startPos = new Vector3(-xBounds, Random.Range(yBounds, -yBounds), 0);
+                    startPos = new Vector3(-xBounds, Random.Range(yBounds/2, -yBounds/2), 0);
                     break;
                 case 3:
-                    startPos = new Vector3(xBounds, Random.Range(yBounds, -yBounds), 0);
+                    startPos = new Vector3(xBounds, Random.Range(yBounds/2, -yBounds/2), 0);
                     break;
                 default:
                     startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
@@ -105,7 +105,6 @@ public class WaveSpawningSystem : MonoBehaviour
                 if (w.enemyType == currentWave[currentWaveIndex].enemyType)
                 {
                     enemyObject = w.gameObject;
-                    inactiveEnemies.Remove(w);
                     break;
                 }
             }
@@ -121,6 +120,7 @@ public class WaveSpawningSystem : MonoBehaviour
             enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
             enemyScript.SetColor(modelGame.ColorToColor(enemyColor));
             gameManager.activeEnemies.Add(enemyScript);
+            inactiveEnemies.Remove(enemyScript);
             enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
             
             if (currentWaveIndex < currentWave.Count-1){
@@ -431,7 +431,19 @@ public class WaveSpawningSystem : MonoBehaviour
         clearWave();
         IncreaseDifficulty();
         generateWave();
+        RandomizeWave();
         gameManager.GenerateUpgrades();
+    }
+
+    public void RandomizeWave()
+    {
+        for (int j = 0; j < currentWave.Count; j++)
+        {
+            WaveObject tmp = currentWave[j];
+            int rand = Random.Range(0, currentWave.Count);
+            currentWave[j] = currentWave[rand];
+            currentWave[rand] = tmp;
+        }
     }
 
     public void IncreaseDifficulty()
@@ -592,7 +604,7 @@ public class WaveSpawningSystem : MonoBehaviour
                             colors.Contains(GameModel.GameColor.WHITE));
             isDarkened = false;
         }
-        public abstract void Generate(bool tutorial);
+        public abstract void Generate(bool tutorial); 
         public abstract Chunk MakeCopy();
         public virtual void SetDifficulty(GameModel.GameColor[] spawnColors)
         {

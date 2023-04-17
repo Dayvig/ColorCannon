@@ -72,6 +72,7 @@ public class EnemyBehavior : MonoBehaviour
         destination = des;
         moveSpeed = SPEED;
         initializeMixedColor(color);
+        isMultiColor = enemyColors.Count > 1;
         if (isMultiColor)
         {
             enemyColor = SetMixedColor(enemyColors);

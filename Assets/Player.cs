@@ -146,7 +146,6 @@ public class Player : MonoBehaviour
             {
                 //some conditional later
                 newBulletObject = b.gameObject;
-                gameManager.inactiveBullets.Remove(b);
                 break;
             }
             if (newBulletObject == null)
@@ -159,6 +158,7 @@ public class Player : MonoBehaviour
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             gameManager.activeBullets.Add(bulletScript);
+            gameManager.inactiveBullets.Remove(bulletScript);
         }
         else
         {
@@ -174,7 +174,6 @@ public class Player : MonoBehaviour
                 {
                     //some conditional later
                     newBulletObject = b.gameObject;
-                    gameManager.inactiveBullets.Remove(b);
                     break;
                 }
                 if (newBulletObject == null)
@@ -186,6 +185,8 @@ public class Player : MonoBehaviour
                 bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
                 gameManager.activeBullets.Add(bulletScript);
+                gameManager.inactiveBullets.Remove(bulletScript);
+
             }
         }
     }
@@ -318,7 +319,8 @@ public class Player : MonoBehaviour
         if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Ended)
         {
             Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-            if (Vector3.Distance(tapPos, newPos) < 1f)
+            Debug.Log("Distance: "+Vector3.Distance(tapPos, newPos));
+            if (Vector3.Distance(tapPos, newPos) < 0.1f)
             {
                 clicks++;
                 mouseTimer = 0f;
