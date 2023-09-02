@@ -21,6 +21,7 @@ public class Bullet : MonoBehaviour
     private int piercing = 1;
     public CircleCollider2D thisCollider;
     public List<EnemyBehavior> immuneEnemies;
+    private float bulletScale;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +44,7 @@ public class Bullet : MonoBehaviour
         bulletColor = color;
         piercing = pierce;
         gameObject.SetActive(true);
+        bulletScale = scale;
         this.transform.localScale = new Vector3 (scale, scale, 1);
 
         immuneEnemies.Clear();
@@ -73,7 +75,7 @@ public class Bullet : MonoBehaviour
                 }
             }
         }
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(positionTarget, thisCollider.radius);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(positionTarget, thisCollider.radius * bulletScale);
         foreach (Collider2D c in hitColliders)
         {
             Collide(c);

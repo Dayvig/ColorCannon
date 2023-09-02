@@ -3329,6 +3329,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
+      propertyPath: baseBulletSize
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: dClickInterval
       value: 0.25
       objectReference: {fileID: 0}

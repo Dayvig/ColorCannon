@@ -15,8 +15,8 @@ public class Player : MonoBehaviour
     public float baseShotSpeed = 0.5f;
     [Range(0.001f, 1f)]
     public float baseBulletSpeed = 0.01f;
-    [Range(0.5f, 2f)]
-    public float baseBulletSize = 1f;
+    [Range(0.1f, 1.5f)]
+    public float baseBulletSize = 0.1f;
     [Range(1, 10)] 
     public int basePiercing = 1;
     [Range(1, 5)] 
@@ -138,7 +138,6 @@ public class Player : MonoBehaviour
             newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
         }
             
-        newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
         Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
         bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing, bulletSize);
         bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
@@ -164,7 +163,6 @@ public class Player : MonoBehaviour
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
             bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing, bulletSize);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
-            newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             gameManager.activeBullets.Add(bulletScript);
             gameManager.inactiveBullets.Remove(bulletScript);
         }

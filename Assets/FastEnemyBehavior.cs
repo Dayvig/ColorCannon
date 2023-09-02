@@ -47,6 +47,10 @@ public class FastEnemyBehavior : EnemyBehavior
         {
             fastBehavior = Behavior.FASTMOVEMENT;
         }
+        else
+        {
+            fastBehavior = Behavior.WINDUP;
+        }
         switch (fastBehavior)
         {
             case Behavior.WINDUP:
