@@ -10,7 +10,7 @@ public class NinjaEnemyBehavior : EnemyBehavior
     private float sneakInterval = 1.0f;
     private float SNEAKINTERVAL = 0.5f;
     private float WAITINTERVAL = 1.0f;
-    private float SNEAKSPEED = 1.2f;
+    private float SNEAKSPEEDMULT = 2f;
 
     public enum Behavior
     {
@@ -24,7 +24,7 @@ public class NinjaEnemyBehavior : EnemyBehavior
     {
         base.initialize(des, color, darkened, eType);
         ninjaBehavior = Behavior.SNEAK;
-        
+        sneakTime = 0f;
     }
 
     
@@ -40,7 +40,7 @@ public class NinjaEnemyBehavior : EnemyBehavior
         switch (ninjaBehavior)
         {
             case Behavior.SNEAK:
-                moveSpeed = SNEAKSPEED;
+                moveSpeed = modelGame.baseGlobalWaveSpeed * SNEAKSPEEDMULT;
                 sneakInterval = SNEAKINTERVAL;
                 break;
             case Behavior.WAIT:

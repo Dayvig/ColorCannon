@@ -26,7 +26,7 @@ public class EnemyBehavior : MonoBehaviour
     private float knockBackDuration = 1f;
     public WaveSpawningSystem.WaveObject.Type enemyType;
 
-    void Start()
+    void Awake()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
@@ -70,7 +70,7 @@ public class EnemyBehavior : MonoBehaviour
     {
         currentPos = transform.position;
         destination = des;
-        moveSpeed = SPEED;
+        moveSpeed = modelGame.baseGlobalWaveSpeed;
         initializeMixedColor(color);
         isMultiColor = enemyColors.Count > 1;
         if (isMultiColor)
@@ -86,6 +86,8 @@ public class EnemyBehavior : MonoBehaviour
         enemyType = type;
         gameObject.SetActive(true);
         immuneBullets.Clear();
+        knockBack = false;
+        knockBackTimer = 0f;
     }
 
     private void initializeMixedColor(GameModel.GameColor color)
@@ -194,7 +196,6 @@ public class EnemyBehavior : MonoBehaviour
             if (bullet.bulletColor == enemyColor)
             {
                 TakeHit();
-                immuneBullets.Add(bullet);
                 bullet.TakeHit();
             }
         }
@@ -210,6 +211,7 @@ public class EnemyBehavior : MonoBehaviour
                 enemyColor = SetMixedColor(enemyColors);
                 SetColor(modelGame.ColorToColor(enemyColor));
                 knockBack = true;
+                knockBackTimer = 0.0f;
                 bullet.TakeHit();
             }
         }
@@ -222,6 +224,7 @@ public class EnemyBehavior : MonoBehaviour
             isDarkened = false;
             SetColor(modelGame.ColorToColor(enemyColor));
             knockBack = true;
+            knockBackTimer = 0.0f;
         }
         else
         {

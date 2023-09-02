@@ -10,7 +10,7 @@ public class FastEnemyBehavior : EnemyBehavior
     private float windUpInterval = 1.0f;
     private float waitInterval = 1.5f;
     private float WINDUPSPEED = 0.4f;
-    private float FASTSPEED = 1.5f;
+    private float FASTSPEEDMULT = 3f;
     private float rotationTarget;
 
     public enum Behavior
@@ -26,6 +26,7 @@ public class FastEnemyBehavior : EnemyBehavior
     {
         base.initialize(des, color, darkened, eType);
         fastBehavior = Behavior.WINDUP;
+        windUpTime = 0.0f;
         
         //Sets rotation to look at player
         Quaternion rot = gameObject.transform.rotation;
@@ -35,7 +36,6 @@ public class FastEnemyBehavior : EnemyBehavior
         gameObject.transform.rotation = Quaternion.Euler(new Vector3(rot.x, rot.y, rotationTarget));
     }
 
-    
     public override void Move()
     {
         windUpTime += Time.deltaTime;
@@ -56,7 +56,7 @@ public class FastEnemyBehavior : EnemyBehavior
                 moveSpeed = 0.0f;
                 break;
             case Behavior.FASTMOVEMENT:
-                moveSpeed = FASTSPEED;
+                moveSpeed = modelGame.baseGlobalWaveSpeed * FASTSPEEDMULT;
                 break;
         }
 

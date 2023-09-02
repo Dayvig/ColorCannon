@@ -27,7 +27,12 @@ public class GameModel : MonoBehaviour
     [Range(1, 10)] public int piercingUpgrade;
     [Range(20, 180)] 
     public float spreadAngleMax;
-
+    public int baseGlobalWaveNumber;
+    public float baseGlobalWaveSpacing;
+    public float baseTutorialSpacing;
+    public float baseGlobalWaveSpeed;
+    public int baseNumChunks;
+    public int baseNumUniqueChunks;
 
     public float darkenedColorDivisor = 1.5f;
 

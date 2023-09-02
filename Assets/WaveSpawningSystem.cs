@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.WSA;
+using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 public class WaveSpawningSystem : MonoBehaviour
@@ -11,17 +13,14 @@ public class WaveSpawningSystem : MonoBehaviour
     public List<EnemyBehavior> EnemyScripts = new List<EnemyBehavior>();
 
     public int Level = 1;
-    public int baseGlobalWaveNumber;
-    public float baseGlobalWaveSpacing;
-    public float baseTutorialSpacing;
-    public float baseGlobalWaveSpeed;
-    public int baseNumChunks;
     private static int globalWaveNumber;
     private static float globalWaveSpacing;
     private static float globalWaveSpeed;
     public static float tutorialSpacing;
-    private int numChunks;
+    public int numUniqueChunks;
+    public int numChunks;
     public List<Chunk> availableChunks = new List<Chunk>();
+    public List<Chunk> availableSpecialChunks = new List<Chunk>();
     public static List<WaveObject> currentWave = new List<WaveObject>();
     public List<EnemyBehavior> inactiveEnemies = new List<EnemyBehavior>();
     public List<GameModel.GameColor> currentColors = new List<GameModel.GameColor>();
@@ -30,6 +29,7 @@ public class WaveSpawningSystem : MonoBehaviour
     public List<Mechanic> currentMechanics = new List<Mechanic>();
     public List<Mechanic> newMechanics = new List<Mechanic>();
 
+    [SerializeField]
     private float enemyTimer = 0.0f;
     private float xBounds = 3;
     private float yBounds = 5;
@@ -55,12 +55,14 @@ public class WaveSpawningSystem : MonoBehaviour
         DARK,
         FAST,
         NINJA,
-        TWOCOLOR,
-        THREECOLOR,
+        ORANGE,
+        GREEN,
+        PURPLE,
+        WHITE
     }
 
-    public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.TWOCOLOR, Mechanic.DARK};
-    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.THREECOLOR};
+    public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.ORANGE, Mechanic.GREEN, Mechanic.PURPLE, Mechanic.DARK};
+    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE};
 
     public int[] ALL =
         {0, 1, 2, 3};
@@ -134,21 +136,21 @@ public class WaveSpawningSystem : MonoBehaviour
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("GameManager").GetComponent<UIManager>();
-        tutorialSpacing = baseTutorialSpacing;
+        tutorialSpacing = modelGame.baseTutorialSpacing;
     }
 
     public void initialize()
     {
-        addStartingChunks();
-        newMechanics.Add(Mechanic.BASIC);
+        currentMechanics.Add(Mechanic.BASIC);
+        repopulateChunks();
         
-        globalWaveNumber = baseGlobalWaveNumber;
-        globalWaveSpacing = baseGlobalWaveSpacing;
-        numChunks = baseNumChunks;
+        globalWaveNumber = modelGame.baseGlobalWaveNumber;
+        globalWaveSpacing = modelGame.baseGlobalWaveSpacing;
+        numChunks = modelGame.baseNumChunks;
+        numUniqueChunks = modelGame.baseNumUniqueChunks;
         for (int i = 0; i < numChunks; i++)
         {
             chunkDifficulties.Add(1 + i/2);
-            Debug.Log(chunkDifficulties[i]);
         }
 
         gameManager.addStartingUpgrades();
@@ -158,179 +160,156 @@ public class WaveSpawningSystem : MonoBehaviour
         Level = 1;
     }
 
-    void addStartingChunks()
+    List<GameModel.GameColor[]> twoColorPermutations(GameModel.GameColor[] colors)
     {
-        addBasicChunks(1, currentMechanics.Contains(Mechanic.DARK));
-    }
+        List<GameModel.GameColor[]>permutations = new List<GameModel.GameColor[]>();
 
-    void addBasicChunks(int colors, bool hasDark)
-    {
-        switch (colors)
+        //selects elements 1 apart, then continues until the space apart is 1 less than array size
+        for (int spacer = 1; spacer < colors.Length; spacer++)
         {
-            case 1:
-                GameModel.GameColor[] standardColors = {GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE, GameModel.GameColor.RED};
-                for (int i = 0; i < standardColors.Length; i++)
-                {
-                    availableChunks.Add(new BasicChunk(new[]{standardColors[i]}, hasDark));
-                }
-                availableChunks.Add(new BasicChunk(new[]{standardColors[0], standardColors[1]}, hasDark));
-                availableChunks.Add(new BasicChunk(new[]{standardColors[0], standardColors[2]}, hasDark));
-                availableChunks.Add(new BasicChunk(new[]{standardColors[1], standardColors[2]}, hasDark));
-                availableChunks.Add(new BasicChunk(new[]{standardColors[0], standardColors[1], standardColors[2]}, hasDark));
-                break;
-            case 2:
-                GameModel.GameColor[] mixedColors = {GameModel.GameColor.ORANGE, GameModel.GameColor.GREEN, GameModel.GameColor.PURPLE};
-                for (int i = 0; i < mixedColors.Length; i++)
-                {
-                    availableChunks.Add(new BasicChunk(new[]{mixedColors[i]}));
-                }
-                availableChunks.Add(new BasicChunk(new[]{mixedColors[0], mixedColors[1]}, hasDark));
-                availableChunks.Add(new BasicChunk(new[]{mixedColors[0], mixedColors[2]}, hasDark));
-                availableChunks.Add(new BasicChunk(new[]{mixedColors[1], mixedColors[2]}, hasDark));
-                availableChunks.Add(new BasicChunk(new[]{mixedColors[0], mixedColors[1], mixedColors[2]}, hasDark));
-                break;
-            case 3:
-                availableChunks.Add(new BasicChunk(new[] {GameModel.GameColor.WHITE}, hasDark));
-                break;
-        }
-        if (hasDark)
-        {
-            addBasicChunks(colors, false);
-        }
-    }
-    
-    void addFastChunks(int colors, bool hasDark)
-    {
-        switch (colors)
-        {
-            case 1:
-                GameModel.GameColor[] standardColors = {GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE, GameModel.GameColor.RED};
-                for (int i = 0; i < standardColors.Length; i++)
-                {
-                    availableChunks.Add(new FastChunk(new[]{standardColors[i]}, hasDark));
-                }
-                availableChunks.Add(new FastChunk(new[]{standardColors[0], standardColors[1]}, hasDark));
-                availableChunks.Add(new FastChunk(new[]{standardColors[0], standardColors[2]}, hasDark));
-                availableChunks.Add(new FastChunk(new[]{standardColors[1], standardColors[2]}, hasDark));
-                availableChunks.Add(new FastChunk(new[]{standardColors[0], standardColors[1], standardColors[2]}, hasDark));
-                break;
-            case 2:
-                GameModel.GameColor[] mixedColors = {GameModel.GameColor.ORANGE, GameModel.GameColor.GREEN, GameModel.GameColor.PURPLE};
-                for (int i = 0; i < mixedColors.Length; i++)
-                {
-                    availableChunks.Add(new FastChunk(new[]{mixedColors[i]}, hasDark));
-                }
-                availableChunks.Add(new FastChunk(new[]{mixedColors[0], mixedColors[1]}, hasDark));
-                availableChunks.Add(new FastChunk(new[]{mixedColors[0], mixedColors[2]}, hasDark));
-                availableChunks.Add(new FastChunk(new[]{mixedColors[1], mixedColors[2]}, hasDark));
-                availableChunks.Add(new FastChunk(new[]{mixedColors[0], mixedColors[1], mixedColors[2]}, hasDark));
-                break;
-            case 3:
-                availableChunks.Add(new FastChunk(new[] {GameModel.GameColor.WHITE}));
-                break;
-        }
-        if (hasDark)
-        {
-            addFastChunks(colors, false);
-        }
-    }
-    
-    void addNinjaChunks(int colors, bool hasDark)
-    {
-        switch (colors)
-        {
-            case 1:
-                GameModel.GameColor[] standardColors = {GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE, GameModel.GameColor.RED};
-                for (int i = 0; i < standardColors.Length; i++)
-                {
-                    availableChunks.Add(new NinjaChunk(new[]{standardColors[i]}, hasDark));
-                }
-                availableChunks.Add(new NinjaChunk(new[]{standardColors[0], standardColors[1]}, hasDark));
-                availableChunks.Add(new NinjaChunk(new[]{standardColors[0], standardColors[2]}, hasDark));
-                availableChunks.Add(new NinjaChunk(new[]{standardColors[1], standardColors[2]}, hasDark));
-                availableChunks.Add(new NinjaChunk(new[]{standardColors[0], standardColors[1], standardColors[2]}, hasDark));
-                break;
-            case 2:
-                GameModel.GameColor[] mixedColors = {GameModel.GameColor.ORANGE, GameModel.GameColor.GREEN, GameModel.GameColor.PURPLE};
-                for (int i = 0; i < mixedColors.Length; i++)
-                {
-                    availableChunks.Add(new NinjaChunk(new[]{mixedColors[i]}));
-                }
-                availableChunks.Add(new NinjaChunk(new[]{mixedColors[0], mixedColors[1]}, hasDark));
-                availableChunks.Add(new NinjaChunk(new[]{mixedColors[0], mixedColors[2]}, hasDark));
-                availableChunks.Add(new NinjaChunk(new[]{mixedColors[1], mixedColors[2]}, hasDark));
-                availableChunks.Add(new NinjaChunk(new[]{mixedColors[0], mixedColors[1], mixedColors[2]}, hasDark));
-                break;
-            case 3:
-                availableChunks.Add(new NinjaChunk(new[] {GameModel.GameColor.WHITE}, hasDark));
-                break;
-        }
-        if (hasDark)
-        {
-            addNinjaChunks(colors, false);
-        }
-    }
-
-    void addTwoColorChunks(bool hasDark)
-    {
-        addBasicChunks(2, hasDark);
-        if (currentMechanics.Contains(Mechanic.FAST))
-        {
-            addFastChunks(2, hasDark);
-        }
-        if (currentMechanics.Contains(Mechanic.NINJA))
-        {
-            addNinjaChunks(2, hasDark);
-        }
-        if (currentMechanics.Contains(Mechanic.NINJA))
-        {
-            addNinjaChunks(2, hasDark);
-        }
-    }
-    
-    void addThreeColorChunks(bool hasDark)
-    {
-        addBasicChunks(3, hasDark);
-        if (currentMechanics.Contains(Mechanic.FAST))
-        {
-            addFastChunks(3, hasDark);
-        }
-        if (currentMechanics.Contains(Mechanic.NINJA))
-        {
-            addNinjaChunks(3, hasDark);
-        }
-        if (currentMechanics.Contains(Mechanic.NINJA))
-        {
-            addNinjaChunks(3, hasDark);
-        }
-    }
-    
-    void addDarkChunks()
-    {
-        List<Chunk> toAdd = new List<Chunk>();
-        foreach (Chunk c in availableChunks)
-        {
-            if (c.isDarkened == false)
+            for (int i = 0; i < colors.Length; i++)
             {
-                Chunk nu = c.MakeCopy();
-                nu.isDarkened = true;
-                toAdd.Add(nu);
+                if (i + spacer < colors.Length)
+                {
+                    permutations.Add(new[] { colors[i], colors[i + spacer] });
+                }
             }
         }
-        foreach (Chunk c2 in toAdd)
+
+        return permutations;
+    }
+
+    List<GameModel.GameColor[]> oneColorPermutations(GameModel.GameColor[] colors)
+    {
+        List<GameModel.GameColor[]> permutations = new List<GameModel.GameColor[]>();
+        //reads out each single color in array
+        for (int i = 0; i < colors.Length; i++)
         {
-            availableChunks.Add(c2);
+                permutations.Add(new[] { colors[i] });
+        }
+        return permutations;
+    }
+
+    List<GameModel.GameColor> additionalColorsReadout()
+    {
+        List<GameModel.GameColor> readOut = new List<GameModel.GameColor>();
+        foreach (Mechanic m in newMechanics)
+        {
+            switch (m)
+            {
+                case Mechanic.ORANGE:
+                    readOut.Add(GameModel.GameColor.ORANGE);
+                    break;
+                case Mechanic.GREEN:
+                    readOut.Add(GameModel.GameColor.GREEN);
+                    break;
+                case Mechanic.PURPLE:
+                    readOut.Add(GameModel.GameColor.PURPLE);
+                    break;
+            }
+        }
+        foreach (Mechanic m in currentMechanics)
+        {
+            switch (m)
+            {
+                case Mechanic.ORANGE:
+                    if (!readOut.Contains(GameModel.GameColor.ORANGE))
+                        readOut.Add(GameModel.GameColor.ORANGE);
+                    break;
+                case Mechanic.GREEN:
+                    if (!readOut.Contains(GameModel.GameColor.GREEN))
+                    readOut.Add(GameModel.GameColor.GREEN);
+                    break;
+                case Mechanic.PURPLE:
+                    if (!readOut.Contains(GameModel.GameColor.PURPLE))
+                    readOut.Add(GameModel.GameColor.PURPLE);
+                    break;
+            }
+        }
+        return readOut;
+    }
+
+    void addAllChunkColors(Chunk toAdd)
+    {
+        GameModel.GameColor[] standardColors = {GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE, GameModel.GameColor.RED};
+        GameModel.GameColor[] additionalColors = additionalColorsReadout().ToArray();
+        addChunks(standardColors, toAdd);
+        addChunks(additionalColors, toAdd);
+
+        if (newMechanics.Contains(Mechanic.WHITE) || currentMechanics.Contains(Mechanic.WHITE))
+        {
+            addChunks(new[] { GameModel.GameColor.WHITE }, toAdd);
         }
     }
 
-    public Chunk returnRandomChunk()
+    void addAllDarkChunks()
     {
-        return availableChunks[Random.Range(0, availableChunks.Count)];
+        Chunk newChunk;
+        List<Chunk> tempList = new List<Chunk>();
+        foreach (Chunk toCopy in availableChunks)
+        {
+            newChunk = toCopy.MakeCopy(toCopy.colors, true);
+            tempList.Add(newChunk);
+        }
+        foreach (Chunk c in tempList)
+        {
+            availableChunks.Add(c);
+            availableSpecialChunks.Add(c);
+        }
     }
-    
-    public Chunk returnRandomChunk(int lessthan)
+
+    bool isNonBasic (Chunk c)
     {
-        Chunk nextChunk = availableChunks[Random.Range(0, availableChunks.Count)];
+        return !(c is BasicChunk) || c.isDarkened || c.isMultiColor;
+
+    }
+
+    void addChunks(GameModel.GameColor[] colors, Chunk toAdd)
+    {
+        Chunk newChunk;
+        foreach (GameModel.GameColor[] singleColor in oneColorPermutations(colors))
+        {
+            newChunk = toAdd.MakeCopy(singleColor, false);
+            availableChunks.Add(newChunk);
+            if (isNonBasic(newChunk))
+            {
+                Debug.Log("Ech");
+                availableSpecialChunks.Add(newChunk);
+            }
+        }
+        if (colors.Length > 1)
+        {
+            foreach (GameModel.GameColor[] colorPair in twoColorPermutations(colors))
+            {
+                newChunk = toAdd.MakeCopy(colorPair, false);
+                availableChunks.Add(newChunk);
+                if (isNonBasic(newChunk))
+                {
+                    availableSpecialChunks.Add(newChunk);
+                }
+            }
+        }
+        if (colors.Length > 2)
+        {
+            newChunk = toAdd.MakeCopy(new[] { colors[0], colors[1], colors[2] }, false);
+            availableChunks.Add(newChunk);
+            if (isNonBasic(newChunk))
+            {
+                availableSpecialChunks.Add(newChunk);
+            }
+
+        }
+
+    }
+
+    public Chunk returnRandomChunk(List<Chunk> chunklist)
+    {
+        return chunklist[Random.Range(0, chunklist.Count)];
+    }
+
+    public Chunk returnRandomChunk(List<Chunk> chunklist, int lessthan)
+    {
+        Chunk nextChunk = chunklist[Random.Range(0, chunklist.Count)];
         if (nextChunk.difficulty <= lessthan)
         {
             return nextChunk;
@@ -338,15 +317,15 @@ public class WaveSpawningSystem : MonoBehaviour
         recusionProtection++;
         if (recusionProtection <= 100)
         {
-            return returnRandomChunk(lessthan);
+            return returnRandomChunk(chunklist, lessthan);
         }
         Debug.Log("Tried to access a chunk that didn't exist");
-        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE}, false);
+        return chunklist[0];
     }
-    
-    public Chunk returnRandomChunk(int floor, int ceiling)
+
+    public Chunk returnRandomChunk(List<Chunk> chunklist, int floor, int ceiling)
     {
-        Chunk nextChunk = availableChunks[Random.Range(0, availableChunks.Count)];
+        Chunk nextChunk = chunklist[Random.Range(0, chunklist.Count)];
         if (nextChunk.difficulty >= floor && nextChunk.difficulty <= ceiling)
         {
             return nextChunk;
@@ -354,20 +333,28 @@ public class WaveSpawningSystem : MonoBehaviour
         recusionProtection++;
         if (recusionProtection <= 100)
         {
-            return returnRandomChunk(floor, ceiling);
+            return returnRandomChunk(chunklist, floor, ceiling);
         }
         Debug.Log("Tried to access a chunk that didn't exist");
 
-        return new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE}, false);
+        return chunklist[0];
     }
 
     public void generateWave()
     {
+        Chunk nextChunk;
         uiManager.WipePreviewImages();
         for (int i = 0; i < chunkDifficulties.Count; i++)
         {
             recusionProtection = 0;
-            Chunk nextChunk = returnRandomChunk(chunkDifficulties[i]);
+            if (i < numUniqueChunks)
+            {
+                nextChunk = returnRandomChunk(availableSpecialChunks, chunkDifficulties[i]);
+            }
+            else
+            {
+                nextChunk = returnRandomChunk(availableChunks, chunkDifficulties[i]);
+            }
             if (i < 4)
             {
                 uiManager.SetupChunkPreview(nextChunk, 1);
@@ -433,6 +420,8 @@ public class WaveSpawningSystem : MonoBehaviour
         generateWave();
         RandomizeWave();
         gameManager.GenerateUpgrades();
+        enemyTimer = currentWave[0].delayUntilNext;
+        currentWaveIndex = 0;
     }
 
     public void RandomizeWave()
@@ -453,8 +442,8 @@ public class WaveSpawningSystem : MonoBehaviour
             gameManager.SetState(GameManager.GameState.WIN);
             return;
         }
-        //every sixth wave, adds an extra chunk
-        if (Level % 6 == 0)
+        //every 12th wave, adds an extra chunk
+        if (Level % 12 == 0)
         {
             double sum = 0;
             for (int k = 0; k < chunkDifficulties.Count; k++)
@@ -464,6 +453,12 @@ public class WaveSpawningSystem : MonoBehaviour
             numChunks++;
             chunkDifficulties.Add((int)Math.Ceiling((sum/chunkDifficulties.Count)));
         }
+        //starting on wave 3, every 12th wave adds a guaranteed unique chunk
+        if ((Level+9) % 12 == 0)
+        {
+            numUniqueChunks++;
+        }
+
         //every third wave, introduces a new mechanic.
         if (Level % 3 == 0)
         {
@@ -484,7 +479,7 @@ public class WaveSpawningSystem : MonoBehaviour
             switch (randomWaveMod)
             {
                 case 0:
-                    globalWaveNumber = (int)(globalWaveNumber * 1.2);
+                    globalWaveNumber += 2;
                     break;
                 case 1:
                     globalWaveSpacing /= 1.2f;
@@ -499,6 +494,7 @@ public class WaveSpawningSystem : MonoBehaviour
         }
         int rand = Random.Range(0, chunkDifficulties.Count);
         chunkDifficulties[rand] = (int)Math.Ceiling(chunkDifficulties[rand] * 1.5f);
+        repopulateChunks();
     }
 
     void addRandomMechanic(int level)
@@ -513,7 +509,6 @@ public class WaveSpawningSystem : MonoBehaviour
                 }
                 rand = Random.Range(0, basicMechanics.Count);
                 newMechanics.Add(basicMechanics[rand]);
-                implementMechanic(basicMechanics[rand]);
                 basicMechanics.Remove(basicMechanics[rand]);
                 break;
             case 2:
@@ -523,36 +518,36 @@ public class WaveSpawningSystem : MonoBehaviour
                 }
                 rand = Random.Range(0, medMechanics.Count);
                 newMechanics.Add(medMechanics[rand]);
-                implementMechanic(medMechanics[rand]);
                 medMechanics.Remove(medMechanics[rand]);
                 break;
         }
     }
 
-    void implementMechanic(Mechanic newMechanic)
+    void repopulateChunks()
     {
-        switch (newMechanic)
+        availableChunks.Clear();
+        availableSpecialChunks.Clear();
+        Debug.Log("Repopulating Chunks");
+
+        //enemy types
+        addAllChunkColors(new BasicChunk(new[] { GameModel.GameColor.NONE }, false));
+        if (newMechanics.Contains(Mechanic.FAST) || currentMechanics.Contains(Mechanic.FAST))
         {
-            case Mechanic.BASIC:
-                addBasicChunks(1, currentMechanics.Contains(Mechanic.DARK));
-                break;
-            case Mechanic.FAST:
-                addFastChunks(1, currentMechanics.Contains(Mechanic.DARK));
-                break;
-            case Mechanic.NINJA:
-                addNinjaChunks(1, currentMechanics.Contains(Mechanic.DARK));
-                break;
-            case Mechanic.TWOCOLOR:
-                addTwoColorChunks(currentMechanics.Contains(Mechanic.DARK));
-                break;
-            case Mechanic.DARK:
-                addDarkChunks();
-                break;
-            case Mechanic.THREECOLOR:
-                addThreeColorChunks(currentMechanics.Contains(Mechanic.DARK));
-                break;
+            addAllChunkColors(new FastChunk(new[] { GameModel.GameColor.NONE }, false));
         }
-    }
+        if (newMechanics.Contains(Mechanic.NINJA) || currentMechanics.Contains(Mechanic.NINJA))
+        {
+            addAllChunkColors(new NinjaChunk(new[] { GameModel.GameColor.NONE }, false));
+        }
+
+        //modifiers (Dark only for now)
+        if (newMechanics.Contains(Mechanic.DARK) || currentMechanics.Contains(Mechanic.DARK))
+        {
+            addAllDarkChunks();
+        }
+
+        Debug.Log("Special Chunks" + availableSpecialChunks.Count);
+    }   
 
     public void clearWave()
     {
@@ -579,6 +574,7 @@ public class WaveSpawningSystem : MonoBehaviour
         public int difficulty;
         public int baseDifficulty;
         public bool isDarkened;
+        public string name;
 
         public Chunk(GameModel.GameColor[] spawnColors, bool dark)
         {
@@ -606,6 +602,8 @@ public class WaveSpawningSystem : MonoBehaviour
         }
         public abstract void Generate(bool tutorial); 
         public abstract Chunk MakeCopy();
+        public abstract Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark);
+
         public virtual void SetDifficulty(GameModel.GameColor[] spawnColors)
         {
             difficulty = baseDifficulty + spawnColors.Length;
@@ -633,28 +631,31 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate(bool tutorial)
         {
-            Debug.Log("Basic Chunk Added: Difficulty - "+difficulty + " / "+ String.Join("",
-                new List<GameModel.GameColor>(colors)
-                    .ConvertAll(i => i.ToString())
-                    .ToArray())+ " | "+isDarkened);
+            int numToSpawn = globalWaveNumber;
+            if (tutorial)
+            {
+                for (int i = 0; i < 3; i++) { 
+                    int rand = Random.Range(0, colors.Length);
+                    currentWave.Insert(0, new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], tutorialSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC));
+                }
+                numToSpawn -= 3;
+                if (numToSpawn <= 0) { return; }
+            }
+
             if (colors.Length == 1)
             {
-                for (int i = 0; i < globalWaveNumber; i++)
+                for (int i = 0; i < numToSpawn; i++)
                 {
-                    currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0],  
-                        tutorial && i < 3 ? tutorialSpacing : globalWaveSpacing,
-                        TOPBOTTOM, isDarkened, WaveObject.Type.BASIC));
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0], globalWaveSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC));
                 }
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
                 {
-                    for (int i = 0; i < globalWaveNumber; i++)
+                    for (int i = 0; i < numToSpawn; i++)
                     {
-                        currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand],  
-                            tutorial && i < 3 ? tutorialSpacing : globalWaveSpacing, 
-                            TOPBOTTOM, isDarkened, WaveObject.Type.BASIC));
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], globalWaveSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC));
                         rand = Random.Range(0, colors.Length);
                     }
                 }
@@ -666,14 +667,21 @@ public class WaveSpawningSystem : MonoBehaviour
             return new BasicChunk(this.colors, this.isDarkened);
         }
 
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new BasicChunk(colors, isDark);
+        }
+
         public BasicChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
         {
+            name = "Basic";
             baseDifficulty = 0;
             image = uiManager.EnemySprites[0];
             SetDifficulty(spawnColors);
         }
         public BasicChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
+            name = "Basic";
             baseDifficulty = 0;
             image = uiManager.EnemySprites[0];
             SetDifficulty(spawnColors);
@@ -685,13 +693,23 @@ public class WaveSpawningSystem : MonoBehaviour
         public override void Generate(bool tutorial)
         {
             Debug.Log("Fast Chunk Added: Difficulty - "+difficulty);
+            int numToSpawn = globalWaveNumber;
+            if (tutorial)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    int rand = Random.Range(0, colors.Length);
+                    currentWave.Insert(0, new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], tutorialSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST));
+                }
+                numToSpawn -= 3;
+                if (numToSpawn <= 0) { return; }
+            }
+
             if (colors.Length == 1)
             {
                 for (int i = 0; i < globalWaveNumber; i++)
                 {
-                    currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0],  
-                        tutorial && i < 3 ? tutorialSpacing : globalWaveSpacing,
-                        TOPBOTTOM, isDarkened, WaveObject.Type.FAST));
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0],  globalWaveSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST));
                     
                 }
             }
@@ -701,9 +719,7 @@ public class WaveSpawningSystem : MonoBehaviour
                 {
                     for (int i = 0; i < globalWaveNumber; i++)
                     {
-                        currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand],  
-                            tutorial && i < 3 ? tutorialSpacing : globalWaveSpacing, 
-                            TOPBOTTOM, isDarkened, WaveObject.Type.FAST));
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], globalWaveSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST));
                         rand = Random.Range(0, colors.Length);
                     }
                 }
@@ -712,12 +728,14 @@ public class WaveSpawningSystem : MonoBehaviour
 
         public FastChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
         {
+            name = "Fast";
             baseDifficulty = 3;
             image = uiManager.EnemySprites[1];
             SetDifficulty(spawnColors);
         }
         public FastChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
+            name = "Fast";
             baseDifficulty = 3;
             image = uiManager.EnemySprites[1];
             SetDifficulty(spawnColors);
@@ -727,20 +745,35 @@ public class WaveSpawningSystem : MonoBehaviour
         {
             return new FastChunk(this.colors, this.isDarkened);
         }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new FastChunk(colors, isDark);
+        }
     }
     
     public class NinjaChunk : Chunk
     {
         public override void Generate(bool tutorial)
         {
+
+            int numToSpawn = globalWaveNumber;
+            if (tutorial)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    int rand = Random.Range(0, colors.Length);
+                    currentWave.Insert(0, new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], tutorialSpacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA));
+                }
+                numToSpawn -= 3;
+                if (numToSpawn <= 0) { return; }
+            }
+
             Debug.Log("Ninja Chunk Added: Difficulty - "+difficulty);
             if (colors.Length == 1)
             {
                 for (int i = 0; i < globalWaveNumber; i++)
                 {
-                    currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], 
-                        tutorial && i < 3 ? tutorialSpacing : globalWaveSpacing, 
-                        LEFTRIGHT, isDarkened, WaveObject.Type.NINJA));
+                    currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], globalWaveSpacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA));
                 }
             }
             else
@@ -749,9 +782,7 @@ public class WaveSpawningSystem : MonoBehaviour
                 {
                     for (int i = 0; i < globalWaveNumber; i++)
                     {
-                        currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand],  
-                            tutorial && i < 3 ? tutorialSpacing : globalWaveSpacing, 
-                            LEFTRIGHT, isDarkened, WaveObject.Type.NINJA));
+                        currentWave.Add(new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], globalWaveSpacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA));
                         rand = Random.Range(0, colors.Length);
                     }
                 }
@@ -760,12 +791,14 @@ public class WaveSpawningSystem : MonoBehaviour
 
         public NinjaChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
         {
+            name = "Ninja";
             baseDifficulty = 2;
             image = uiManager.EnemySprites[2];
             SetDifficulty(spawnColors);
         }
         public NinjaChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
+            name = "Ninja";
             baseDifficulty = 2;
             image = uiManager.EnemySprites[2];
             SetDifficulty(spawnColors);
@@ -773,6 +806,10 @@ public class WaveSpawningSystem : MonoBehaviour
         public override Chunk MakeCopy()
         {
             return new NinjaChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new NinjaChunk(colors, isDark);
         }
     }
 
@@ -788,9 +825,13 @@ public class WaveSpawningSystem : MonoBehaviour
                 return c is NinjaChunk;
             case Mechanic.DARK:
                 return c.isDarkened;
-            case Mechanic.TWOCOLOR:
+            case Mechanic.ORANGE:
                 return c.isMultiColor;
-            case Mechanic.THREECOLOR:
+            case Mechanic.GREEN:
+                return c.isMultiColor;
+            case Mechanic.PURPLE:
+                return c.isMultiColor;
+            case Mechanic.WHITE:
                 return c.isMultiColor && c.colors.Length == 3;
         }
 

@@ -2781,6 +2781,12 @@ MonoBehaviour:
   numShotsUpgrade: 1
   piercingUpgrade: 1
   spreadAngleMax: 60
+  baseGlobalWaveNumber: 4
+  baseGlobalWaveSpacing: 1
+  baseTutorialSpacing: 6
+  baseGlobalWaveSpeed: 0.4
+  baseNumChunks: 3
+  baseNumUniqueChunks: 0
   darkenedColorDivisor: 1.5
 --- !u!4 &1793738074
 Transform:
@@ -2817,22 +2823,20 @@ MonoBehaviour:
   - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
   - {fileID: 3324503796375360378, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
   Level: 1
-  baseGlobalWaveNumber: 10
-  baseGlobalWaveSpacing: 1.6
-  baseTutorialSpacing: 4
-  baseGlobalWaveSpeed: 0
-  baseNumChunks: 3
+  numUniqueChunks: 0
+  numChunks: 0
   inactiveEnemies: []
   currentColors: 
   chunkDifficulties: 
   currentWaveIndex: 0
   currentMechanics: 
   newMechanics: 
+  enemyTimer: 0
   modelGame: {fileID: 1793738073}
   player: {fileID: 1100839042}
   gameManager: {fileID: 0}
-  basicMechanics: 01000000020000000300000004000000
-  medMechanics: 05000000
+  basicMechanics: 010000000200000003000000040000000600000005000000
+  medMechanics: 07000000
   ALL: 00000000010000000200000003000000
 --- !u!114 &1793738076
 MonoBehaviour:

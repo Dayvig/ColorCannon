@@ -262,7 +262,7 @@ public class GameManager : MonoBehaviour
     {
         player.PlayerUpdate();
         spawningSystem.EnemyUpdate();
-        if ((spawningSystem.currentWaveIndex == WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count == 0))
+        if ((spawningSystem.currentWaveIndex > WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count <= 0))
         {
             SetState(GameState.POSTWAVE);
         }
@@ -304,11 +304,14 @@ public class GameManager : MonoBehaviour
             WaveSpawningSystem.Mechanic.DARK,
             WaveSpawningSystem.Mechanic.FAST,
             WaveSpawningSystem.Mechanic.NINJA,
-            WaveSpawningSystem.Mechanic.TWOCOLOR
+            WaveSpawningSystem.Mechanic.ORANGE,
+            WaveSpawningSystem.Mechanic.PURPLE,
+            WaveSpawningSystem.Mechanic.GREEN,
+
         };
         spawningSystem.medMechanics = new List<WaveSpawningSystem.Mechanic>
         {
-            WaveSpawningSystem.Mechanic.THREECOLOR
+            WaveSpawningSystem.Mechanic.WHITE
         };
         spawningSystem.initialize();
         player.lives = player.baseLives;

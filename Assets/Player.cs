@@ -53,6 +53,14 @@ public class Player : MonoBehaviour
     private int colorPlace = 0;
 
     public List<GameManager.Upgrade> upgrades = new List<GameManager.Upgrade>();
+
+    private enum controlMode
+    {
+        TOUCH,
+        MOUSE
+    }
+
+    private controlMode playerControlMode = controlMode.MOUSE;
     
     void Start()
     {
@@ -184,7 +192,10 @@ public class Player : MonoBehaviour
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
                 bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
-                gameManager.activeBullets.Add(bulletScript);
+                if (!gameManager.activeBullets.Contains(bulletScript))
+                {
+                    gameManager.activeBullets.Add(bulletScript);
+                }
                 gameManager.inactiveBullets.Remove(bulletScript);
 
             }
@@ -279,35 +290,29 @@ public class Player : MonoBehaviour
     Vector3 tapPos = new Vector3(0f, 0f, 0f);
     void DoubleClickUpdate()
     {
-        
         if (mouseTimer >= 0.0f)
         {
             mouseTimer += Time.deltaTime;
         }
-        
         if (mouseTimer > dClickInterval)
         {
             mouseTimer = -1.0f;
             clicks = 0;
-        }/*
-        if (Input.GetMouseButtonUp(0))
-        {   
-            if (clicks == 0)
-            {
-                tapPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            }
-            else if (clicks > 1){
-                
-                if (mouseTimer != -1.0f)
-                {
-                    nextColor();
-                }
-            }
-            clicks++;
-            mouseTimer = 0.0f;
-        }*/
+        }
+        if (playerControlMode == controlMode.TOUCH) {
+            takeTouchInput();
+        }
+        else
+        {
+            takeMouseInput();
+        }
+    }
 
-        //touch control
+    void takeTouchInput()
+    {
+        //Begin touch
+        //Track the touchposition
+        //if one tap has already been executed, switch color
         if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Began)
         {
             tapPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
@@ -316,10 +321,41 @@ public class Player : MonoBehaviour
                 nextColor();
             }
         }
+        //End Touch
+        //If the position is close to where it began, increment clicks
         if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Ended)
         {
             Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-            Debug.Log("Distance: "+Vector3.Distance(tapPos, newPos));
+            if (Vector3.Distance(tapPos, newPos) < 0.1f)
+            {
+                clicks++;
+                mouseTimer = 0f;
+            }
+            else
+            {
+                mouseTimer = -1.0f;
+                clicks = 0;
+            }
+        }
+    }
+    void takeMouseInput()
+    {
+        //Begin click
+        //Track the clickposition
+        //if one click has already been executed, switch color
+        if (Input.GetMouseButtonDown(0))
+        {
+            tapPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (clicks > 0)
+            {
+                nextColor();
+            }
+        }
+        //End click
+        //If the position is close to where it began, increment clicks
+        if (Input.GetMouseButtonUp(0))
+        {
+            Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (Vector3.Distance(tapPos, newPos) < 0.1f)
             {
                 clicks++;
