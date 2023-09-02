@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
             
         newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
         Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-        bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing);
+        bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing, bulletSize);
         bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
         gameManager.activeBullets.Add(bulletScript);
     }
@@ -162,7 +162,7 @@ public class Player : MonoBehaviour
             }
             
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-            bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing);
+            bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing, bulletSize);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
             gameManager.activeBullets.Add(bulletScript);
@@ -188,9 +188,8 @@ public class Player : MonoBehaviour
                 {
                     newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
                 }
-                newBulletObject.transform.localScale = newBulletObject.transform.localScale * bulletSize;
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing);
+                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing, bulletSize);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
                 if (!gameManager.activeBullets.Contains(bulletScript))
                 {

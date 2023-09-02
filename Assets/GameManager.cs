@@ -262,7 +262,7 @@ public class GameManager : MonoBehaviour
     {
         player.PlayerUpdate();
         spawningSystem.EnemyUpdate();
-        if ((spawningSystem.currentWaveIndex > WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count <= 0))
+        if ((spawningSystem.currentWaveIndex >= WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count <= 0))
         {
             SetState(GameState.POSTWAVE);
         }

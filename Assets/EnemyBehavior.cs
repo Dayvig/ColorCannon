@@ -85,7 +85,6 @@ public class EnemyBehavior : MonoBehaviour
         isDarkened = dark;
         enemyType = type;
         gameObject.SetActive(true);
-        immuneBullets.Clear();
         knockBack = false;
         knockBackTimer = 0f;
     }
@@ -187,7 +186,7 @@ public class EnemyBehavior : MonoBehaviour
 
     public void touchBullet(Bullet bullet)
     {
-        if (immuneBullets.Count > 0 && immuneBullets.Contains(bullet))
+        if (bullet.immuneEnemies.Count > 0 && bullet.immuneEnemies.Contains(this))
         {
             return;
         }
@@ -197,6 +196,7 @@ public class EnemyBehavior : MonoBehaviour
             {
                 TakeHit();
                 bullet.TakeHit();
+                bullet.immuneEnemies.Add(this);
             }
         }
         else
@@ -213,6 +213,7 @@ public class EnemyBehavior : MonoBehaviour
                 knockBack = true;
                 knockBackTimer = 0.0f;
                 bullet.TakeHit();
+                bullet.immuneEnemies.Add(this);
             }
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -19,6 +20,7 @@ public class Bullet : MonoBehaviour
     private GameManager gameManager;
     private int piercing = 1;
     public CircleCollider2D thisCollider;
+    public List<EnemyBehavior> immuneEnemies;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +29,7 @@ public class Bullet : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    public void initialize(Vector3 initialPos, float rotation, float speed, GameModel.GameColor color, int pierce)
+    public void initialize(Vector3 initialPos, float rotation, float speed, GameModel.GameColor color, int pierce, float scale)
     {
         rotation = -(rotation * (Mathf.PI / 180));
         
@@ -41,7 +43,9 @@ public class Bullet : MonoBehaviour
         bulletColor = color;
         piercing = pierce;
         gameObject.SetActive(true);
-        this.transform.localScale = new Vector3 (baseScale, baseScale, baseScale);
+        this.transform.localScale = new Vector3 (scale, scale, 1);
+
+        immuneEnemies.Clear();
     }
 
     public void SetColor(Color c)
@@ -69,6 +73,11 @@ public class Bullet : MonoBehaviour
                 }
             }
         }
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(positionTarget, thisCollider.radius);
+        foreach (Collider2D c in hitColliders)
+        {
+            Collide(c);
+        }
         transform.position = positionCurrent;
         if (positionCurrent.x > xBounds || positionCurrent.x < -xBounds ||
             positionCurrent.y > yBounds || positionCurrent.y < -yBounds)
@@ -76,7 +85,7 @@ public class Bullet : MonoBehaviour
             Die();
         }
     }
-    
+
     private void Collide(Collider2D col)
     {
         if (col.gameObject.CompareTag("Enemy"))

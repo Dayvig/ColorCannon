@@ -40,6 +40,7 @@ public class WaveSpawningSystem : MonoBehaviour
     public static UIManager uiManager;
 
     private int recusionProtection = 0;
+    public int enemiesToSpawn;
 
     public enum SpawnLocations
     {
@@ -117,10 +118,15 @@ public class WaveSpawningSystem : MonoBehaviour
 
             enemyObject.transform.position = startPos;
             enemyScript = enemyObject.GetComponent<EnemyBehavior>();
+            Debug.Log("Enemy type to spawn: " + enemyScript.enemyType);
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
             bool darkEnemy = currentWave[currentWaveIndex].darkened;
             enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
             enemyScript.SetColor(modelGame.ColorToColor(enemyColor));
+            if (gameManager.activeEnemies.Contains(enemyScript))
+            {
+                gameManager.activeEnemies.Remove(enemyScript);
+            }
             gameManager.activeEnemies.Add(enemyScript);
             inactiveEnemies.Remove(enemyScript);
             enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
@@ -386,6 +392,7 @@ public class WaveSpawningSystem : MonoBehaviour
                 }
             }
         }
+        enemiesToSpawn = currentWave.Count - 1;
     }
 
     public void generateFirstWave()
@@ -395,7 +402,7 @@ public class WaveSpawningSystem : MonoBehaviour
         uiManager.SetupChunkPreview(nextChunk, 1);
 
         currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.RED,  
-            tutorialSpacing/2,
+            tutorialSpacing,
             TOPBOTTOM, false, WaveObject.Type.BASIC));
 
         currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.BLUE,  
@@ -407,6 +414,7 @@ public class WaveSpawningSystem : MonoBehaviour
             TOPBOTTOM, false, WaveObject.Type.BASIC));
 
         nextChunk.Generate(false);
+        enemiesToSpawn = currentWave.Count-1;
     }
 
 
@@ -432,6 +440,23 @@ public class WaveSpawningSystem : MonoBehaviour
             int rand = Random.Range(0, currentWave.Count);
             currentWave[j] = currentWave[rand];
             currentWave[rand] = tmp;
+        }
+        MoveTutorialToFront();
+    }
+
+    private void MoveTutorialToFront()
+    {
+        //Moves tutorial wave objects to front
+        int tutorialIndex = 0;
+        for (int j = 0; j < currentWave.Count; j++)
+        {
+            WaveObject tmp = currentWave[j];
+            if (tmp.isTutorial)
+            {
+                currentWave[j] = currentWave[tutorialIndex];
+                currentWave[tutorialIndex] = tmp;
+                tutorialIndex++;
+            }
         }
     }
 
@@ -575,6 +600,7 @@ public class WaveSpawningSystem : MonoBehaviour
         public int baseDifficulty;
         public bool isDarkened;
         public string name;
+        public bool isTutorialChunk;
 
         public Chunk(GameModel.GameColor[] spawnColors, bool dark)
         {
@@ -600,7 +626,10 @@ public class WaveSpawningSystem : MonoBehaviour
                             colors.Contains(GameModel.GameColor.WHITE));
             isDarkened = false;
         }
-        public abstract void Generate(bool tutorial); 
+        public virtual void Generate(bool tutorial)
+        {
+            isTutorialChunk = tutorial;
+        }
         public abstract Chunk MakeCopy();
         public abstract Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark);
 
@@ -631,12 +660,15 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate(bool tutorial)
         {
+            base.Generate(tutorial);
             int numToSpawn = globalWaveNumber;
-            if (tutorial)
+            if (isTutorialChunk)
             {
                 for (int i = 0; i < 3; i++) { 
                     int rand = Random.Range(0, colors.Length);
-                    currentWave.Insert(0, new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], tutorialSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC));
+                    WaveObject newObj = new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], tutorialSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC);
+                    newObj.isTutorial = true;
+                    currentWave.Add(newObj);
                 }
                 numToSpawn -= 3;
                 if (numToSpawn <= 0) { return; }
@@ -692,6 +724,7 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate(bool tutorial)
         {
+            base.Generate(tutorial);
             Debug.Log("Fast Chunk Added: Difficulty - "+difficulty);
             int numToSpawn = globalWaveNumber;
             if (tutorial)
@@ -699,7 +732,9 @@ public class WaveSpawningSystem : MonoBehaviour
                 for (int i = 0; i < 3; i++)
                 {
                     int rand = Random.Range(0, colors.Length);
-                    currentWave.Insert(0, new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], tutorialSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST));
+                    WaveObject newObj = new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], tutorialSpacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST);
+                    newObj.isTutorial = true;
+                    currentWave.Add(newObj);
                 }
                 numToSpawn -= 3;
                 if (numToSpawn <= 0) { return; }
@@ -755,14 +790,16 @@ public class WaveSpawningSystem : MonoBehaviour
     {
         public override void Generate(bool tutorial)
         {
-
+            base.Generate(tutorial);
             int numToSpawn = globalWaveNumber;
             if (tutorial)
             {
                 for (int i = 0; i < 3; i++)
                 {
                     int rand = Random.Range(0, colors.Length);
-                    currentWave.Insert(0, new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], tutorialSpacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA));
+                    WaveObject newObj = new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], tutorialSpacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA);
+                    newObj.isTutorial = true;
+                    currentWave.Add(newObj);
                 }
                 numToSpawn -= 3;
                 if (numToSpawn <= 0) { return; }
@@ -826,13 +863,13 @@ public class WaveSpawningSystem : MonoBehaviour
             case Mechanic.DARK:
                 return c.isDarkened;
             case Mechanic.ORANGE:
-                return c.isMultiColor;
+                return c.colors.Contains(GameModel.GameColor.ORANGE);
             case Mechanic.GREEN:
-                return c.isMultiColor;
+                return c.colors.Contains(GameModel.GameColor.GREEN);
             case Mechanic.PURPLE:
-                return c.isMultiColor;
+                return c.colors.Contains(GameModel.GameColor.PURPLE);
             case Mechanic.WHITE:
-                return c.isMultiColor && c.colors.Length == 3;
+                return c.colors.Contains(GameModel.GameColor.WHITE);
         }
 
         return false;
@@ -849,6 +886,7 @@ public class WaveSpawningSystem : MonoBehaviour
         public int[] locationsToSpawn;
         public bool darkened;
         public Type enemyType;
+        public bool isTutorial;
 
         public enum Type
         {

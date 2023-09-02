@@ -2777,13 +2777,13 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2486e62b0e17f4f41a5ca0b458f472dd, type: 3}
   shotSpeedMultiplier: 1.185
   rapidFireMultiplier: 1.366
-  shotSizeMultiplier: 1.49
+  shotSizeMultiplier: 1.5
   numShotsUpgrade: 1
   piercingUpgrade: 1
   spreadAngleMax: 60
-  baseGlobalWaveNumber: 4
+  baseGlobalWaveNumber: 3
   baseGlobalWaveSpacing: 1
-  baseTutorialSpacing: 6
+  baseTutorialSpacing: 3
   baseGlobalWaveSpeed: 0.4
   baseNumChunks: 3
   baseNumUniqueChunks: 0
@@ -2835,6 +2835,7 @@ MonoBehaviour:
   modelGame: {fileID: 1793738073}
   player: {fileID: 1100839042}
   gameManager: {fileID: 0}
+  enemiesToSpawn: 0
   basicMechanics: 010000000200000003000000040000000600000005000000
   medMechanics: 07000000
   ALL: 00000000010000000200000003000000

@@ -145,6 +145,6 @@ MonoBehaviour:
   isDarkened: 0
   immuneBullets: []
   knockBack: 0
-  enemyType: 0
+  enemyType: 2
   sneakTime: 0
   ninjaBehavior: 0
