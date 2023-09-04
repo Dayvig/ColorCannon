@@ -1169,7 +1169,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.36138916, y: -35.023193}
+  m_AnchoredPosition: {x: -0.36132812, y: -35.023193}
   m_SizeDelta: {x: -32.3549, y: -70.0127}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &773639243
@@ -1643,6 +1643,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008799251}
   m_CullTransparentMesh: 1
+--- !u!1001 &1065290749
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476663335253206864, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+      propertyPath: m_Name
+      value: ZigZagEnemy
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
 --- !u!1 &1073291408
 GameObject:
   m_ObjectHideFlags: 0
@@ -2818,10 +2875,14 @@ MonoBehaviour:
   - {fileID: 7963215952173959544, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   - {fileID: 9124210647007902113, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
   - {fileID: 3234621261998620790, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
+  - {fileID: 2882379518967128744, guid: 0e0fddcf45384ba4f838b7c2df8d79f5, type: 3}
+  - {fileID: 1476663335253206864, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
   - {fileID: 3324503796375360378, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
+  - {fileID: 4072842897581863581, guid: 0e0fddcf45384ba4f838b7c2df8d79f5, type: 3}
+  - {fileID: 5649068234250954665, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
   Level: 1
   numUniqueChunks: 0
   numChunks: 0
@@ -2836,7 +2897,7 @@ MonoBehaviour:
   player: {fileID: 1100839042}
   gameManager: {fileID: 0}
   enemiesToSpawn: 0
-  basicMechanics: 010000000200000003000000040000000600000005000000
+  basicMechanics: 0100000002000000030000000400000006000000050000000800000009000000
   medMechanics: 07000000
   ALL: 00000000010000000200000003000000
 --- !u!114 &1793738076
@@ -2877,6 +2938,8 @@ MonoBehaviour:
   - {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   - {fileID: -9095717837082945937, guid: bd3cb4af8406d4436a2ae8c2aafe1f8d, type: 3}
   - {fileID: 2747690628134850419, guid: 16037dbd798344f57a526d53d48f5ead, type: 3}
+  - {fileID: 21300000, guid: 1038032ed9d668e438d3f97dd8014cbb, type: 3}
+  - {fileID: 21300000, guid: 6027031a7453da24f95d0af9a2308c52, type: 3}
   UpcomingPanel: {fileID: 1809639732}
   PreviewPanelRow1: {fileID: 520930940}
   PreviewPanelRow2: {fileID: 130674182}
