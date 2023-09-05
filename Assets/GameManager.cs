@@ -242,7 +242,6 @@ public class GameManager : MonoBehaviour
         //Take out the TREASSH
         foreach (EnemyBehavior ded in markedForDeathEnemies)
         {
-            //TODO: Add object pooling
             activeEnemies.Remove(ded);
             spawningSystem.inactiveEnemies.Add(ded);
             ded.gameObject.SetActive(false);

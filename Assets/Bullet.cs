@@ -112,5 +112,4 @@ public class Bullet : MonoBehaviour
         gameManager.markedForDeathBullets.Add(this);
     }
     
-    
 }

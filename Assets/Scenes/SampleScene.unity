@@ -2828,13 +2828,15 @@ MonoBehaviour:
   - {fileID: 2882379518967128744, guid: 0e0fddcf45384ba4f838b7c2df8d79f5, type: 3}
   - {fileID: 1476663335253206864, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
   - {fileID: 2828672357647286389, guid: ceb379202e7837449a9abdb3d1146e75, type: 3}
+  - {fileID: 8069311381474920864, guid: 64a4022530e2e0145ae5788bd08519be, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
   - {fileID: 3324503796375360378, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
   - {fileID: 4072842897581863581, guid: 0e0fddcf45384ba4f838b7c2df8d79f5, type: 3}
-  - {fileID: 5649068234250954665, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+  - {fileID: 2113607169574944503, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
   - {fileID: 3906329422095621827, guid: ceb379202e7837449a9abdb3d1146e75, type: 3}
+  - {fileID: 1187610945692734044, guid: 64a4022530e2e0145ae5788bd08519be, type: 3}
   Level: 1
   numUniqueChunks: 0
   numChunks: 0
@@ -2842,7 +2844,7 @@ MonoBehaviour:
   currentColors: 
   chunkDifficulties: 
   currentWaveIndex: 0
-  currentMechanics: 
+  currentMechanics: 0b000000
   newMechanics: 
   enemyTimer: 0
   modelGame: {fileID: 1793738073}
@@ -2892,6 +2894,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1038032ed9d668e438d3f97dd8014cbb, type: 3}
   - {fileID: 21300000, guid: 6027031a7453da24f95d0af9a2308c52, type: 3}
   - {fileID: 21300000, guid: 8008767850e870a4e8baaf5a6fc8b35c, type: 3}
+  - {fileID: 21300000, guid: f7e651b449fe96f42badf0e18b738c78, type: 3}
   UpcomingPanel: {fileID: 1809639732}
   PreviewPanelRow1: {fileID: 520930940}
   PreviewPanelRow2: {fileID: 130674182}

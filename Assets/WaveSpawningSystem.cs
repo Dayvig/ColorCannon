@@ -59,11 +59,12 @@ public class WaveSpawningSystem : MonoBehaviour
         WHITE,
         SWARM,
         ZIGZAG,
-        DISGUISED
+        DISGUISED,
+        SWIRL
     }
 
     public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.ORANGE, Mechanic.GREEN, Mechanic.PURPLE, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG};
-    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE, Mechanic.DISGUISED};
+    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE, Mechanic.DISGUISED, Mechanic.SWIRL};
 
     public static int[] ALL =
         {0, 1, 2, 3};
@@ -381,7 +382,6 @@ public class WaveSpawningSystem : MonoBehaviour
                     currentMechanics.Add(m);
                 }
             }
-            Debug.Log("Next Chunk Generating: "+nextChunk.name);
             nextChunk.Generate(isTutorial);
             foreach (Mechanic m2 in currentMechanics)
             {
@@ -575,6 +575,10 @@ public class WaveSpawningSystem : MonoBehaviour
         if (newMechanics.Contains(Mechanic.DISGUISED) || currentMechanics.Contains(Mechanic.DISGUISED))
         {
             addAllChunkColors(new DisguiserChunk(new[] { GameModel.GameColor.NONE }, false));
+        }
+        if (newMechanics.Contains(Mechanic.SWIRL) || currentMechanics.Contains(Mechanic.SWIRL))
+        {
+            addAllChunkColors(new SwirlChunk(new[] { GameModel.GameColor.NONE }, false));
         }
 
         //modifiers (Dark only for now)
@@ -980,6 +984,50 @@ public class WaveSpawningSystem : MonoBehaviour
         }
     }
 
+    public class SwirlChunk : Chunk
+    {
+        public SwirlChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
+        {
+            name = "Swirl";
+            baseDifficulty = 4;
+            image = uiManager.EnemySprites[6];
+            SetDifficulty(spawnColors);
+        }
+        public SwirlChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Swirl";
+            baseDifficulty = 4;
+            image = uiManager.EnemySprites[6];
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(spawningSystem.Enemies[6], spawningSystem.EnemyScripts[6], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SWIRL);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(spawningSystem.Enemies[6], spawningSystem.EnemyScripts[6], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SWIRL);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new SwirlChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new SwirlChunk(colors, isDark);
+        }
+    }
+
     public bool ChunkIsMechanic(Mechanic m, Chunk c)
     {
         switch (m)
@@ -1006,7 +1054,8 @@ public class WaveSpawningSystem : MonoBehaviour
                 return c is ZigZagChunk;
             case Mechanic.DISGUISED:
                 return c is DisguiserChunk;
-
+            case Mechanic.SWIRL:
+                return c is SwirlChunk;
 
         }
 
@@ -1033,7 +1082,8 @@ public class WaveSpawningSystem : MonoBehaviour
             NINJA,
             SWARM,
             ZIGZAG,
-            DISGUISED
+            DISGUISED,
+            SWIRL
         }
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark, WaveObject.Type type)
