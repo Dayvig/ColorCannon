@@ -2782,7 +2782,7 @@ MonoBehaviour:
   piercingUpgrade: 1
   spreadAngleMax: 60
   baseGlobalWaveNumber: 3
-  baseGlobalWaveSpacing: 1
+  baseGlobalWaveSpacing: 2
   baseTutorialSpacing: 6
   baseGlobalWaveSpeed: 0.4
   baseNumChunks: 3
@@ -2851,7 +2851,6 @@ MonoBehaviour:
   enemiesToSpawn: 0
   basicMechanics: 0100000002000000030000000400000006000000050000000800000009000000
   medMechanics: 070000000a000000
-  ALL: 00000000010000000200000003000000
 --- !u!114 &1793738076
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -65,15 +65,15 @@ public class WaveSpawningSystem : MonoBehaviour
     public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.ORANGE, Mechanic.GREEN, Mechanic.PURPLE, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG};
     public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE, Mechanic.DISGUISED};
 
-    public int[] ALL =
+    public static int[] ALL =
         {0, 1, 2, 3};
 
     public static int[] TOPBOTTOM = {0, 1};
     public static int[] LEFTRIGHT = {2, 3};
-    
+
 
     //================================================  Enemy Spawning ===============================================
-    
+
     public void EnemyUpdate()
     {
         enemyTimer -= Time.deltaTime;
@@ -866,12 +866,12 @@ public class WaveSpawningSystem : MonoBehaviour
             WaveObject toReturn;
             if (colors.Length == 1)
             {
-                toReturn = new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[0], spacing * SWARMSPACINGMULT, TOPBOTTOM, isDarkened, WaveObject.Type.SWARM);
+                toReturn = new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[0], spacing * SWARMSPACINGMULT, ALL, isDarkened, WaveObject.Type.SWARM);
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
-                toReturn = new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[rand], spacing * SWARMSPACINGMULT, TOPBOTTOM, isDarkened, WaveObject.Type.SWARM);
+                toReturn = new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[rand], spacing * SWARMSPACINGMULT, ALL, isDarkened, WaveObject.Type.SWARM);
             }
             toReturn.isTutorial = isTutorial;
             return toReturn;

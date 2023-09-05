@@ -32,6 +32,7 @@ public class ZigZagEnemyBehavior : EnemyBehavior
         zigzagBehavior = Behavior.MOVE;
         sneakTime = 0f;
         originalDestination = des;
+        flipped = (UnityEngine.Random.Range(0, 1) == 0) ? -1 : 1;
         setNewDestination();
     }
 

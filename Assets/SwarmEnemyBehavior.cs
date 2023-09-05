@@ -10,7 +10,7 @@ using UnityEngine;
 public class SwarmEnemyBehavior : EnemyBehavior
 {
 
-    private float SPEEDMULT = 0.5f;
+    private float SPEEDMULT = 0.7f;
     public override void initialize(Vector3 des, GameModel.GameColor color, bool darkened, WaveSpawningSystem.WaveObject.Type eType)
     {
         base.initialize(des, color, darkened, eType);
