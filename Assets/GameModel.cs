@@ -36,6 +36,14 @@ public class GameModel : MonoBehaviour
 
     public float darkenedColorDivisor = 1.5f;
 
+    public Color redVisualColor = Color.red;
+    public Color greenVisualColor = new Color(0f, 0.65f, 0.15f);
+    public Color blueVisualColor = Color.blue;
+    public Color yellowVisualColor = Color.yellow;
+    public Color orangeVisualColor = new Color(1f, 0.65f, 0.15f);
+    public Color purpleVisualColor = new Color(0.5f, 0f, 1f);
+    public Color whiteVisualColor = Color.white;
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,17 +56,40 @@ public class GameModel : MonoBehaviour
         switch (col)
         {
             case GameColor.RED:
-                return Color.red;
+                return redVisualColor;
             case GameColor.BLUE:
-                return Color.blue;
+                return blueVisualColor;
             case GameColor.YELLOW:
-                return Color.yellow;
+                return yellowVisualColor;
             case GameColor.ORANGE:
-                return new Color(1f, 0.65f, 0.15f);
+                return orangeVisualColor;
             case GameColor.GREEN:
-                return new Color(0f, 0.65f, 0.15f);
+                return greenVisualColor;
             case GameColor.PURPLE:
-                return new Color(0.5f, 0f, 1f);
+                return purpleVisualColor;
+            case GameColor.WHITE:
+                return whiteVisualColor;
+            default:
+                return Color.gray;
+        }
+    }
+
+    public Color OppositeColor(GameColor col)
+    {
+        switch (col)
+        {
+            case GameColor.RED:
+                return greenVisualColor;
+            case GameColor.BLUE:
+                return orangeVisualColor;
+            case GameColor.YELLOW:
+                return purpleVisualColor;
+            case GameColor.ORANGE:
+                return blueVisualColor;
+            case GameColor.GREEN:
+                return redVisualColor;
+            case GameColor.PURPLE:
+                return yellowVisualColor;
             case GameColor.WHITE:
                 return Color.white;
             default:

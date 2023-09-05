@@ -25,6 +25,7 @@ public class EnemyBehavior : MonoBehaviour
     private float knockBackTimer;
     private float knockBackDuration = 1f;
     public WaveSpawningSystem.WaveObject.Type enemyType;
+    private bool hitTaken = false;
 
     void Awake()
     {
@@ -157,8 +158,9 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
     
-    public void SetColor(Color c)
+    public virtual void SetVisualColor(GameModel.GameColor thisColor)
     {
+        Color c = modelGame.ColorToColor(thisColor);
         if (!isDarkened)
         {
             rend.color = c;
@@ -209,21 +211,28 @@ public class EnemyBehavior : MonoBehaviour
                     Die();
                 }
                 enemyColor = SetMixedColor(enemyColors);
-                SetColor(modelGame.ColorToColor(enemyColor));
-                knockBack = true;
-                knockBackTimer = 0.0f;
+                hitTaken = true;
+                TakeHit();
                 bullet.TakeHit();
                 bullet.immuneEnemies.Add(this);
             }
         }
     }
 
-    public void TakeHit()
+    public virtual void TakeHit()
     {
+        if (hitTaken)
+        {
+            hitTaken = false;
+            SetVisualColor(enemyColor);
+            knockBack = true;
+            knockBackTimer = 0.0f;
+            return;
+        }
         if (isDarkened)
         {
             isDarkened = false;
-            SetColor(modelGame.ColorToColor(enemyColor));
+            SetVisualColor(enemyColor);
             knockBack = true;
             knockBackTimer = 0.0f;
         }

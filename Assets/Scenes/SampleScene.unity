@@ -1643,63 +1643,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008799251}
   m_CullTransparentMesh: 1
---- !u!1001 &1065290749
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_RootOrder
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206857, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1476663335253206864, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
-      propertyPath: m_Name
-      value: ZigZagEnemy
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
 --- !u!1 &1073291408
 GameObject:
   m_ObjectHideFlags: 0
@@ -2840,11 +2783,18 @@ MonoBehaviour:
   spreadAngleMax: 60
   baseGlobalWaveNumber: 3
   baseGlobalWaveSpacing: 1
-  baseTutorialSpacing: 3
+  baseTutorialSpacing: 6
   baseGlobalWaveSpeed: 0.4
   baseNumChunks: 3
   baseNumUniqueChunks: 0
   darkenedColorDivisor: 1.5
+  redVisualColor: {r: 1, g: 0, b: 0, a: 1}
+  greenVisualColor: {r: 0, g: 0.65, b: 0.15, a: 1}
+  blueVisualColor: {r: 0, g: 0, b: 1, a: 1}
+  yellowVisualColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  orangeVisualColor: {r: 1, g: 0.65, b: 0.15, a: 1}
+  purpleVisualColor: {r: 0.5, g: 0, b: 1, a: 1}
+  whiteVisualColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1793738074
 Transform:
   m_ObjectHideFlags: 0
@@ -2877,12 +2827,14 @@ MonoBehaviour:
   - {fileID: 3234621261998620790, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
   - {fileID: 2882379518967128744, guid: 0e0fddcf45384ba4f838b7c2df8d79f5, type: 3}
   - {fileID: 1476663335253206864, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+  - {fileID: 2828672357647286389, guid: ceb379202e7837449a9abdb3d1146e75, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
   - {fileID: 3324503796375360378, guid: ba2f8306ff7bef8408a4a8f5430b69fe, type: 3}
   - {fileID: 4072842897581863581, guid: 0e0fddcf45384ba4f838b7c2df8d79f5, type: 3}
   - {fileID: 5649068234250954665, guid: 50b072d7b7c69fd4ca864a8fd389ee45, type: 3}
+  - {fileID: 3906329422095621827, guid: ceb379202e7837449a9abdb3d1146e75, type: 3}
   Level: 1
   numUniqueChunks: 0
   numChunks: 0
@@ -2898,7 +2850,7 @@ MonoBehaviour:
   gameManager: {fileID: 0}
   enemiesToSpawn: 0
   basicMechanics: 0100000002000000030000000400000006000000050000000800000009000000
-  medMechanics: 07000000
+  medMechanics: 070000000a000000
   ALL: 00000000010000000200000003000000
 --- !u!114 &1793738076
 MonoBehaviour:
@@ -2940,6 +2892,7 @@ MonoBehaviour:
   - {fileID: 2747690628134850419, guid: 16037dbd798344f57a526d53d48f5ead, type: 3}
   - {fileID: 21300000, guid: 1038032ed9d668e438d3f97dd8014cbb, type: 3}
   - {fileID: 21300000, guid: 6027031a7453da24f95d0af9a2308c52, type: 3}
+  - {fileID: 21300000, guid: 8008767850e870a4e8baaf5a6fc8b35c, type: 3}
   UpcomingPanel: {fileID: 1809639732}
   PreviewPanelRow1: {fileID: 520930940}
   PreviewPanelRow2: {fileID: 130674182}

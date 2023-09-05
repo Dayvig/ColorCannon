@@ -58,11 +58,12 @@ public class WaveSpawningSystem : MonoBehaviour
         PURPLE,
         WHITE,
         SWARM,
-        ZIGZAG
+        ZIGZAG,
+        DISGUISED
     }
 
     public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.ORANGE, Mechanic.GREEN, Mechanic.PURPLE, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG};
-    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE};
+    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE, Mechanic.DISGUISED};
 
     public int[] ALL =
         {0, 1, 2, 3};
@@ -120,7 +121,7 @@ public class WaveSpawningSystem : MonoBehaviour
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
             bool darkEnemy = currentWave[currentWaveIndex].darkened;
             enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
-            enemyScript.SetColor(modelGame.ColorToColor(enemyColor));
+            enemyScript.SetVisualColor(enemyColor);
             if (gameManager.activeEnemies.Contains(enemyScript))
             {
                 gameManager.activeEnemies.Remove(enemyScript);
@@ -451,6 +452,7 @@ public class WaveSpawningSystem : MonoBehaviour
             WaveObject tmp = currentWave[j];
             if (tmp.isTutorial)
             {
+                Debug.Log("Tutorial found");
                 currentWave[j] = currentWave[tutorialIndex];
                 currentWave[tutorialIndex] = tmp;
                 tutorialIndex++;
@@ -570,6 +572,10 @@ public class WaveSpawningSystem : MonoBehaviour
         {
             addAllChunkColors(new ZigZagChunk(new[] { GameModel.GameColor.NONE }, false));
         }
+        if (newMechanics.Contains(Mechanic.DISGUISED) || currentMechanics.Contains(Mechanic.DISGUISED))
+        {
+            addAllChunkColors(new DisguiserChunk(new[] { GameModel.GameColor.NONE }, false));
+        }
 
         //modifiers (Dark only for now)
         if (newMechanics.Contains(Mechanic.DARK) || currentMechanics.Contains(Mechanic.DARK))
@@ -640,7 +646,7 @@ public class WaveSpawningSystem : MonoBehaviour
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    currentWave.Add(ChunkToWaveObject(isTutorialChunk));
+                    currentWave.Insert(0, ChunkToWaveObject(isTutorialChunk));
                 }
                 numToSpawn -= 3;
                 if (numToSpawn <= 0) { return; }
@@ -719,15 +725,18 @@ public class WaveSpawningSystem : MonoBehaviour
         public override WaveObject ChunkToWaveObject(bool isTutorial)
         {
             float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
             if (colors.Length == 1)
             {
-                return new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC);
+                toReturn = new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC);
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
-                return new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC);
+                toReturn = new WaveObject(spawningSystem.Enemies[0], spawningSystem.EnemyScripts[0], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.BASIC);
             }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
         }
 
         public BasicChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
@@ -765,15 +774,18 @@ public class WaveSpawningSystem : MonoBehaviour
         public override WaveObject ChunkToWaveObject(bool isTutorial)
         {
             float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
             if (colors.Length == 1)
             {
-                return new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST);
+                toReturn = new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST);
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
-                return new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST);
+                toReturn = new WaveObject(spawningSystem.Enemies[1], spawningSystem.EnemyScripts[1], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.FAST);
             }
+            toReturn.isTutorial = isTutorial;
+                return toReturn;
         }
 
         public override Chunk MakeCopy()
@@ -806,15 +818,18 @@ public class WaveSpawningSystem : MonoBehaviour
         public override WaveObject ChunkToWaveObject(bool isTutorial)
         {
             float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
             if (colors.Length == 1)
             {
-                return new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], spacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA);
+                toReturn = new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[0], spacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA);
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
-                return new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], spacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA);
+                toReturn = new WaveObject(spawningSystem.Enemies[2], spawningSystem.EnemyScripts[2], colors[rand], spacing, LEFTRIGHT, isDarkened, WaveObject.Type.NINJA);
             }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
         }
 
         public override Chunk MakeCopy()
@@ -848,15 +863,18 @@ public class WaveSpawningSystem : MonoBehaviour
         public override WaveObject ChunkToWaveObject(bool isTutorial)
         {
             float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
             if (colors.Length == 1)
             {
-                return new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[0], spacing * SWARMSPACINGMULT, TOPBOTTOM, isDarkened, WaveObject.Type.SWARM);
+                toReturn = new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[0], spacing * SWARMSPACINGMULT, TOPBOTTOM, isDarkened, WaveObject.Type.SWARM);
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
-                return new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[rand], spacing * SWARMSPACINGMULT, TOPBOTTOM, isDarkened, WaveObject.Type.SWARM);
+                toReturn = new WaveObject(spawningSystem.Enemies[3], spawningSystem.EnemyScripts[3], colors[rand], spacing * SWARMSPACINGMULT, TOPBOTTOM, isDarkened, WaveObject.Type.SWARM);
             }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
         }
 
         public override void Generate(bool tutorial)
@@ -894,15 +912,18 @@ public class WaveSpawningSystem : MonoBehaviour
         public override WaveObject ChunkToWaveObject(bool isTutorial)
         {
             float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
             if (colors.Length == 1)
             {
-                return new WaveObject(spawningSystem.Enemies[4], spawningSystem.EnemyScripts[4], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.ZIGZAG);
+                toReturn = new WaveObject(spawningSystem.Enemies[4], spawningSystem.EnemyScripts[4], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.ZIGZAG);
             }
             else
             {
                 int rand = Random.Range(0, colors.Length);
-                return new WaveObject(spawningSystem.Enemies[4], spawningSystem.EnemyScripts[4], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.ZIGZAG);
+                toReturn = new WaveObject(spawningSystem.Enemies[4], spawningSystem.EnemyScripts[4], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.ZIGZAG);
             }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
         }
 
         public override Chunk MakeCopy()
@@ -912,6 +933,50 @@ public class WaveSpawningSystem : MonoBehaviour
         public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
         {
             return new ZigZagChunk(colors, isDark);
+        }
+    }
+
+    public class DisguiserChunk : Chunk
+    {
+        public DisguiserChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark)
+        {
+            name = "Disguiser";
+            baseDifficulty = 5;
+            image = uiManager.EnemySprites[5];
+            SetDifficulty(spawnColors);
+        }
+        public DisguiserChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Disguiser";
+            baseDifficulty = 5;
+            image = uiManager.EnemySprites[5];
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(spawningSystem.Enemies[5], spawningSystem.EnemyScripts[5], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.DISGUISED);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(spawningSystem.Enemies[5], spawningSystem.EnemyScripts[5], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.DISGUISED);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new DisguiserChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new DisguiserChunk(colors, isDark);
         }
     }
 
@@ -939,6 +1004,9 @@ public class WaveSpawningSystem : MonoBehaviour
                 return c is SwarmChunk;
             case Mechanic.ZIGZAG:
                 return c is ZigZagChunk;
+            case Mechanic.DISGUISED:
+                return c is DisguiserChunk;
+
 
         }
 
@@ -964,7 +1032,8 @@ public class WaveSpawningSystem : MonoBehaviour
             FAST,
             NINJA,
             SWARM,
-            ZIGZAG
+            ZIGZAG,
+            DISGUISED
         }
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark, WaveObject.Type type)
