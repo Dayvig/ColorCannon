@@ -194,6 +194,9 @@ public class GameModel : MonoBehaviour
             case "Swirl":
                 returnText = ChunkTexts[5];
                 break;
+            case "ZigZag":
+                returnText = ChunkTexts[6];
+                break;
             default:
                 return "Something went wrong";
         }

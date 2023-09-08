@@ -665,8 +665,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.2319946, y: -0.5950012}
-  m_SizeDelta: {x: 308.056, y: 96.806}
+  m_AnchoredPosition: {x: 0.87, y: 0.011}
+  m_SizeDelta: {x: 320, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &255417819
 MonoBehaviour:
@@ -688,7 +688,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: +2 Enemies per wave.
+  m_text: asdfasdfasdfasdfasdasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfaasdf
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -715,11 +715,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.7
+  m_fontSize: 28
   m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 20
+  m_fontSizeMin: 28
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -1693,8 +1693,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 350, y: 130}
+  m_AnchoredPosition: {x: 0, y: -59.4}
+  m_SizeDelta: {x: 350, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &924312804
 MonoBehaviour:
@@ -3185,6 +3185,15 @@ MonoBehaviour:
   - Enemies move 20% faster.
   - Enemies spawn 20% faster.
   - Adds an additional 2 enemies per chunk.
+  ChunkTexts:
+  - Basic enemy that moves in a straight line.
+  - Fast enemy that lingers at the edge, before zooming forward.
+  - Approaches from the sides in a sneaking motion.
+  - Swarm of slow, but numerous enemies that come from all directions.
+  - Tricky enemy that lingers at the edge of the arena before disguising its true
+    color as its opposite.
+  - Enemy that moves in a circular motion, slowly closing in.
+  - Enemy that approaches in a zig-zag pattern.
   shotSpeedMultiplier: 1.185
   rapidFireMultiplier: 1.366
   shotSizeMultiplier: 1.5
@@ -3205,6 +3214,7 @@ MonoBehaviour:
   orangeVisualColor: {r: 1, g: 0.65, b: 0.15, a: 1}
   purpleVisualColor: {r: 0.5, g: 0, b: 1, a: 1}
   whiteVisualColor: {r: 1, g: 1, b: 1, a: 1}
+  CHARACTERMAX: 68
 --- !u!4 &1793738074
 Transform:
   m_ObjectHideFlags: 0
@@ -3324,7 +3334,13 @@ MonoBehaviour:
   gameManager: {fileID: 1793738076}
   toolTip: {fileID: 924312802}
   toolTipText: {fileID: 255417819}
+  toolTipRect: {fileID: 0}
+  toolTipTextRect: {fileID: 0}
+  toolTipActive: 0
+  toolTipTimer: 0
   baseToolTipOffset: 2800000028000000
+  baseToolTipSize: 5e01000096000000
+  extendedToolTipSize: 5e010000e6000000
 --- !u!1 &1809639732
 GameObject:
   m_ObjectHideFlags: 0
