@@ -912,7 +912,7 @@ public class WaveSpawningSystem : MonoBehaviour
         }
         public ZigZagChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
         {
-            name = "ZigZag";
+            name = "Zigzag";
             baseDifficulty = 5;
             image = uiManager.EnemySprites[4];
             SetDifficulty(spawnColors);
