@@ -19,6 +19,9 @@ public class GameModel : MonoBehaviour
     }
 
     public List<Sprite> UpgradeImages = new List<Sprite>();
+    public List<Sprite> WaveModImages = new List<Sprite>();
+    public List<string> WaveModTexts = new List<string>();
+    public List<string> ChunkTexts = new List<string>();
 
     [Range(1.05f, 10f)] public float shotSpeedMultiplier;
     [Range(1.05f, 10f)] public float rapidFireMultiplier;
@@ -43,6 +46,8 @@ public class GameModel : MonoBehaviour
     public Color orangeVisualColor = new Color(1f, 0.65f, 0.15f);
     public Color purpleVisualColor = new Color(0.5f, 0f, 1f);
     public Color whiteVisualColor = Color.white;
+
+    public int CHARACTERMAX = 68;
 
 
     // Start is called before the first frame update
@@ -129,6 +134,81 @@ public class GameModel : MonoBehaviour
             default:
                 return UpgradeImages[3];
         }
+    }
+
+    public Sprite WaveModImageFromType(UIManager.WaveModifier waveModifier)
+    {
+        switch (waveModifier)
+        {
+            case UIManager.WaveModifier.DIFFICULT:
+                return WaveModImages[0];
+            case UIManager.WaveModifier.FASTER:
+                return WaveModImages[1];
+            case UIManager.WaveModifier.NUMEROUS:
+                return WaveModImages[2];
+            case UIManager.WaveModifier.BIGGER_WAVE:
+                return WaveModImages[3];
+            default:
+                return WaveModImages[0];
+        }
+
+    }
+
+    public string GetWaveModTextFromType(UIManager.WaveModifier waveModifier)
+    {
+        switch (waveModifier)
+        {
+            case UIManager.WaveModifier.DIFFICULT:
+                return WaveModTexts[0];
+            case UIManager.WaveModifier.FASTER:
+                return WaveModTexts[1];
+            case UIManager.WaveModifier.NUMEROUS:
+                return WaveModTexts[2];
+            case UIManager.WaveModifier.BIGGER_WAVE:
+                return WaveModTexts[3];
+            default:
+                return "Huh";
+        }
+    }
+
+    public string GetChunkTextFromType(WaveSpawningSystem.Chunk thisChunk)
+    {
+        string returnText = "";
+        switch (thisChunk.name)
+        {
+            case "Basic":
+                returnText = ChunkTexts[0];
+                    break;
+            case "Fast":
+                returnText = ChunkTexts[1];
+                break;
+            case "Ninja":
+                returnText = ChunkTexts[2];
+                break;
+            case "Swarm":
+                returnText = ChunkTexts[3];
+                break;
+            case "Disguiser":
+                returnText = ChunkTexts[4];
+                break;
+            case "Swirl":
+                returnText = ChunkTexts[5];
+                break;
+            default:
+                return "Something went wrong";
+        }
+        returnText += "\n"+"Colors: ";
+        for (int i = 0; i < thisChunk.colors.Length; i++)
+        {
+            if (thisChunk.isDarkened)
+            {
+                returnText += "Dark ";
+            }
+            returnText += thisChunk.colors[i];
+            if (i != thisChunk.colors.Length - 1)
+                returnText += ", ";
+        }
+        return returnText;
     }
 
     // Update is called once per frame

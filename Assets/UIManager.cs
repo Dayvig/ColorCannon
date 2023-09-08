@@ -1,17 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public List<Sprite> EnemySprites = new List<Sprite>();
+    public List<WaveModifier> WaveMods = new List<WaveModifier>();
     public GameObject UpcomingPanel;
+    public GameObject WaveModPanel;
     public Transform PreviewPanelRow1;
     public Transform PreviewPanelRow2;
     public Transform PreviewPanelRow3;
+    public Transform WaveModPanelRow;
     public GameObject ChunkPreview;
+    public GameObject WaveModPreview;
     public GameObject UpgradePreview;
     public GameObject PreviewImage;
     public GameObject UpgradePanel;
@@ -22,9 +27,35 @@ public class UIManager : MonoBehaviour
     public GameModel modelGame;
     public GameManager gameManager;
 
+    public GameObject toolTip;
+    public TextMeshProUGUI toolTipText;
+    public RectTransform toolTipRect;
+    public RectTransform toolTipTextRect;
+    public bool toolTipActive = false;
+
+    //Note: put in game model
+    private float xBounds = 3;
+    private float yBounds = 5;
+    public float toolTipTimer;
+    private float toolTipDissappearInterval = 0.05f;
+
+    public int[] baseToolTipOffset = { 0, 0 };
+    public int[] baseToolTipSize = { 350, 150 };
+    public int[] extendedToolTipSize = { 350, 230 };
+
+    public enum WaveModifier
+    {
+        NUMEROUS,
+        FASTER,
+        BIGGER_WAVE,
+        DIFFICULT
+    }
+
     void Start(){
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>(); 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        toolTipRect = toolTip.GetComponent<RectTransform>();
+        toolTipTextRect = toolTipText.gameObject.GetComponent<RectTransform>();
         deactivateWinLoseUI();
     }
 
@@ -35,6 +66,48 @@ public class UIManager : MonoBehaviour
 
     public void PostWaveUIUpdate()
     {
+        if (toolTipTimer < toolTipDissappearInterval)
+        {
+            toolTipTimer += Time.deltaTime;
+            if (toolTipTimer >= toolTipDissappearInterval)
+            {
+                SetToolTip(false);
+            }
+            else
+            {
+                SetToolTip(true);
+            }
+        }
+    }
+
+    public void renderToolTip(String inputText)
+    {
+        if (inputText.ToCharArray().Length < modelGame.CHARACTERMAX)
+        {
+            toolTipRect.sizeDelta = new Vector2(baseToolTipSize[0], baseToolTipSize[1]);
+            toolTipTextRect.sizeDelta = new Vector2(baseToolTipSize[0]-20, baseToolTipSize[1]-20);
+        }
+        else
+        {
+            toolTipRect.sizeDelta = new Vector2(extendedToolTipSize[0], extendedToolTipSize[1]);
+            toolTipTextRect.sizeDelta = new Vector2(extendedToolTipSize[0] - 20, extendedToolTipSize[1] - 20);
+        }
+        Vector3 mousePos = Input.mousePosition;
+        
+        Vector3 toolTipPos = new Vector3(mousePos.x + (mousePos.x >= 150 ? -baseToolTipOffset[0] : baseToolTipOffset[0]), mousePos.y - baseToolTipOffset[1], 0);
+        toolTip.transform.position = toolTipPos;
+        toolTipText.text = inputText;
+        toolTipTimer = 0.0f;
+    }
+
+    public void SetToolTip(bool isActive)
+    {
+        toolTip.SetActive(isActive);
+    }
+
+    public void AddWaveMod(WaveModifier waveMod)
+    {
+        WaveMods.Add(waveMod);
     }
 
     public void activateWinScreen()
@@ -57,14 +130,16 @@ public class UIManager : MonoBehaviour
     {
         UpcomingPanel.SetActive(true);
         UpgradePanel.SetActive(true);
+        WaveModPreview.SetActive(true);
     }
 
     public void deactivatePostWaveUI()
     {
         UpcomingPanel.SetActive(false);
         UpgradePanel.SetActive(false);
+        WaveModPreview.SetActive(false);
     }
-    
+
     public void SetupChunkPreview(WaveSpawningSystem.Chunk c, int row)
     {
         GameObject newChunkPreview;
@@ -96,6 +171,23 @@ public class UIManager : MonoBehaviour
                 enemyImage.color = new Color(newColor.r / div, newColor.g / div, newColor.b / div, newColor.a);
             }
         }
+        previewScript2 thisPreview = newChunkPreview.GetComponent<previewScript2>();
+        thisPreview.modText = modelGame.GetChunkTextFromType(c);
+        thisPreview.setupCollider();
+    }
+
+    public void SetupWaveModUI()
+    {
+        foreach (WaveModifier mod in WaveMods)
+        {
+            GameObject newWaveModPreview = Instantiate(WaveModPreview, WaveModPanelRow.transform);
+            GameObject newWaveModPreviewImage = Instantiate(PreviewImage, newWaveModPreview.transform);
+            Image modImage = newWaveModPreviewImage.GetComponent<Image>();
+            previewScript2 previewScript2 = newWaveModPreview.GetComponent<previewScript2>();
+            previewScript2.SetText(modelGame.GetWaveModTextFromType(mod));
+            previewScript2.setupCollider();
+            modImage.sprite = modelGame.WaveModImageFromType(mod);
+        }
     }
 
     public void SetupUpgradePreview(GameManager.Upgrade u)
@@ -117,6 +209,7 @@ public class UIManager : MonoBehaviour
     {
         WipeWave();
         WipeUpgrades();
+        WipeWaveMods();
     }
 
     public void WipeUpgrades()
@@ -140,6 +233,43 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < PreviewPanelRow3.childCount; i++)
         {
             PreviewPanelRow3.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    public void WipeWaveMods()
+    {
+        for (int i = 0; i < WaveModPanelRow.childCount; i++)
+        {
+            WaveModPanelRow.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    public void ClearWaveMods()
+    {
+        WaveMods.Clear();
+    }
+
+    public void DestroyAll()
+    {
+        for (int i = 0; i < PreviewPanelRow1.childCount; i++)
+        {
+            Destroy(PreviewPanelRow1.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < PreviewPanelRow2.childCount; i++)
+        {
+            Destroy(PreviewPanelRow2.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < PreviewPanelRow3.childCount; i++)
+        {
+            Destroy(PreviewPanelRow3.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < WaveModPanelRow.childCount; i++)
+        {
+            Destroy(WaveModPanelRow.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < UpgradePreviewPanel.childCount; i++)
+        {
+            Destroy(UpgradePreviewPanel.GetChild(i).gameObject);
         }
     }
 }

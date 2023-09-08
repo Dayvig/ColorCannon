@@ -226,6 +226,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.POSTWAVE:
                 PostWaveUpdate();
+                uiManager.PostWaveUIUpdate();
                 break;
             case GameState.PAUSED:
                 PausedUpdate();
@@ -297,7 +298,9 @@ public class GameManager : MonoBehaviour
         spawningSystem.newMechanics.Clear();
         spawningSystem.medMechanics.Clear();
         spawningSystem.availableChunks.Clear();
+        uiManager.WaveMods.Clear();
         spawningSystem.clearWave();
+        uiManager.DestroyAll();
         spawningSystem.basicMechanics = new List<WaveSpawningSystem.Mechanic>
         {
             WaveSpawningSystem.Mechanic.DARK,

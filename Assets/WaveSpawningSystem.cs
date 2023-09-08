@@ -392,11 +392,13 @@ public class WaveSpawningSystem : MonoBehaviour
             }
         }
         enemiesToSpawn = currentWave.Count - 1;
+        uiManager.SetupWaveModUI();
     }
 
     public void generateFirstWave()
     {
         uiManager.WipePreviewImages();
+        uiManager.WipeWaveMods();
         Chunk nextChunk = new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW});
         uiManager.SetupChunkPreview(nextChunk, 1);
 
@@ -505,15 +507,18 @@ public class WaveSpawningSystem : MonoBehaviour
             {
                 case 0:
                     globalWaveNumber += 2;
+                    uiManager.AddWaveMod(UIManager.WaveModifier.BIGGER_WAVE);
                     break;
                 case 1:
                     globalWaveSpacing /= 1.2f;
+                    uiManager.AddWaveMod(UIManager.WaveModifier.NUMEROUS);
                     break;
                 case 2:
                     for (int k = 0; k < chunkDifficulties.Count; k++)
                     {
                         chunkDifficulties[k]++;
                     }
+                    uiManager.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
                     break;
             }
         }
