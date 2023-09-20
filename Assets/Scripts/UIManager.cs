@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public GameObject WinPanel;
     public GameObject LosePanel;
     public GameObject RefreshUpgradesButton;
+    public TextMeshProUGUI WaveText;
     
     public GameModel modelGame;
     public GameManager gameManager;
@@ -53,6 +54,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public int[] baseToolTipOffset = { 0, 0 };
     public int[] baseToolTipSize = { 350, 150 };
     public int[] extendedToolTipSize = { 350, 230 };
+
+    public static string[] WaveUIText = new string[] { "Wave: ", " / 30" };
 
     public enum WaveModifier
     {
@@ -156,6 +159,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         SetWaveModPreviews(true);
         SetUpgradesVisible(true);
         RefreshUpgradesButton.SetActive(refreshActive);
+        WaveText.text = WaveUIText[0] + WaveSpawningSystem.instance.Level + WaveUIText[1];
         refreshActive = true;
     }
 

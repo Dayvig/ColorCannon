@@ -206,9 +206,12 @@ public class EnemyBehavior : MonoBehaviour
                 {
                     Die();
                 }
-                enemyColor = SetMixedColor(enemyColors);
-                hitTaken = true;
-                TakeHit();
+                else
+                {
+                    enemyColor = SetMixedColor(enemyColors);
+                    hitTaken = true;
+                    TakeHit();
+                }
                 bullet.TakeHit();
                 bullet.immuneEnemies.Add(this);
             }
@@ -220,22 +223,26 @@ public class EnemyBehavior : MonoBehaviour
         if (hitTaken)
         {
             hitTaken = false;
-            SetVisualColor(enemyColor);
-            knockBack = true;
-            knockBackTimer = 0.0f;
+            StartKnockBack();
             return;
         }
         if (isDarkened)
         {
             isDarkened = false;
-            SetVisualColor(enemyColor);
-            knockBack = true;
-            knockBackTimer = 0.0f;
+            StartKnockBack();
         }
         else
         {
             Die();
         }
+    }
+
+    public void StartKnockBack()
+    {
+        SetVisualColor(enemyColor);
+        knockBack = true;
+        knockBackTimer = 0.0f;
+        SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
     }
 
     public void Die()

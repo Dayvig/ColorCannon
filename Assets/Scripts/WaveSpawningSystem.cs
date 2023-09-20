@@ -38,6 +38,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     private int recusionProtection = 0;
     public int enemiesToSpawn;
 
+    public static WaveSpawningSystem instance { get; private set; }
+
     public enum SpawnLocations
     {
         TOP,
@@ -138,6 +140,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     void Start()
     {
+        instance = this;
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         tutorialSpacing = modelGame.baseTutorialSpacing;
