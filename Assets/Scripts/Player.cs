@@ -16,7 +16,7 @@ public class Player : MonoBehaviour, IDataPersistence
     public float baseShotSpeed = 0.5f;
     [Range(0.001f, 1f)]
     public float baseBulletSpeed = 0.01f;
-    [Range(0.1f, 1.5f)]
+    [Range(0.01f, 0.1f)]
     public float baseBulletSize = 0.1f;
     [Range(1, 10)] 
     public int basePiercing = 1;

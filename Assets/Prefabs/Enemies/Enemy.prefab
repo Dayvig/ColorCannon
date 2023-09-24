@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7963215952173959544}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5682, y: 0.5682, z: 0.5682}
+  m_LocalScale: {x: 0.0888355, y: 0.0888355, z: 0.0888355}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: cb4baaaf685693849821db60028063bb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b951b8df55803d9448af595f2cc7e8f2, type: 3}
   m_Color: {r: 0.9811321, g: 0.43040225, b: 0.43040225, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -105,11 +105,11 @@ MonoBehaviour:
   enemyColor: 0
   enemyColors: 
   rend: {fileID: 8244717342847803329}
-  modelGame: {fileID: 0}
   isDarkened: 0
   immuneBullets: []
   knockBack: 0
   enemyType: 0
+  enemySource: {fileID: 0}
 --- !u!50 &8196177601444596792
 Rigidbody2D:
   serializedVersion: 4
@@ -144,18 +144,18 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.022868037, y: -0.0074440986}
+  m_Offset: {x: 0.058475018, y: -0.1883254}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.28, y: 0.78}
+    oldSize: {x: 8.96, y: 8.96}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.1744547, y: 0.7474481}
+  m_Size: {x: 3.893896, y: 6.786606}
   m_EdgeRadius: 0
 --- !u!82 &5671364434688019111
 AudioSource:
