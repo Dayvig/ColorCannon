@@ -15,14 +15,20 @@ public class GameData
     public List<WaveSpawningSystem.Mechanic> undiscoveredMedMechanics = new List<WaveSpawningSystem.Mechanic>();
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
     public int[] chunkDifficulties;
+    public int waveNumber;
+    public float waveSpacing;
+    public float waveSpeed;
 
     public bool refreshActive;
     public GameData(){
 
-        currentLevel = 1;
+        currentLevel = 0;
         refreshActive = true;
-        undiscoveredEasyMechanics = new List<Mechanic> { Mechanic.FAST, Mechanic.NINJA, Mechanic.ORANGE, Mechanic.GREEN, Mechanic.PURPLE, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG };
-        undiscoveredMedMechanics = new List<Mechanic> { Mechanic.WHITE, Mechanic.DISGUISED, Mechanic.SWIRL };
+        undiscoveredEasyMechanics = new List<Mechanic> { Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG };
+        undiscoveredMedMechanics = new List<Mechanic> { Mechanic.DISGUISED, Mechanic.SWIRL };
         chunkDifficulties = new int[]{ 1, 1, 2 };
+        waveNumber = GameModel.instance.baseGlobalWaveNumber;
+        waveSpacing = GameModel.instance.baseGlobalWaveSpacing;
+        waveSpeed = GameModel.instance.baseGlobalWaveSpeed;
     }
 }

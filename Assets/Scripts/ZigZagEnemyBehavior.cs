@@ -72,7 +72,7 @@ public class ZigZagEnemyBehavior : EnemyBehavior
         switch (zigzagBehavior)
         {
             case Behavior.MOVE:
-                moveSpeed = GameModel.instance.baseGlobalWaveSpeed * SNEAKSPEEDMULT;
+                moveSpeed = WaveSpawningSystem.globalWaveSpeed * SNEAKSPEEDMULT;
                 sneakInterval = SNEAKINTERVAL;
                 break;
             case Behavior.WAIT:

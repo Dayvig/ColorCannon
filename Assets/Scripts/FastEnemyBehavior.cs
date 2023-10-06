@@ -60,7 +60,7 @@ public class FastEnemyBehavior : EnemyBehavior
                 moveSpeed = 0.0f;
                 break;
             case Behavior.FASTMOVEMENT:
-                moveSpeed = GameModel.instance.baseGlobalWaveSpeed * FASTSPEEDMULT;
+                moveSpeed = WaveSpawningSystem.globalWaveSpeed * FASTSPEEDMULT;
                 break;
         }
 

@@ -40,7 +40,7 @@ public class NinjaEnemyBehavior : EnemyBehavior
         switch (ninjaBehavior)
         {
             case Behavior.SNEAK:
-                moveSpeed = GameModel.instance.baseGlobalWaveSpeed * SNEAKSPEEDMULT;
+                moveSpeed = WaveSpawningSystem.globalWaveSpeed * SNEAKSPEEDMULT;
                 sneakInterval = SNEAKINTERVAL;
                 break;
             case Behavior.WAIT:

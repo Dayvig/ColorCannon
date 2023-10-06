@@ -48,6 +48,11 @@ public class Player : MonoBehaviour, IDataPersistence
     public float dClickInterval;
     public int clicks = 0;
 
+    public Transform[] orbs = new Transform[3];
+    public Transform mainOrb;
+    public Vector3[] orbPositions = new Vector3[] { new Vector3(-0.13f, 0.482f, 0), new Vector3(-0.355f, 0.263f, 0f), new Vector3(-0.415f, 0.09f, 0f) };
+    public Vector3[] orbTargetPos = new Vector3[3];
+
     private GameModel.GameColor[] colorOrder =
         {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW};
 
@@ -56,6 +61,9 @@ public class Player : MonoBehaviour, IDataPersistence
     public List<GameManager.Upgrade> upgrades = new List<GameManager.Upgrade>();
 
     public AudioSource playerAudio;
+
+    public float orbAnimTimer = 0.0f;
+    public float orbAnimInterval = 1.0f;
 
     private enum controlMode
     {
@@ -72,6 +80,7 @@ public class Player : MonoBehaviour, IDataPersistence
         playerColor = colorOrder[colorPlace];
         barrel.color = modelGame.ColorToColor(playerColor);
         lives = baseLives;
+        setNextOrb();
         configureWeapon();
         playerAudio = GetComponent<AudioSource>();
     }
@@ -81,17 +90,11 @@ public class Player : MonoBehaviour, IDataPersistence
     {
         DoubleClickUpdate();
         LifeUpdate();
+        OrbUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
-        if (Input.GetMouseButton(0))
-        {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            {
-                float angle = ((180 / Mathf.PI) * Mathf.Atan2(mousePos.y -currentPos.y,
-                                          mousePos.x - currentPos.x)) - 90;
-                rotationTarget = angle;
-            }
-        }
+        LookAtMouse(currentPos);
+
         if (Input.touchCount == 1)
         {
             Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
@@ -119,11 +122,42 @@ public class Player : MonoBehaviour, IDataPersistence
         }
     }
 
+    private void LookAtMouse(Vector3 current)
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float angle = ((180 / Mathf.PI) * Mathf.Atan2(mousePos.y - current.y, mousePos.x - current.x)) - 90;
+        rotationTarget = angle;
+    }
+
     private void LifeUpdate()
     {
         for (int i = lifeShields.Length-1; i >= 0; i--)
         {
             lifeShields[i].enabled = (lives >= i+1);
+        }
+    }
+
+    private void OrbUpdate()
+    {
+        if (orbAnimTimer != -1f)
+        {
+            orbAnimTimer += Time.deltaTime;
+        }
+        if (orbAnimTimer > orbAnimInterval)
+        {
+            orbAnimTimer = -1f;
+        }
+        for (int i = 0; i < orbs.Length; i++)
+        {
+            if (orbs[i] != mainOrb)
+            {
+                orbs[i].localScale = Vector3.Lerp(orbs[i].localScale, new Vector3(0.17f, 0.17f, 0f), orbAnimTimer / orbAnimInterval);
+            }
+            else
+            {
+                orbs[i].localScale = Vector3.Lerp(orbs[i].localScale, new Vector3(0.28f, 0.28f, 0f), orbAnimTimer / orbAnimInterval);
+            }
+            orbs[i].localPosition = Vector3.Lerp(orbs[i].localPosition, orbTargetPos[i], orbAnimTimer / orbAnimInterval);
         }
     }
 
@@ -205,7 +239,25 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         playerColor = colorOrder[colorPlace];
         barrel.color = modelGame.ColorToColor(playerColor);
+        setNextOrb();
         configureWeapon();
+    }
+
+    private void setNextOrb()
+    {
+        mainOrb = orbs[colorPlace];
+        for (int i= 0; i < orbs.Length; i++)
+        {
+            if (colorPlace + i < orbs.Length)
+            {
+                orbTargetPos[colorPlace + i] = orbPositions[i];
+            }
+            else
+            {
+                orbTargetPos[colorPlace - orbs.Length + i] = orbPositions[i];
+            }
+        }
+        orbAnimTimer = 0.0f;
     }
 
     public void configureWeapon()

@@ -20,8 +20,8 @@ public class EnemyBehavior : MonoBehaviour
     public bool isDarkened;
     public List<Bullet> immuneBullets = new List<Bullet>();
     public bool knockBack = false;
-    private float knockBackTimer;
-    private float knockBackDuration = 1f;
+    public float knockBackTimer;
+    public float knockBackDuration = 1f;
     public WaveSpawningSystem.WaveObject.Type enemyType;
     private bool hitTaken = false;
 
@@ -65,7 +65,7 @@ public class EnemyBehavior : MonoBehaviour
     {
         currentPos = transform.position;
         destination = des;
-        moveSpeed = GameModel.instance.baseGlobalWaveSpeed;
+        moveSpeed = WaveSpawningSystem.globalWaveSpeed;
         initializeMixedColor(color);
         isMultiColor = enemyColors.Count > 1;
         if (isMultiColor)
@@ -237,7 +237,7 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
-    public void StartKnockBack()
+    public virtual void StartKnockBack()
     {
         SetVisualColor(enemyColor);
         knockBack = true;

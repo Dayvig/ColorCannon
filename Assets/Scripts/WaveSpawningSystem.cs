@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
@@ -10,9 +12,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public List<EnemyBehavior> EnemyScripts = new List<EnemyBehavior>();
 
     public int Level;
-    private static int globalWaveNumber;
-    private static float globalWaveSpacing;
-    private static float globalWaveSpeed;
+    public static int globalWaveNumber;
+    public static float globalWaveSpacing;
+    public static float globalWaveSpeed;
     public static float tutorialSpacing;
     public int numUniqueChunks;
     public int numChunks;
@@ -64,8 +66,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         SWIRL
     }
 
-    public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.ORANGE, Mechanic.GREEN, Mechanic.PURPLE, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG};
-    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.WHITE, Mechanic.DISGUISED, Mechanic.SWIRL};
+    public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG};
+    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.DISGUISED, Mechanic.SWIRL};
 
     public static int[] ALL =
         {0, 1, 2, 3};
@@ -150,14 +152,12 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     {
         repopulateChunks();
         
-        globalWaveNumber = modelGame.baseGlobalWaveNumber;
-        globalWaveSpacing = modelGame.baseGlobalWaveSpacing;
         numChunks = modelGame.baseNumChunks;
         numUniqueChunks = modelGame.baseNumUniqueChunks;
 
         gameManager.addStartingUpgrades();
         clearWave();
-        if (Level == 1 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
+        if (Level == 0 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
         {
             Debug.Log("Spawning First Wave");
             generateFirstWave();
@@ -397,6 +397,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 }
             }
             nextChunk.Generate(isTutorial);
+            Debug.Log("Spawning next chunk with " + globalWaveNumber + " enemies.");
             foreach (Mechanic m2 in currentMechanics)
             {
                 if (newMechanics.Contains(m2))
@@ -439,17 +440,29 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void SetupNextWave()
     {
-        Debug.Log("Next Wave =================");
-        UIManager.instance.WipePreviewImages();
-        gameManager.currentOfferedUpgrades.Clear();
-        clearWave();
         IncreaseDifficulty();
-        generateWave();
-        RandomizeWave();
-        gameManager.GenerateUpgrades();
-        enemyTimer = currentWave[0].delayUntilNext;
-        currentWaveIndex = 0;
-        UIManager.instance.activatePostWaveUI();
+
+        Debug.Log("Next Wave =================");
+        if (Level == 0)
+        {
+            generateFirstWave();
+            RandomizeWave();
+            enemyTimer = currentWave[0].delayUntilNext;
+            currentWaveIndex = 0;
+        }
+        else
+        {
+            UIManager.instance.WipePreviewImages();
+            gameManager.currentOfferedUpgrades.Clear();
+            clearWave();
+            generateWave();
+            RandomizeWave();
+            gameManager.GenerateUpgrades();
+            enemyTimer = currentWave[0].delayUntilNext;
+            currentWaveIndex = 0;
+            UIManager.instance.activatePostWaveUI();
+        }
+
         SaveLoadManager.instance.SaveGame();
     }
 
@@ -506,10 +519,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             numUniqueChunks++;
         }
 
-        //every third wave, introduces a new mechanic.
-        if (Level % 3 == 0)
+        //every 2nd wave, introduces a new mechanic.
+        if (Level % 2 == 0)
         {
-            if (Level > 15)
+            if (Level > 7)
             {
                 addRandomMechanic(2);
             }
@@ -519,6 +532,18 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             }
         }
 
+        //On wave 3, add secondary colors. On wave 10, adds white.
+        if (Level == 3)
+        {
+            newMechanics.Add(Mechanic.PURPLE);
+            newMechanics.Add(Mechanic.GREEN);
+            newMechanics.Add(Mechanic.ORANGE);
+        }
+        if (Level == 10)
+        {
+            newMechanics.Add(Mechanic.WHITE);
+        }
+
         if (Level % 2 == 0)
         {
             //Every other wave makes waves harder with a modifier.
@@ -526,17 +551,18 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             switch (randomWaveMod)
             {
                 case 0:
-                    globalWaveNumber += 2;
-                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.BIGGER_WAVE);
-                    break;
-                case 1:
+                    globalWaveNumber += 4;
                     globalWaveSpacing /= 1.2f;
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.NUMEROUS);
+                    break;
+                case 1:
+                    globalWaveSpeed *= 1.2f;
+                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.FASTER);
                     break;
                 case 2:
                     for (int k = 0; k < chunkDifficulties.Count; k++)
                     {
-                        chunkDifficulties[k]++;
+                        chunkDifficulties[k] += 2;
                     }
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
                     break;
@@ -640,6 +666,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         public bool isDarkened;
         public string name;
         public bool isTutorialChunk;
+        public float speedMultiplier;
 
         public Chunk(GameModel.GameColor[] spawnColors, bool dark)
         {
@@ -1096,6 +1123,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         medMechanics = data.undiscoveredMedMechanics;
         basicMechanics = data.undiscoveredEasyMechanics;
         chunkDifficulties = data.chunkDifficulties.ToList();
+        globalWaveNumber = data.waveNumber;
+        Debug.Log("globalWaveNumber : " + globalWaveNumber);
+        globalWaveSpacing = data.waveSpacing;
+        globalWaveSpeed = data.waveSpeed;
+        Debug.Log("globalWaveSpeed : " + globalWaveSpeed);
     }
 
     public void SaveData(ref GameData data)
@@ -1106,6 +1138,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         data.undiscoveredMedMechanics = medMechanics;
         data.undiscoveredEasyMechanics = basicMechanics;
         data.chunkDifficulties = chunkDifficulties.ToArray();
+        data.waveNumber = globalWaveNumber;
+        data.waveSpacing = globalWaveSpacing;
+        data.waveSpeed = globalWaveSpeed;
     }
 
     // ========================================================= End of Chunks =================================================================
