@@ -64,9 +64,9 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public Vector3 swingStart = new Vector3(-1076.0f, -7.2f, 0f);
     public Vector3 swingMid = new Vector3(-130f, 60f, 0f);
     public Vector3 swingEnd = new Vector3(-36f, -7.2f, 0f);
-    private Vector3 swingRotStart = new Vector3(0f, 0f, 14f);
-    private Vector3 swingRotMid = new Vector3(0f, 0f, -1.4f);
-    private Vector3 swingRotEnd = new Vector3(0f, 0f, -3.4f);
+    public Vector3 swingRotStart = new Vector3(0f, 0f, 14f);
+    public Vector3 swingRotMid = new Vector3(0f, 0f, -1.4f);
+    public Vector3 swingRotEnd = new Vector3(0f, 0f, -3.6f);
     private bool swingIn = true;
     private Vector3 start;
     private Vector3 end;

@@ -653,7 +653,6 @@ GameObject:
   - component: {fileID: 207417598}
   - component: {fileID: 207417597}
   - component: {fileID: 207417596}
-  - component: {fileID: 207417595}
   m_Layer: 5
   m_Name: WaveModPanel
   m_TagString: Untagged
@@ -669,44 +668,18 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207417593}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1236444431}
   m_Father: {fileID: 1809639733}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.68396, y: -4.73999}
-  m_SizeDelta: {x: -32.355, y: -221.896}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -82.5, y: -86.5}
+  m_SizeDelta: {x: 470.95, y: 44.721}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &207417595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 207417593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &207417596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1808,8 +1781,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 9.838989, y: 45.905}
-  m_SizeDelta: {x: -20.733, y: -201.62}
+  m_AnchoredPosition: {x: 11.230011, y: -11.315002}
+  m_SizeDelta: {x: -20.733, y: -121.225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &773639243
 MonoBehaviour:
@@ -2258,7 +2231,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.206, y: 213.684}
+  m_AnchoredPosition: {x: 13, y: 200}
   m_SizeDelta: {x: -64.758, y: -1222.002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &968282013
@@ -2887,16 +2860,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236444430}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 207417594}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 175.235, y: 165.241}
+  m_SizeDelta: {x: 470.578, y: 56.085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1236444432
 MonoBehaviour:
@@ -2915,13 +2888,13 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: -30
+  m_ChildAlignment: 3
+  m_Spacing: -5
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 0
+  m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!1 &1266984570
@@ -4066,7 +4039,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1662487983}
-  m_LocalRotation: {x: -0, y: -0, z: -0.01215329, w: 0.99992615}
+  m_LocalRotation: {x: 0, y: 0, z: -0.03141073, w: 0.9995066}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4078,11 +4051,11 @@ RectTransform:
   - {fileID: 924312803}
   m_Father: {fileID: 425172974}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1.393}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -3.6}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -68, y: 4}
-  m_SizeDelta: {x: 844.92993, y: 1517.396}
+  m_AnchoredPosition: {x: -28, y: 0}
+  m_SizeDelta: {x: 880.79, y: 1547}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1662487985
 MonoBehaviour:
@@ -4158,7 +4131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4492,7 +4465,10 @@ MonoBehaviour:
   postWaveUISwingInterval2: 0.04
   swingStart: {x: -1076, y: -7.2, z: 0}
   swingMid: {x: -68, y: 4, z: 0}
-  swingEnd: {x: -36, y: -7.2, z: 0}
+  swingEnd: {x: -28, y: -7.2, z: 0}
+  swingRotStart: {x: 0, y: 0, z: 14}
+  swingRotMid: {x: 0, y: 0, z: -1.4}
+  swingRotEnd: {x: 0, y: 0, z: -3.6}
 --- !u!114 &1793738078
 MonoBehaviour:
   m_ObjectHideFlags: 0
