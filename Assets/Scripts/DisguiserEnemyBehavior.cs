@@ -48,13 +48,13 @@ public class DisguiserEnemyBehavior : EnemyBehavior
         base.KnockBack();
     }
 
-    public override void TakeHit()
+    public override void TakeHit(GameModel.GameColor bulletColor)
     {
+        base.TakeHit(bulletColor);
         disguised = false;
         SetVisualColor(enemyColor);
         disguiserBehavior = Behavior.DISGUISE;
         timer = windupInterval;
-        base.TakeHit();
     }
 
     public override void Move()

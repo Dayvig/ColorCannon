@@ -19,6 +19,15 @@ public class SoundManager : MonoBehaviour
         source.PlayOneShot(clip);
     }
 
+    public void PlaySound(AudioSource source, AudioClip clip, float minPitchOffset, float maxPitchOffset)
+    {
+        float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
+        source.clip = clip;
+        source.pitch *= pitchShift;
+        source.PlayOneShot(clip);
+        source.pitch /= pitchShift;
+    }
+
     public void PlaySound(AudioSource source, AudioClip clip, float delaySeconds)
     {
         StartCoroutine(PlaySoundWithDelay(source, clip, delaySeconds));

@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public List<Sprite> EnemySprites = new List<Sprite>();
     public List<WaveModifier> WaveMods = new List<WaveModifier>();
     public GameObject previousUpgrades;
-    public GameObject UpcomingPanel;
+    public GameObject PostWaveUIPanel;
     public GameObject WaveModPanel;
     public GameObject currentUpgradePanel;
     public Transform PreviewPanelRow1;
@@ -55,7 +55,25 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public int[] baseToolTipSize = { 350, 150 };
     public int[] extendedToolTipSize = { 350, 230 };
 
-    public static string[] WaveUIText = new string[] { "Wave: ", " / 30" };
+    public static string[] WaveUIText = new string[] { "Wave: ", " / 15" };
+
+    public float postWaveUITimer = 0.0f;
+    public float postWaveUISwingInterval1;
+    public float postWaveUISwingInterval2;
+    private RectTransform PostUIRect;
+    public Vector3 swingStart = new Vector3(-1076.0f, -7.2f, 0f);
+    public Vector3 swingMid = new Vector3(-130f, 60f, 0f);
+    public Vector3 swingEnd = new Vector3(-36f, -7.2f, 0f);
+    private Vector3 swingRotStart = new Vector3(0f, 0f, 14f);
+    private Vector3 swingRotMid = new Vector3(0f, 0f, -1.4f);
+    private Vector3 swingRotEnd = new Vector3(0f, 0f, -3.4f);
+    private bool swingIn = true;
+    private Vector3 start;
+    private Vector3 end;
+    private Vector3 rotStart;
+    private Vector3 rotEnd;
+    private float interval1;
+    private float interval2;
 
     public enum WaveModifier
     {
@@ -71,13 +89,14 @@ public class UIManager : MonoBehaviour, IDataPersistence
         toolTipRect = toolTip.GetComponent<RectTransform>();
         toolTipTextRect = toolTipText.gameObject.GetComponent<RectTransform>();
         deactivateWinLoseUI();
+        PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
     }
 
     public void Awake()
     {
         if (instance != null)
         {
-            Debug.Log("Multiple SaveLoadManagers Detected.");
+            Debug.Log("Multiple UIManagers Detected.");
         }
         instance = this;
     }
@@ -87,18 +106,60 @@ public class UIManager : MonoBehaviour, IDataPersistence
         
     }
 
-    public void PostWaveUIUpdate()
+    public void activatePostWaveAnimations(bool swingingIn)
     {
-        if (toolTipTimer < toolTipDissappearInterval)
+        swingIn = swingingIn;
+        start = swingIn ? swingStart : swingEnd;
+        end = swingIn ? swingEnd : swingStart;
+        rotStart = swingIn ? swingRotStart : swingRotEnd;
+        rotEnd = swingIn ? swingRotEnd : swingRotStart;
+        interval1 = swingIn ? postWaveUISwingInterval1 : postWaveUISwingInterval2;
+        interval2 = swingIn ? postWaveUISwingInterval2 : postWaveUISwingInterval1;
+        postWaveUITimer = 0.0f;
+        PostUIRect.anchoredPosition = start;
+
+        SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[2], -0.5f, 0.5f);
+
+    }
+
+    public void PostWaveUIAndAnimationUpdate()
+    {
+        if (postWaveUITimer == -1f)
         {
-            toolTipTimer += Time.deltaTime;
-            if (toolTipTimer >= toolTipDissappearInterval)
+            if (toolTipTimer < toolTipDissappearInterval)
             {
-                SetToolTip(false);
+                toolTipTimer += Time.deltaTime;
+                if (toolTipTimer >= toolTipDissappearInterval)
+                {
+                    SetToolTip(false);
+                }
+                else
+                {
+                    SetToolTip(true);
+                }
             }
-            else
+        }
+        else
+        {
+            postWaveUITimer += Time.deltaTime;
+            if (postWaveUITimer < interval1)
             {
-                SetToolTip(true);
+                PostUIRect.anchoredPosition = Vector3.Lerp(start, swingMid, postWaveUITimer / interval1);
+                PostUIRect.transform.rotation = Quaternion.Euler(Vector3.Lerp(rotStart, swingRotMid, postWaveUITimer / interval1));
+            }
+            else if (postWaveUITimer < interval2 + interval1)
+            {
+                PostUIRect.anchoredPosition = Vector3.Lerp(swingMid, end, (postWaveUITimer - interval1) / interval2);
+                PostUIRect.transform.rotation = Quaternion.Euler(Vector3.Lerp(swingRotMid, rotEnd, (postWaveUITimer - interval1) / interval2));
+            }   
+            else 
+            {
+                postWaveUITimer = -1f;
+                if (!swingIn)
+                {
+                    deactivatePostWaveUI();
+                    GameManager.instance.SetState(GameState.WAVE);
+                }
             }
         }
     }
@@ -151,7 +212,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void activatePostWaveUI()
     {
-        UpcomingPanel.SetActive(true);
+        PostWaveUIPanel.SetActive(true);
         UpgradePanel.SetActive(true);
         WaveModPreview.SetActive(true);
         currentUpgradePanel.SetActive(true);
@@ -165,7 +226,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void deactivatePostWaveUI()
     {
-        UpcomingPanel.SetActive(false);
+        PostWaveUIPanel.SetActive(false);
         UpgradePanel.SetActive(false);
         WaveModPreview.SetActive(false);
         currentUpgradePanel.SetActive(false);

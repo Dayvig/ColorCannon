@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WAVE,
         PAUSED,
         POSTWAVE,
+        UIANIMATIONS,
         WIN,
         LOSE
     }
@@ -82,13 +83,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             spawningSystem.SetupNextWave();
             DisposeAllBullets();
+            UIManager.instance.activatePostWaveAnimations(true);
             UIManager.instance.activatePostWaveUI();
             selectedUpgrade = noUpgrade;
         }
 
-        if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
+        if ((currentState == GameState.POSTWAVE || currentState == GameState.UIANIMATIONS) && nextState == GameState.WAVE)
         {
-            UIManager.instance.deactivatePostWaveUI();
             if (selectedUpgrade != null && selectedUpgrade.type != UpgradeType.NONE)
             {
                 if (selectedUpgrade.type == UpgradeType.SHIELDS)
@@ -249,10 +250,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 break;
             case GameState.POSTWAVE:
                 PostWaveUpdate();
-                UIManager.instance.PostWaveUIUpdate();
+                UIManager.instance.PostWaveUIAndAnimationUpdate();
                 break;
             case GameState.PAUSED:
                 PausedUpdate();
+                break;
+            case GameState.UIANIMATIONS:
+                UIManager.instance.PostWaveUIAndAnimationUpdate();
                 break;
             default:
                 WaveUpdate();

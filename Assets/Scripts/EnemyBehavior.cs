@@ -188,56 +188,36 @@ public class EnemyBehavior : MonoBehaviour
         {
             return;
         }
-        if (!isMultiColor)
+        if (enemyColors.Contains(bullet.bulletColor) || enemyColor == bullet.bulletColor)
         {
-            if (bullet.bulletColor == enemyColor)
-            {
-                TakeHit();
-                bullet.TakeHit();
-                bullet.immuneEnemies.Add(this);
-            }
-        }
-        else
-        {
-            if (enemyColors.Contains(bullet.bulletColor))
-            {
-                enemyColors.Remove(bullet.bulletColor);
-                if (enemyColors.Count == 0)
-                {
-                    Die();
-                }
-                else
-                {
-                    enemyColor = SetMixedColor(enemyColors);
-                    hitTaken = true;
-                    TakeHit();
-                }
-                bullet.TakeHit();
-                bullet.immuneEnemies.Add(this);
-            }
+            TakeHit(bullet.bulletColor);
+            bullet.TakeHit();
+            bullet.immuneEnemies.Add(this);
         }
     }
 
-    public virtual void TakeHit()
+    public virtual void TakeHit(GameModel.GameColor bulletColor)
     {
-        if (hitTaken)
-        {
-            hitTaken = false;
-            StartKnockBack();
-            return;
-        }
         if (isDarkened)
         {
             isDarkened = false;
+            SetVisualColor(enemyColor);
             StartKnockBack();
+            return;
         }
-        else
-        {
-            Die();
-        }
+        enemyColors.Remove(bulletColor);
+        enemyColor = SetMixedColor(enemyColors);
+        SetVisualColor(enemyColor);
+            if (enemyColors.Count == 0)
+            {
+                Die();
+            }
+            else { 
+            StartKnockBack();
+            }
     }
 
-    public virtual void StartKnockBack()
+public virtual void StartKnockBack()
     {
         SetVisualColor(enemyColor);
         knockBack = true;
