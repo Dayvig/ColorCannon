@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
+            WaveSpawningSystem.currentChunks.Clear();
             spawningSystem.SetupNextWave();
             DisposeAllBullets();
             UIManager.instance.activatePostWaveAnimations(true);
