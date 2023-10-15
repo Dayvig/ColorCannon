@@ -32,7 +32,7 @@ public class SaveLoadManager : MonoBehaviour
 
     public void NewGame()
     {
-        WipeAlllData();
+        gameData = new GameData();
         dataHandler.Save(gameData);
     }
 
@@ -52,25 +52,13 @@ public class SaveLoadManager : MonoBehaviour
         gameData.waveSpacing = GameModel.instance.baseGlobalWaveSpacing;
         gameData.waveNumber = GameModel.instance.baseGlobalWaveNumber;
         gameData.waveSpeed = GameModel.instance.baseGlobalWaveSpeed;
+        gameData.chunks.Clear();
     }
 
-    public void WipeAlllData()
+    public void WipeAllData()
     {
-        gameData.currentLevel = 0;
-        gameData.refreshActive = true;
-        gameData.undiscoveredEasyMechanics = new List<Mechanic> { Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG };
-        gameData.undiscoveredMedMechanics = new List<Mechanic> { Mechanic.DISGUISED, Mechanic.SWIRL };
-        gameData.chunkDifficulties = new int[] { 1, 1, 2 };
-        gameData.currentNewMechanics.Clear();
-        gameData.currentMechanics.Clear();
-        gameData.currentUpgradesOffered.Clear();
-        gameData.playerUpgrades.Clear();
-        gameData.waveUpgrades.Clear();
+        WipeMidRunDataOnly();
         gameData.encounteredEnemies.Clear();
-        gameData.waveSpacing = GameModel.instance.baseGlobalWaveSpacing;
-        gameData.waveNumber = GameModel.instance.baseGlobalWaveNumber;
-        gameData.waveSpeed = GameModel.instance.baseGlobalWaveSpeed;
-
     }
 
     public void LoadGame()

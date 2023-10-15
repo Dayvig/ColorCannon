@@ -14,6 +14,7 @@ public class GameData
     public List<WaveSpawningSystem.Mechanic> undiscoveredEasyMechanics = new List<WaveSpawningSystem.Mechanic>();
     public List<WaveSpawningSystem.Mechanic> undiscoveredMedMechanics = new List<WaveSpawningSystem.Mechanic>();
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
+    public List<Chunk> chunks;
     public int[] chunkDifficulties;
     public int waveNumber;
     public float waveSpacing;

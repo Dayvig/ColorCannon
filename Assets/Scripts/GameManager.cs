@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,8 +37,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         public String name;
         public GameManager.UpgradeType type;
         public GameModel.GameColor color;
-        private Sprite image;
-        
+
+        [JsonConstructor]
         public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType, GameModel.GameColor upgradeColor)
         {
             name = upgradeName;

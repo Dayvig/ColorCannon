@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,9 +32,17 @@ public class FileDataHandler
                         dataToLoad = sr.ReadToEnd();
                     }
                 }
-
-                loadedData = JsonUtility.FromJson<GameData>(dataToLoad);
-
+                Debug.Log("====");
+                loadedData = JsonConvert.DeserializeObject<GameData>(dataToLoad);
+                Debug.Log("====");
+                if (loadedData.chunks != null)
+                {
+                    for (int i = 0; i < loadedData.chunks.Count; i++)
+                    {
+                        Debug.Log(loadedData.chunks.Count);
+                        loadedData.chunks[i] = WaveSpawningSystem.instance.returnSpecialChunkFromGeneric(loadedData.chunks[i]);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -50,7 +59,7 @@ public class FileDataHandler
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-            string DataToStore = JsonUtility.ToJson(data, true);
+            string DataToStore = JsonConvert.SerializeObject(data);
             using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
                 using (StreamWriter writer = new StreamWriter(stream))

@@ -21,6 +21,7 @@ public class refreshWave : MonoBehaviour
     void TaskOnClick()
     {
         uiManager.HideWave();
+        WaveSpawningSystem.currentChunks.Clear();
         spawningSystem.SetupNextWave();
     }
 }
