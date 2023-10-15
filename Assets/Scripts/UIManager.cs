@@ -272,7 +272,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         {
             GameObject newChunkPreviewImage = Instantiate(PreviewImage, newChunkPreview.transform);
             Image enemyImage = newChunkPreviewImage.GetComponent<Image>();
-            enemyImage.sprite = c.image;
+            enemyImage.sprite = UIManager.instance.EnemySprites[c.imageID];
             Color newColor = modelGame.ColorToColor(c.colors[k]);
             if (!c.isDarkened)
             {
