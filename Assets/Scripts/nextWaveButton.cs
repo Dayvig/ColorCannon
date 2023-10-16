@@ -17,7 +17,6 @@ public class nextWaveButton : MonoBehaviour
 
     void TaskOnClick()
     {
-        UIManager.instance.activatePostWaveAnimations(false);
-        GameManager.instance.SetState(GameManager.GameState.UIANIMATIONS);
-    }
+        GameManager.instance.SetState(GameManager.GameState.WAVE);
+    }   
 }

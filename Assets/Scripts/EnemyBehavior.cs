@@ -176,7 +176,7 @@ public class EnemyBehavior : MonoBehaviour
             player.lives--;
             if (player.lives < 0)
             {
-                GameManager.instance.SetState(GameManager.GameState.LOSE);
+                GameManager.instance.Lose();
             }
             Die();
         }

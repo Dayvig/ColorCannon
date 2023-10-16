@@ -60,13 +60,29 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public float postWaveUITimer = 0.0f;
     public float postWaveUISwingInterval1;
     public float postWaveUISwingInterval2;
+    public float winLoseUISwingInterval1;
+    public float winLoseUISwingInterval2;
+
     private RectTransform PostUIRect;
+    private RectTransform WinRect;
+    private RectTransform LoseRect;
+    public RectTransform currentAnimationTarget;
+
     public Vector3 swingStart = new Vector3(-1076.0f, -7.2f, 0f);
     public Vector3 swingMid = new Vector3(-130f, 60f, 0f);
     public Vector3 swingEnd = new Vector3(-36f, -7.2f, 0f);
     public Vector3 swingRotStart = new Vector3(0f, 0f, 14f);
     public Vector3 swingRotMid = new Vector3(0f, 0f, -1.4f);
     public Vector3 swingRotEnd = new Vector3(0f, 0f, -3.6f);
+
+    public Vector3 winLoseStartPos = new Vector3(37, 1604, 0f);
+    public Vector3 winLosMidPos = new Vector3(37, -57, 0f);
+    public Vector3 winLoseEndPos = new Vector3(-14, 18, 0f);
+    public Vector3 winLoseStartRot = new Vector3(0f, 0f, 0f);
+    public Vector3 winLoseMidRot = new Vector3(0f, 0f, -1.1f);
+    public Vector3 winLoseEndRot = new Vector3(0f, 0f, 0.85f);
+
+
     private bool swingIn = true;
     private Vector3 start;
     private Vector3 end;
@@ -90,6 +106,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
         toolTipTextRect = toolTipText.gameObject.GetComponent<RectTransform>();
         deactivateWinLoseUI();
         PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
+        WinRect = WinPanel.GetComponent<RectTransform>();
+        LoseRect = LosePanel.GetComponent<RectTransform>();
     }
 
     public void Awake()
@@ -108,6 +126,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void activatePostWaveAnimations(bool swingingIn)
     {
+        currentAnimationTarget = PostUIRect;
         swingIn = swingingIn;
         start = swingIn ? swingStart : swingEnd;
         end = swingIn ? swingEnd : swingStart;
@@ -116,10 +135,33 @@ public class UIManager : MonoBehaviour, IDataPersistence
         interval1 = swingIn ? postWaveUISwingInterval1 : postWaveUISwingInterval2;
         interval2 = swingIn ? postWaveUISwingInterval2 : postWaveUISwingInterval1;
         postWaveUITimer = 0.0f;
-        PostUIRect.anchoredPosition = start;
+        currentAnimationTarget.anchoredPosition = start;
 
         SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[2], -0.5f, 0.5f);
 
+    }
+
+    public void activateWinLoseAnimations(bool swingingIn, bool win)
+    {
+        currentAnimationTarget = win ? WinRect : LoseRect;
+        swingIn = swingingIn;
+        start = swingIn ? winLoseStartPos : winLoseEndPos;
+        end = swingIn ? winLoseEndPos : winLoseStartPos;
+        rotStart = swingIn ? winLoseStartRot : winLoseEndRot;
+        rotEnd = swingIn ? winLoseEndRot : winLoseStartRot;
+        interval1 = swingIn ? winLoseUISwingInterval1 : winLoseUISwingInterval2;
+        interval2 = swingIn ? winLoseUISwingInterval2 : winLoseUISwingInterval1;
+        postWaveUITimer = 0.0f;
+        currentAnimationTarget.anchoredPosition = start;
+
+        if (win)
+        {
+            SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[3], -0.5f, 0.5f);
+        }
+        else
+        {
+           SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[4], -0.5f, 0.5f);
+        }
     }
 
     public void PostWaveUIAndAnimationUpdate()
@@ -141,25 +183,41 @@ public class UIManager : MonoBehaviour, IDataPersistence
         }
         else
         {
-            postWaveUITimer += Time.deltaTime;
-            if (postWaveUITimer < interval1)
+            if (currentAnimationTarget == PostUIRect)
             {
-                PostUIRect.anchoredPosition = Vector3.Lerp(start, swingMid, postWaveUITimer / interval1);
-                PostUIRect.transform.rotation = Quaternion.Euler(Vector3.Lerp(rotStart, swingRotMid, postWaveUITimer / interval1));
+                Debug.Log("Destination State: " + (swingIn ? GameState.POSTWAVE : GameState.WAVE));
+                animationUpdate(start, swingMid, end, rotStart, swingRotMid, rotEnd, swingIn ? GameState.POSTWAVE : GameState.WAVE);
             }
-            else if (postWaveUITimer < interval2 + interval1)
+            else
             {
-                PostUIRect.anchoredPosition = Vector3.Lerp(swingMid, end, (postWaveUITimer - interval1) / interval2);
-                PostUIRect.transform.rotation = Quaternion.Euler(Vector3.Lerp(swingRotMid, rotEnd, (postWaveUITimer - interval1) / interval2));
-            }   
-            else 
+                animationUpdate(winLoseStartPos, winLosMidPos, winLoseEndPos, winLoseStartRot, winLoseMidRot, winLoseEndRot, currentAnimationTarget == WinRect ? GameState.WIN : GameState.LOSE);
+            }
+        }
+    }
+
+    void animationUpdate(Vector3 startPos, Vector3 midPos, Vector3 endPos, Vector3 startRot, Vector3 midRot, Vector3 endRot, GameManager.GameState endState)
+    {
+        postWaveUITimer += Time.deltaTime;
+        if (postWaveUITimer < interval1)
+        {
+            currentAnimationTarget.anchoredPosition = Vector3.Lerp(startPos, midPos, postWaveUITimer / interval1);
+            currentAnimationTarget.transform.rotation = Quaternion.Euler(Vector3.Lerp(startRot, midRot, postWaveUITimer / interval1));
+        }
+        else if (postWaveUITimer < interval2 + interval1)
+        {
+            currentAnimationTarget.anchoredPosition = Vector3.Lerp(midPos, endPos, (postWaveUITimer - interval1) / interval2);
+            currentAnimationTarget.transform.rotation = Quaternion.Euler(Vector3.Lerp(midRot, endRot, (postWaveUITimer - interval1) / interval2));
+        }
+        else
+        {
+            postWaveUITimer = -1f;
+            if (currentAnimationTarget == PostUIRect)
             {
-                postWaveUITimer = -1f;
-                if (!swingIn)
-                {
-                    deactivatePostWaveUI();
-                    GameManager.instance.SetState(GameState.WAVE);
-                }
+                GameManager.instance.SetState(endState);
+            }
+            else if (currentAnimationTarget == WinRect || currentAnimationTarget == LoseRect)
+            {
+                GameManager.instance.SetState(endState);
             }
         }
     }

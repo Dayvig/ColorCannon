@@ -76,21 +76,22 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void SetState(GameState nextState)
     {
-        if (!(nextState == GameState.WIN || nextState == GameState.LOSE))
-        {
-            UIManager.instance.deactivateWinLoseUI();
-        }
+        UnityEngine.Debug.Log("Current State " + currentState);
+        UnityEngine.Debug.Log("Next State " + nextState);
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
+            UnityEngine.Debug.Log("New Wave Generated");
             WaveSpawningSystem.currentChunks.Clear();
             spawningSystem.SetupNextWave();
             DisposeAllBullets();
-            UIManager.instance.activatePostWaveAnimations(true);
             UIManager.instance.activatePostWaveUI();
             selectedUpgrade = noUpgrade;
+
+            UIManager.instance.activatePostWaveAnimations(true);
+            nextState = GameState.UIANIMATIONS;
         }
 
-        if ((currentState == GameState.POSTWAVE || currentState == GameState.UIANIMATIONS) && nextState == GameState.WAVE)
+        if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
         {
             if (selectedUpgrade != null && selectedUpgrade.type != UpgradeType.NONE)
             {
@@ -106,22 +107,26 @@ public class GameManager : MonoBehaviour, IDataPersistence
             }
             selectedUpgrade = noUpgrade;
             player.configureWeapon();
+
+            UIManager.instance.activatePostWaveAnimations(false);
+            nextState = GameState.UIANIMATIONS;
         }
 
-        if (nextState == GameState.WIN && currentState != GameState.WIN)
+        if (nextState == GameState.WIN && currentState != GameState.UIANIMATIONS)
         {
             UIManager.instance.deactivatePostWaveUI();
             WipeAllEnemiesAndBullets();
             UIManager.instance.activateWinScreen();
+            UIManager.instance.activateWinLoseAnimations(true, true);
+            nextState = GameState.UIANIMATIONS;
         }
-        
-        if (nextState == GameState.LOSE && currentState != GameState.LOSE)
+
+        if (nextState == GameState.LOSE && currentState != GameState.UIANIMATIONS)
         {
-            UIManager.instance.deactivatePostWaveUI();
-            WipeAllEnemiesAndBullets();
-            UIManager.instance.activateLoseScreen();
+            Lose();
         }
         currentState = nextState;
+
     }
 
     private void WipeAllEnemiesAndBullets()
@@ -297,7 +302,19 @@ public class GameManager : MonoBehaviour, IDataPersistence
         spawningSystem.EnemyUpdate();
         if ((spawningSystem.currentWaveIndex >= WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count <= 0))
         {
-            SetState(GameState.POSTWAVE);
+            if (WaveSpawningSystem.instance.Level >= 15)
+            {
+                UIManager.instance.activateWinScreen();
+                WaveSpawningSystem.currentChunks.Clear();
+                SaveLoadManager.instance.WipeMidRunDataOnly();
+                GameManager.instance.SetState(GameState.WIN);
+            }
+            else
+            {
+                UIManager.instance.activatePostWaveUI();
+                GameManager.instance.SetState(GameState.POSTWAVE);
+                WaveSpawningSystem.currentChunks.Clear();
+            }
         }
     }
 
@@ -321,6 +338,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
     void PausedUpdate()
     {
         
+    }
+
+    public void Lose()
+    {
+        UnityEngine.Debug.Log("Lose");
+        UIManager.instance.deactivatePostWaveUI();
+        WipeAllEnemiesAndBullets();
+        UIManager.instance.activateLoseScreen();
+        UIManager.instance.activateWinLoseAnimations(true, false);
+        SetState(GameState.UIANIMATIONS);
     }
 
     public void PlayAgain()

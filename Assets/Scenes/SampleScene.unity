@@ -409,6 +409,8 @@ GameObject:
   - component: {fileID: 150906758}
   - component: {fileID: 150906757}
   - component: {fileID: 150906756}
+  - component: {fileID: 150906760}
+  - component: {fileID: 150906759}
   m_Layer: 5
   m_Name: LoseScreen
   m_TagString: Untagged
@@ -436,7 +438,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -14, y: 14}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &150906756
@@ -500,6 +502,44 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &150906759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150906754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.254717, g: 0.254717, b: 0.254717, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &150906760
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150906754}
+  m_CullTransparentMesh: 1
 --- !u!212 &171740074 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 2037130195045230306, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
@@ -573,8 +613,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2731,13 +2771,15 @@ GameObject:
   - component: {fileID: 1100308496}
   - component: {fileID: 1100308495}
   - component: {fileID: 1100308494}
+  - component: {fileID: 1100308498}
+  - component: {fileID: 1100308497}
   m_Layer: 5
   m_Name: WinScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1100308493
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2755,10 +2797,10 @@ RectTransform:
   m_Father: {fileID: 425172974}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 900, y: 1600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1100308494
 MonoBehaviour:
@@ -2821,6 +2863,44 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1100308497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100308492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.6886792, g: 0.6886792, b: 0.6886792, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1100308498
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100308492}
+  m_CullTransparentMesh: 1
 --- !u!1 &1100839042 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6828051733919904986, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
@@ -4292,7 +4372,7 @@ MonoBehaviour:
   numShotsUpgrade: 1
   piercingUpgrade: 1
   spreadAngleMax: 60
-  baseGlobalWaveNumber: 6
+  baseGlobalWaveNumber: 1
   baseGlobalWaveSpacing: 2
   baseTutorialSpacing: 5
   baseGlobalWaveSpeed: 0.4
@@ -4319,6 +4399,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d22f3e9ef1587994b82f49f2ba5501cb, type: 3}
   - {fileID: 8300000, guid: b6d333de70c0de44ca26c32ee81d1462, type: 3}
   - {fileID: 8300000, guid: f083edf6f10f3d6489a5f8b4ded4e68a, type: 3}
+  - {fileID: 8300000, guid: 5a9a7902dd820b448bc1ca4b327ee0d3, type: 3}
+  - {fileID: 8300000, guid: 15033cf66231914409d963977ac84adb, type: 3}
 --- !u!4 &1793738074
 Transform:
   m_ObjectHideFlags: 0
@@ -4463,12 +4545,21 @@ MonoBehaviour:
   postWaveUITimer: 0
   postWaveUISwingInterval1: 0.32
   postWaveUISwingInterval2: 0.04
+  winLoseUISwingInterval1: 0.86
+  winLoseUISwingInterval2: 0.06
+  currentAnimationTarget: {fileID: 0}
   swingStart: {x: -1076, y: -7.2, z: 0}
   swingMid: {x: -68, y: 4, z: 0}
   swingEnd: {x: -28, y: -7.2, z: 0}
   swingRotStart: {x: 0, y: 0, z: 14}
   swingRotMid: {x: 0, y: 0, z: -1.4}
   swingRotEnd: {x: 0, y: 0, z: -3.6}
+  winLoseStartPos: {x: 37, y: 1604, z: 0}
+  winLosMidPos: {x: 37, y: -57, z: 0}
+  winLoseEndPos: {x: -7, y: 9, z: 0}
+  winLoseStartRot: {x: 0, y: 0, z: 0}
+  winLoseMidRot: {x: 0, y: 0, z: -1.1}
+  winLoseEndRot: {x: 0, y: 0, z: 0.85}
 --- !u!114 &1793738078
 MonoBehaviour:
   m_ObjectHideFlags: 0
