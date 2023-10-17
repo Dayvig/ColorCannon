@@ -4366,15 +4366,15 @@ MonoBehaviour:
   - Refills your shields to 3.
   - Increases bullet size.
   - Bullets pierce an extra enemy.
-  shotSpeedMultiplier: 1.185
-  rapidFireMultiplier: 1.366
+  shotSpeedMultiplier: 1.2
+  rapidFireMultiplier: 1.1
   shotSizeMultiplier: 1.5
   numShotsUpgrade: 1
   piercingUpgrade: 1
   spreadAngleMax: 60
-  baseGlobalWaveNumber: 1
-  baseGlobalWaveSpacing: 2
-  baseTutorialSpacing: 5
+  baseGlobalWaveNumber: 5
+  baseGlobalWaveSpacing: 1
+  baseTutorialSpacing: 3
   baseGlobalWaveSpeed: 0.4
   baseNumChunks: 3
   baseNumUniqueChunks: 0
@@ -4545,8 +4545,8 @@ MonoBehaviour:
   postWaveUITimer: 0
   postWaveUISwingInterval1: 0.32
   postWaveUISwingInterval2: 0.04
-  winLoseUISwingInterval1: 0.86
-  winLoseUISwingInterval2: 0.06
+  winLoseUISwingInterval1: 0.32
+  winLoseUISwingInterval2: 0.04
   currentAnimationTarget: {fileID: 0}
   swingStart: {x: -1076, y: -7.2, z: 0}
   swingMid: {x: -68, y: 4, z: 0}
@@ -4556,7 +4556,7 @@ MonoBehaviour:
   swingRotEnd: {x: 0, y: 0, z: -3.6}
   winLoseStartPos: {x: 37, y: 1604, z: 0}
   winLosMidPos: {x: 37, y: -57, z: 0}
-  winLoseEndPos: {x: -7, y: 9, z: 0}
+  winLoseEndPos: {x: 0, y: 0, z: 0}
   winLoseStartRot: {x: 0, y: 0, z: 0}
   winLoseMidRot: {x: 0, y: 0, z: -1.1}
   winLoseEndRot: {x: 0, y: 0, z: 0.85}
@@ -5177,6 +5177,10 @@ PrefabInstance:
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: baseLives
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
+      propertyPath: baseShotSpeed
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: baseBulletSize

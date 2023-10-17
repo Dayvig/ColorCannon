@@ -26,7 +26,7 @@ public class EnemyBehavior : MonoBehaviour
     private bool hitTaken = false;
 
     public AudioSource enemySource;
-
+    public float lifeTime = 0.0f;
     private GameModel.GameColor SetMixedColor(List<GameModel.GameColor> colors)
     {
         if (colors.Count == 0)
@@ -84,6 +84,7 @@ public class EnemyBehavior : MonoBehaviour
         knockBackTimer = 0f;
 
         enemySource = GetComponent<AudioSource>();
+        lifeTime = 0.0f;
     }
 
     private void initializeMixedColor(GameModel.GameColor color)
@@ -127,6 +128,7 @@ public class EnemyBehavior : MonoBehaviour
     // Update is called once per frame
     public void EnemyUpdate()
     {
+        lifeTime += Time.deltaTime;
         if (knockBack)
         {
             KnockBack();

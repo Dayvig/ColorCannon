@@ -94,19 +94,19 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             switch (EdgeToSpawnFrom)
             {
                 case 0:
-                    startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
+                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
                     break;
                 case 1:
-                    startPos = new Vector3(Random.Range(xBounds, -xBounds), -yBounds, 0);
+                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), -yBounds, 0);
                     break;
                 case 2:
-                    startPos = new Vector3(-xBounds, Random.Range(yBounds/2, -yBounds/2), 0);
+                    startPos = new Vector3(-xBounds * 1.2f, Random.Range(yBounds/2, -yBounds/2), 0);
                     break;
                 case 3:
-                    startPos = new Vector3(xBounds, Random.Range(yBounds/2, -yBounds/2), 0);
+                    startPos = new Vector3(xBounds * 1.2f, Random.Range(yBounds/2, -yBounds/2), 0);
                     break;
                 default:
-                    startPos = new Vector3(Random.Range(xBounds, -xBounds), yBounds, 0);
+                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
                     break;
             }
 
@@ -157,9 +157,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     {
         repopulateChunks();
         
-        numChunks = modelGame.baseNumChunks;
-        numUniqueChunks = modelGame.baseNumUniqueChunks;
-
         gameManager.addStartingUpgrades();
         clearWave();
         if (Level == 0 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
@@ -286,7 +283,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     bool isNonBasic (Chunk c)
     {
-        return !(c is BasicChunk) || c.isDarkened || c.isMultiColor;
+        return !(c is BasicChunk);
 
     }
 
@@ -579,8 +576,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             numChunks++;
             chunkDifficulties.Add((int)Math.Ceiling((sum/chunkDifficulties.Count)));
         }
-        //starting on wave 3, every 12th wave adds a guaranteed unique chunk
-        if ((Level+9) % 12 == 0)
+        //starting on wave 3, every 7th wave adds a guaranteed unique chunk
+        if ((Level+4) % 7 == 0)
         {
             numUniqueChunks++;
         }
@@ -617,8 +614,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             switch (randomWaveMod)
             {
                 case 0:
-                    globalWaveNumber += 4;
-                    globalWaveSpacing /= 1.2f;
+                    globalWaveNumber += 1;
+                    globalWaveSpacing /= 1.12f;
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.NUMEROUS);
                     break;
                 case 1:
@@ -1251,6 +1248,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             currentChunks = data.chunks;
         }
+        numUniqueChunks = data.uniqueChunks;
+        numChunks = data.numChunks;
     }
 
     public void SaveData(ref GameData data)
@@ -1265,6 +1264,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         data.waveSpacing = globalWaveSpacing;
         data.waveSpeed = globalWaveSpeed;
         data.chunks = currentChunks;
+        data.uniqueChunks = numUniqueChunks;
+        data.numChunks = numChunks;
     }
 
     // ========================================================= End of Chunks =================================================================

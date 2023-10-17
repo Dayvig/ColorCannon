@@ -16,9 +16,12 @@ public class GameData
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
     public List<Chunk> chunks;
     public int[] chunkDifficulties;
+    public int uniqueChunks;
     public int waveNumber;
     public float waveSpacing;
     public float waveSpeed;
+    public int playerLives;
+    public int numChunks;
 
     public bool refreshActive;
     public GameData(){
@@ -31,5 +34,8 @@ public class GameData
         waveNumber = GameModel.instance.baseGlobalWaveNumber;
         waveSpacing = GameModel.instance.baseGlobalWaveSpacing;
         waveSpeed = GameModel.instance.baseGlobalWaveSpeed;
+        numChunks = GameModel.instance.baseNumChunks;
+        uniqueChunks = GameModel.instance.baseNumUniqueChunks;
+        playerLives = 3;
     }
 }

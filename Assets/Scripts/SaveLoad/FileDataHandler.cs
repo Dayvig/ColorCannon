@@ -55,6 +55,7 @@ public class FileDataHandler
 
     public void Save(GameData data)
     {
+        Debug.Log("Saving Game " + data.currentLevel);
         string fullPath = Path.Combine(dataDirPath, dataFileName);
         try
         {

@@ -300,7 +300,7 @@ public class Player : MonoBehaviour, IDataPersistence
         {
             if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
             {
-                shotSpeed /= modelGame.shotSpeedMultiplier;
+                shotSpeed /= modelGame.rapidFireMultiplier;
             }
         }
         return shotSpeed;
@@ -422,10 +422,12 @@ public class Player : MonoBehaviour, IDataPersistence
             Debug.Log("Adding new upgrade to preview");
             UIManager.instance.AddNewPlayerUpgradeToPreview(newUpgrade);
         }
+        lives = data.playerLives;
     }
 
     public void SaveData(ref GameData data)
     {
         data.playerUpgrades = upgrades;
+        data.playerLives = lives;
     }
 }

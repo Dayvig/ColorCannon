@@ -76,8 +76,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void SetState(GameState nextState)
     {
-        UnityEngine.Debug.Log("Current State " + currentState);
-        UnityEngine.Debug.Log("Next State " + nextState);
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
             UnityEngine.Debug.Log("New Wave Generated");
@@ -114,16 +112,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         if (nextState == GameState.WIN && currentState != GameState.UIANIMATIONS)
         {
-            UIManager.instance.deactivatePostWaveUI();
-            WipeAllEnemiesAndBullets();
-            UIManager.instance.activateWinScreen();
-            UIManager.instance.activateWinLoseAnimations(true, true);
+            Win();
             nextState = GameState.UIANIMATIONS;
         }
 
         if (nextState == GameState.LOSE && currentState != GameState.UIANIMATIONS)
         {
             Lose();
+            nextState = GameState.UIANIMATIONS;
         }
         currentState = nextState;
 
@@ -350,39 +346,24 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SetState(GameState.UIANIMATIONS);
     }
 
+    public void Win()
+    {
+        UIManager.instance.deactivatePostWaveUI();
+        WipeAllEnemiesAndBullets();
+        UIManager.instance.activateWinScreen();
+        UIManager.instance.activateWinLoseAnimations(true, true);
+        SaveLoadManager.instance.WipeMidRunDataOnly();
+    }
+
     public void PlayAgain()
     {
-        spawningSystem.chunkDifficulties.Clear();
-        spawningSystem.basicMechanics.Clear();
-        spawningSystem.currentMechanics.Clear();
-        spawningSystem.newMechanics.Clear();
-        spawningSystem.medMechanics.Clear();
-        spawningSystem.availableChunks.Clear();
-        UIManager.instance.WaveMods.Clear();
-        spawningSystem.clearWave();
-        UIManager.instance.DestroyAll();
-        spawningSystem.basicMechanics = new List<WaveSpawningSystem.Mechanic>
-        {
-            WaveSpawningSystem.Mechanic.DARK,
-            WaveSpawningSystem.Mechanic.FAST,
-            WaveSpawningSystem.Mechanic.NINJA,
-            WaveSpawningSystem.Mechanic.ORANGE,
-            WaveSpawningSystem.Mechanic.PURPLE,
-            WaveSpawningSystem.Mechanic.GREEN,
-
-        };
-        spawningSystem.medMechanics = new List<WaveSpawningSystem.Mechanic>
-        {
-            WaveSpawningSystem.Mechanic.WHITE
-        };
-        spawningSystem.initialize();
-        player.lives = player.baseLives;
-        player.upgrades.Clear();
-        player.configureWeapon();
-
+        UIManager.instance.deactivateWinLoseUI();
+        SaveLoadManager.instance.WipeMidRunDataOnly();
+        SaveLoadManager.instance.LoadGame();
+        WaveSpawningSystem.instance.initialize();
+        WaveSpawningSystem.instance.Level = 0;
+        currentState = GameState.WAVE;
         SetState(GameState.POSTWAVE);
-        UIManager.instance.activatePostWaveUI();
-        GenerateUpgrades();
         SaveLoadManager.instance.SaveGame();
     }
 

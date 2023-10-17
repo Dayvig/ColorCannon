@@ -17,6 +17,14 @@ public class nextWaveButton : MonoBehaviour
 
     void TaskOnClick()
     {
-        GameManager.instance.SetState(GameManager.GameState.WAVE);
+        if (WaveSpawningSystem.instance.Level > 15)
+        {
+            GameManager.instance.SetState(GameManager.GameState.WIN);
+            Debug.Log("Win");
+        }
+        else
+        {
+            GameManager.instance.SetState(GameManager.GameState.WAVE);
+        }
     }   
 }
