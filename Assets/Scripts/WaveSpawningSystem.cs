@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.U2D.IK;
 using UnityEngine.UIElements;
+using static GameManager;
 using Random = UnityEngine.Random;
 
 public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
@@ -71,8 +72,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         SWIRL
     }
 
-    public List<Mechanic> basicMechanics = new List<Mechanic>{Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG};
-    public List<Mechanic> medMechanics = new List<Mechanic>{Mechanic.DISGUISED, Mechanic.SWIRL};
+    public List<Mechanic> basicMechanics;
+    public List<Mechanic> medMechanics;
 
     public static int[] ALL =
         {0, 1, 2, 3};
@@ -145,7 +146,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
-    void Start()
+    void Awake()
     {
         instance = this;
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
@@ -154,16 +155,19 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     }
 
     public void initialize()
-    {
+    { 
         repopulateChunks();
         
         gameManager.addStartingUpgrades();
         clearWave();
+        UIManager.instance.activatePostWaveUI();
+
         if (Level == 0 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
         {
             Debug.Log("Spawning First Wave");
             generateFirstWave();
             UIManager.instance.WipeUpgrades();
+            UIManager.instance.SetUpgradesVisible(false);
         }
         else
         {
@@ -174,8 +178,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
         enemyTimer = currentWave[0].delayUntilNext;
         currentWaveIndex = 0;
-        UIManager.instance.activatePostWaveUI();
-
 
         enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
         SaveLoadManager.instance.SaveGame();
@@ -331,6 +333,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public Chunk returnRandomChunk(List<Chunk> chunklist, int lessthan)
     {
+        Debug.Log("Chunk list count " + chunklist.Count);
         Chunk nextChunk = chunklist[Random.Range(0, chunklist.Count)];
         if (nextChunk.difficulty <= lessthan)
         {
@@ -467,6 +470,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             }
         }
         enemiesToSpawn = currentWave.Count - 1;
+        currentWave[0].delayUntilNext += 3f;
         UIManager.instance.SetupWaveModUI();
     }
 

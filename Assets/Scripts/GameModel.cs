@@ -29,8 +29,8 @@ public class GameModel : MonoBehaviour
     [Range(1.05f, 10f)] public float shotSizeMultiplier;
     [Range(1, 10)] public int numShotsUpgrade;
     [Range(1, 10)] public int piercingUpgrade;
-    [Range(20, 180)] 
-    public float spreadAngleMax;
+    [Range(10, 180)] 
+    public float baseSpreadAngle;
     public int baseGlobalWaveNumber;
     public float baseGlobalWaveSpacing;
     public float baseTutorialSpacing;

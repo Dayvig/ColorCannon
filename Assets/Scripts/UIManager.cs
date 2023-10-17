@@ -100,14 +100,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
     }
 
     void Start(){
-        modelGame = GameObject.Find("GameManager").GetComponent<GameModel>(); 
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        toolTipRect = toolTip.GetComponent<RectTransform>();
-        toolTipTextRect = toolTipText.gameObject.GetComponent<RectTransform>();
-        deactivateWinLoseUI();
-        PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
-        WinRect = WinPanel.GetComponent<RectTransform>();
-        LoseRect = LosePanel.GetComponent<RectTransform>();
     }
 
     public void Awake()
@@ -117,6 +109,16 @@ public class UIManager : MonoBehaviour, IDataPersistence
             Debug.Log("Multiple UIManagers Detected.");
         }
         instance = this;
+    }
+
+    public void initialize()
+    {
+        toolTipRect = toolTip.GetComponent<RectTransform>();
+        toolTipTextRect = toolTipText.gameObject.GetComponent<RectTransform>();
+        deactivateWinLoseUI();
+        PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
+        WinRect = WinPanel.GetComponent<RectTransform>();
+        LoseRect = LosePanel.GetComponent<RectTransform>();
     }
 
     public void WaveUIUpdate()
@@ -198,6 +200,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     void animationUpdate(Vector3 startPos, Vector3 midPos, Vector3 endPos, Vector3 startRot, Vector3 midRot, Vector3 endRot, GameManager.GameState endState)
     {
         postWaveUITimer += Time.deltaTime;
+
         if (postWaveUITimer < interval1)
         {
             currentAnimationTarget.anchoredPosition = Vector3.Lerp(startPos, midPos, postWaveUITimer / interval1);
@@ -428,6 +431,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void SetUpgradesVisible(bool visible)
     {
+        UpgradePanel.gameObject.SetActive(visible);
         foreach (Transform g in UpgradePreviewPanel.GetComponentsInChildren<Transform>())
         {
             g.gameObject.SetActive(visible);

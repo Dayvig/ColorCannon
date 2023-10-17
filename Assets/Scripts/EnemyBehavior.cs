@@ -175,11 +175,7 @@ public class EnemyBehavior : MonoBehaviour
         {
             Debug.Assert(col.GetComponent<Player>() != null, "Player doesn't have correct component");
             Player player = col.GetComponent<Player>();
-            player.lives--;
-            if (player.lives < 0)
-            {
-                GameManager.instance.Lose();
-            }
+            player.TakeHit();
             Die();
         }
     }

@@ -121,6 +121,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
             Lose();
             nextState = GameState.UIANIMATIONS;
         }
+        if (currentState == GameState.UIANIMATIONS && nextState == GameState.WAVE)
+        {
+            UIManager.instance.deactivatePostWaveUI();
+        }
         currentState = nextState;
 
     }
@@ -142,15 +146,18 @@ public class GameManager : MonoBehaviour, IDataPersistence
     void Start()
     {
         instance = this;
+        gameAudio = GetComponent<AudioSource>();
+
         SaveLoadManager.instance.initialize();
-        currentState = GameState.POSTWAVE;
         player = GameObject.Find("Player").GetComponent<Player>();
         spawningSystem = GetComponent<WaveSpawningSystem>();
         gameModel = GetComponent<GameModel>();
         
+        UIManager.instance.initialize();
         spawningSystem.initialize();
+        currentState = GameState.POSTWAVE;
+
         selectedUpgrade = noUpgrade;
-        gameAudio = GetComponent<AudioSource>();
     }
 
     public void addStartingUpgrades()

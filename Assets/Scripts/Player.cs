@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour, IDataPersistence
     public int numShots;
     public int piercing;
     public int lives;
+    public float shotSpread;
     
     private float shotTimer;
     public GameObject bullet;
@@ -196,8 +198,8 @@ public class Player : MonoBehaviour, IDataPersistence
             for (int s = initial; s < numShots + initial; s++)
             {
                 float angleOffSet =
-                    ((((float) s / (numShots + (1 - (2 * (numShots % 2))))) * modelGame.spreadAngleMax) -
-                     (modelGame.spreadAngleMax / 2));
+                    ((((float)s / (numShots + (1 - (2 * (numShots % 2))))) * shotSpread) -
+                     (shotSpread / 2));
                 GameObject newBulletObject = null;
                 foreach (Bullet b in gameManager.inactiveBullets)
                 {
@@ -309,11 +311,13 @@ public class Player : MonoBehaviour, IDataPersistence
     public int FinalNumShots(GameModel.GameColor currentColor)
     {
         numShots = baseNumShots;
+        shotSpread = modelGame.baseSpreadAngle;
         foreach (GameManager.Upgrade u in upgrades)
         {
             if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.SHOTS))
             {
                 numShots += modelGame.numShotsUpgrade;
+                shotSpread += 15;
             }
         }
         return numShots;
@@ -410,6 +414,26 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 mouseTimer = -1.0f;
                 clicks = 0;
+            }
+        }
+    }
+
+    public void TakeHit()
+    {
+        lives--;
+        if (lives < 0)
+        {
+            GameManager.instance.Lose();
+        }
+        else
+        {
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, 2);
+            foreach (Collider2D c in hitColliders)
+            {
+                if (c.gameObject.tag == "Enemy")
+                {
+                    c.gameObject.GetComponent<EnemyBehavior>().StartKnockBack();
+                }
             }
         }
     }

@@ -32,9 +32,7 @@ public class FileDataHandler
                         dataToLoad = sr.ReadToEnd();
                     }
                 }
-                Debug.Log("====");
                 loadedData = JsonConvert.DeserializeObject<GameData>(dataToLoad);
-                Debug.Log("====");
                 if (loadedData.chunks != null)
                 {
                     for (int i = 0; i < loadedData.chunks.Count; i++)

@@ -55,6 +55,9 @@ public class SaveLoadManager : MonoBehaviour
         gameData.waveNumber = GameModel.instance.baseGlobalWaveNumber;
         gameData.waveSpeed = GameModel.instance.baseGlobalWaveSpeed;
         gameData.chunks.Clear();
+        gameData.numChunks = GameModel.instance.baseNumChunks;
+        gameData.uniqueChunks = GameModel.instance.baseNumUniqueChunks;
+        Debug.Log(gameData.numChunks + " uniques " + gameData.uniqueChunks);
         dataHandler.Save(gameData);
     }
 
