@@ -439,7 +439,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         }
         if (toCreateNew)
         {
-                createNewPlayerUpgradePreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+            createNewPlayerUpgradePreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
         }
     }
 

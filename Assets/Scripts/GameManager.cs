@@ -108,43 +108,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 }
                 else
                 {
-                    bool addNew = true;
-                    foreach (Upgrade u in player.upgrades)
-                    {
-                        UnityEngine.Debug.Log(u.type);
-                        if (u.type == selectedUpgrade.type && (u.color == selectedUpgrade.color || selectedUpgrade.color == GameModel.GameColor.WHITE))
-                        {
-                            UnityEngine.Debug.Log("Hit");
-                            addNew = false;
-                            u.factor += selectedUpgrade.factor;
-                        }
-                    }
-                    if (addNew)
-                    {
-                        if (selectedUpgrade.color == GameModel.GameColor.WHITE)
-                        {
-                            Upgrade red = selectedUpgrade.MakeCopy();
-                            red.color = GameModel.GameColor.RED;
-                            player.upgrades.Add(red);
-                            UIManager.instance.AddNewPlayerUpgradeToPreview(red, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(red.color));
-
-                            Upgrade blue = selectedUpgrade.MakeCopy();
-                            blue.color = GameModel.GameColor.BLUE;
-                            player.upgrades.Add(blue);
-                            UIManager.instance.AddNewPlayerUpgradeToPreview(blue, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(blue.color));
-
-                            Upgrade yellow = selectedUpgrade.MakeCopy();
-                            yellow.color = GameModel.GameColor.YELLOW;
-                            player.upgrades.Add(yellow);
-                            UIManager.instance.AddNewPlayerUpgradeToPreview(yellow, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(yellow.color));
-
-                        }
-                        else
-                        {
-                            player.upgrades.Add(selectedUpgrade);
-                            UIManager.instance.AddNewPlayerUpgradeToPreview(selectedUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(selectedUpgrade.color));
-                        }
-                    }
+                    addNewUpgrade(selectedUpgrade);
                 }
             }
             selectedUpgrade = noUpgrade;
@@ -173,6 +137,40 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     }
 
+    void addNewUpgrade(Upgrade selected)
+    {
+        if (selected.color == GameModel.GameColor.WHITE)
+        {
+            Upgrade red = selected.MakeCopy();
+            red.color = GameModel.GameColor.RED;
+            addNewUpgrade(red);
+
+            Upgrade blue = selected.MakeCopy();
+            blue.color = GameModel.GameColor.BLUE;
+            addNewUpgrade(blue);
+
+            Upgrade yellow = selected.MakeCopy();
+            yellow.color = GameModel.GameColor.YELLOW;
+            addNewUpgrade(yellow);
+        }
+        else
+        {
+            bool addNew = true;
+            foreach (Upgrade u in player.upgrades)
+            {
+                if (u.type == selected.type && u.color == selectedUpgrade.color)
+                {
+                    addNew = false;
+                    u.factor += selectedUpgrade.factor;
+                }
+            }
+            if (addNew)
+            {
+                player.upgrades.Add(selected);
+                UIManager.instance.AddNewPlayerUpgradeToPreview(selected, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(selected.color));
+            }
+        }
+    }
     private void WipeAllEnemiesAndBullets()
     {
         foreach (EnemyBehavior e in activeEnemies)
