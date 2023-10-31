@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
@@ -148,6 +148,7 @@ public class Player : MonoBehaviour, IDataPersistence
         if (orbAnimTimer > orbAnimInterval)
         {
             orbAnimTimer = -1f;
+            return;
         }
         for (int i = 0; i < orbs.Length; i++)
         {
@@ -231,7 +232,15 @@ public class Player : MonoBehaviour, IDataPersistence
         }
     }
     
-    
+    public void setColor(int index)
+    {
+        colorPlace = index;
+        playerColor = colorOrder[colorPlace];
+        barrel.color = modelGame.ColorToColor(playerColor);
+        setNextOrb();
+        configureWeapon();
+    }
+
     private void nextColor()
     {
         colorPlace++;
@@ -276,9 +285,12 @@ public class Player : MonoBehaviour, IDataPersistence
         bulletSpeed = baseBulletSpeed;
         foreach (GameManager.Upgrade u in upgrades)
         {
-            if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.SHOTSPEED))
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.PIERCING))
             {
-                bulletSpeed *= modelGame.shotSpeedMultiplier;
+                for (int k = 0; k < u.factor; k++)
+                {
+                    bulletSpeed *= modelGame.shotSpeedMultiplier;
+                }
             }
         }
         return bulletSpeed;
@@ -288,9 +300,12 @@ public class Player : MonoBehaviour, IDataPersistence
         bulletSize = baseBulletSize;
         foreach (GameManager.Upgrade u in upgrades)
         {
-            if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.SHOTSIZE))
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.SHOTSIZE))
             {
-                bulletSize *= modelGame.shotSizeMultiplier;
+                for (int k = 0; k < u.factor; k++)
+                {
+                    bulletSize *= modelGame.shotSizeMultiplier;
+                }
             }
         }
         return bulletSize;
@@ -300,9 +315,12 @@ public class Player : MonoBehaviour, IDataPersistence
         shotSpeed = baseShotSpeed;
         foreach (GameManager.Upgrade u in upgrades)
         {
-            if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
             {
-                shotSpeed /= modelGame.rapidFireMultiplier;
+                for (int k = 0; k < u.factor; k++)
+                {
+                    shotSpeed /= modelGame.rapidFireMultiplier;
+                }
             }
         }
         return shotSpeed;
@@ -314,10 +332,13 @@ public class Player : MonoBehaviour, IDataPersistence
         shotSpread = modelGame.baseSpreadAngle;
         foreach (GameManager.Upgrade u in upgrades)
         {
-            if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.SHOTS))
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.SHOTS))
             {
-                numShots += modelGame.numShotsUpgrade;
-                shotSpread += 15;
+                for (int k = 0; k < u.factor; k++)
+                {
+                    numShots += modelGame.numShotsUpgrade;
+                    shotSpread += 15;
+                }
             }
         }
         return numShots;
@@ -328,9 +349,12 @@ public class Player : MonoBehaviour, IDataPersistence
         piercing = basePiercing;
         foreach (GameManager.Upgrade u in upgrades)
         {
-            if (u.color.Equals(currentColor) && u.type.Equals(GameManager.UpgradeType.PIERCING))
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.PIERCING))
             {
-                piercing += modelGame.piercingUpgrade;
+                for (int k = 0; k < u.factor; k++)
+                {
+                    piercing += modelGame.piercingUpgrade;
+                }
             }
         }
         return piercing;
@@ -416,6 +440,19 @@ public class Player : MonoBehaviour, IDataPersistence
                 clicks = 0;
             }
         }
+
+        if (Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            setColor(0);
+        }
+        if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            setColor(1);
+        }
+        if (Input.GetKeyUp(KeyCode.Alpha3))
+        {
+            setColor(2);
+        }
     }
 
     public void TakeHit()
@@ -432,10 +469,11 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 if (c.gameObject.tag == "Enemy")
                 {
-                    c.gameObject.GetComponent<EnemyBehavior>().StartKnockBack();
+                    c.gameObject.GetComponent<EnemyBehavior>().StartKnockBack(false);
                 }
             }
         }
+        SoundManager.instance.PlaySound(playerAudio, GameModel.instance.bulletSounds[3]);
     }
 
     public void LoadData(GameData data)
@@ -444,7 +482,8 @@ public class Player : MonoBehaviour, IDataPersistence
         foreach (GameManager.Upgrade newUpgrade in upgrades)
         {
             Debug.Log("Adding new upgrade to preview");
-            UIManager.instance.AddNewPlayerUpgradeToPreview(newUpgrade);
+            UIManager.instance.AddNewPlayerUpgradeToPreview(newUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(newUpgrade.color));
+            UIManager.instance.updateUpgradeChevrons(newUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(newUpgrade.color));
         }
         lives = data.playerLives;
     }

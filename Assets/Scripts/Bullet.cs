@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class Bullet : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class Bullet : MonoBehaviour
     private Vector3 positionTarget;
     private Vector3 positionCurrent;
     public SpriteRenderer ren;
+    public Light2D lightRen;
     public float baseScale = 0.2f;
 
     public GameModel.GameColor bulletColor;
@@ -22,6 +25,7 @@ public class Bullet : MonoBehaviour
     public CircleCollider2D thisCollider;
     public List<EnemyBehavior> immuneEnemies;
     private float bulletScale;
+    private float baseOuterRadius = 4.2f;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +57,8 @@ public class Bullet : MonoBehaviour
     public void SetColor(Color c)
     {
         ren.color = c;
+        lightRen.color = c;
+        lightRen.pointLightOuterRadius = (baseOuterRadius * bulletScale);
     }
 
     // Update is called once per frame

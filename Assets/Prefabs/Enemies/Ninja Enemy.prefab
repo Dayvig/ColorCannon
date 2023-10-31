@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3234621261998620790}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.1377, y: -0.1377, z: 0}
-  m_LocalScale: {x: 0.11487099, y: 0.11487099, z: 0.11487099}
+  m_LocalScale: {x: 0.065, y: 0.065, z: 0.065}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -129,8 +129,11 @@ MonoBehaviour:
   isDarkened: 0
   immuneBullets: []
   knockBack: 0
+  knockBackTimer: 0
+  knockBackDuration: 1
   enemyType: 2
   enemySource: {fileID: 0}
+  lifeTime: 0
   sneakTime: 0
   ninjaBehavior: 0
 --- !u!82 &1184040670892123741

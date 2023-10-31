@@ -57,7 +57,8 @@ public class SaveLoadManager : MonoBehaviour
         gameData.chunks.Clear();
         gameData.numChunks = GameModel.instance.baseNumChunks;
         gameData.uniqueChunks = GameModel.instance.baseNumUniqueChunks;
-        Debug.Log(gameData.numChunks + " uniques " + gameData.uniqueChunks);
+        gameData.playerLives = 3;
+        UIManager.instance.DestroyAll();
         dataHandler.Save(gameData);
     }
 

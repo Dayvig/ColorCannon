@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7963215952173959544}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0888355, y: 0.0888355, z: 0.0888355}
+  m_LocalScale: {x: 0.065, y: 0.065, z: 0.065}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -108,8 +108,11 @@ MonoBehaviour:
   isDarkened: 0
   immuneBullets: []
   knockBack: 0
+  knockBackTimer: 0
+  knockBackDuration: 1
   enemyType: 0
   enemySource: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &8196177601444596792
 Rigidbody2D:
   serializedVersion: 4

@@ -63,6 +63,8 @@ public class EnemyBehavior : MonoBehaviour
     
     public virtual void initialize(Vector3 des, GameModel.GameColor color, bool dark, WaveSpawningSystem.WaveObject.Type type)
     {
+        enemyColors.Clear();
+        
         currentPos = transform.position;
         destination = des;
         moveSpeed = WaveSpawningSystem.globalWaveSpeed;
@@ -83,8 +85,12 @@ public class EnemyBehavior : MonoBehaviour
         knockBack = false;
         knockBackTimer = 0f;
 
-        enemySource = GetComponent<AudioSource>();
         lifeTime = 0.0f;
+    }
+
+    private void Start()
+    {
+        enemySource = GetComponent<AudioSource>();
     }
 
     private void initializeMixedColor(GameModel.GameColor color)
@@ -117,6 +123,7 @@ public class EnemyBehavior : MonoBehaviour
         else
         {
             isMultiColor = false;
+            enemyColors.Add(color);
         }
     }
 
@@ -176,7 +183,7 @@ public class EnemyBehavior : MonoBehaviour
             Debug.Assert(col.GetComponent<Player>() != null, "Player doesn't have correct component");
             Player player = col.GetComponent<Player>();
             player.TakeHit();
-            Die();
+            Die(false);
         }
     }
 
@@ -200,7 +207,7 @@ public class EnemyBehavior : MonoBehaviour
         {
             isDarkened = false;
             SetVisualColor(enemyColor);
-            StartKnockBack();
+            StartKnockBack(true);
             return;
         }
         enemyColors.Remove(bulletColor);
@@ -208,24 +215,30 @@ public class EnemyBehavior : MonoBehaviour
         SetVisualColor(enemyColor);
             if (enemyColors.Count == 0)
             {
-                Die();
+                Die(true);
             }
             else { 
-            StartKnockBack();
+            StartKnockBack(true);
             }
     }
 
-public virtual void StartKnockBack()
+       public virtual void StartKnockBack(bool withSound)
     {
         SetVisualColor(enemyColor);
         knockBack = true;
         knockBackTimer = 0.0f;
-        SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
+        if (withSound)
+        {
+            SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
+        }
     }
 
-    public void Die()
+    public void Die(bool withSound)
     {
-        SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
+        if (withSound)
+        {
+            SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
+        }
         GameManager.instance.markedForDeathEnemies.Add(this);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class previewScript2 : MonoBehaviour
@@ -8,6 +9,8 @@ public class previewScript2 : MonoBehaviour
     public BoxCollider2D thisCollider;
     private UIManager uiManager;
     public string modText;
+    public Sprite chevronSprite;
+    public TextMeshProUGUI text;
 
     void Start()
     {

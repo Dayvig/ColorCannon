@@ -37,6 +37,8 @@ public class GameModel : MonoBehaviour
     public float baseGlobalWaveSpeed;
     public int baseNumChunks;
     public int baseNumUniqueChunks;
+    public int shieldUpgradeFreq = 9;
+    public int basicUpgradeFreq = 3;
 
     public float darkenedColorDivisor = 1.5f;
 
@@ -159,21 +161,43 @@ public class GameModel : MonoBehaviour
 
     }
 
-    public string GetWaveModTextFromType(UIManager.WaveModifier waveModifier)
+    public string GetWaveModTextFromType(UIManager.WaveModifier waveModifier, int count)
     {
         switch (waveModifier)
         {
             case UIManager.WaveModifier.DIFFICULT:
                 return WaveModTexts[0];
             case UIManager.WaveModifier.FASTER:
-                return WaveModTexts[1];
+                return WaveModTexts[1] + (count * 20) + WaveModTexts[2];
             case UIManager.WaveModifier.NUMEROUS:
-                return WaveModTexts[2];
+                if (count == 1)
+                {
+                    return WaveModTexts[3] + (count * 12) + WaveModTexts[4] + count + WaveModTexts[5];
+                }
+                else
+                {
+                    return WaveModTexts[3] + (count * 12) + WaveModTexts[4] + count + WaveModTexts[6];
+                }
             case UIManager.WaveModifier.BIGGER_WAVE:
                 return WaveModTexts[3];
             default:
                 return "Huh";
         }
+    }
+
+    public int GetPlayerUpgradePreviewColorRowFromColor(GameModel.GameColor color)
+    {
+        switch (color)
+        {
+            case GameColor.RED:
+                return 0;
+            case GameColor.BLUE:
+                return 1;
+            case GameColor.YELLOW:
+                return 2;
+        }
+        Debug.Log("Heck");
+        return 0;
     }
 
     public string GetChunkTextFromType(WaveSpawningSystem.Chunk thisChunk)

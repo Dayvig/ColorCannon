@@ -7,9 +7,9 @@ public class FastEnemyBehavior : EnemyBehavior
 {
 
     public float windUpTime = 0.0f;
-    private float windUpInterval = 1.0f;
+    private float windUpInterval = 1.5f;
     private float waitInterval = 1.5f;
-    private float WINDUPSPEED = 0.4f;
+    private float WINDUPSPEED = 0.5f;
     private float FASTSPEEDMULT = 3f;
     private float rotationTarget;
 
@@ -27,6 +27,7 @@ public class FastEnemyBehavior : EnemyBehavior
         base.initialize(des, color, darkened, eType);
         fastBehavior = Behavior.WINDUP;
         windUpTime = 0.0f;
+        Debug.Log("Initialized to " + windUpTime + "Behavior: "+fastBehavior);
         
         //Sets rotation to look at player
         Quaternion rot = gameObject.transform.rotation;

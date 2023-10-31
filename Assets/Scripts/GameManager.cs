@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
@@ -37,19 +38,27 @@ public class GameManager : MonoBehaviour, IDataPersistence
         public String name;
         public GameManager.UpgradeType type;
         public GameModel.GameColor color;
+        public int factor;
 
         [JsonConstructor]
-        public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType, GameModel.GameColor upgradeColor)
+        public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType, GameModel.GameColor upgradeColor, int factor)
         {
             name = upgradeName;
             type = upgradeType;
             color = upgradeColor;
+            this.factor = factor;
         }
         public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType)
         {
             name = upgradeName;
             type = upgradeType;
             color = GameModel.GameColor.NONE;
+            factor = 1;
+        }
+
+        public Upgrade MakeCopy()
+        {
+            return new Upgrade(name, type, color, factor);
         }
     }
 
@@ -99,8 +108,43 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 }
                 else
                 {
-                    player.upgrades.Add(selectedUpgrade);
-                    UIManager.instance.AddNewPlayerUpgradeToPreview(selectedUpgrade);
+                    bool addNew = true;
+                    foreach (Upgrade u in player.upgrades)
+                    {
+                        UnityEngine.Debug.Log(u.type);
+                        if (u.type == selectedUpgrade.type && (u.color == selectedUpgrade.color || selectedUpgrade.color == GameModel.GameColor.WHITE))
+                        {
+                            UnityEngine.Debug.Log("Hit");
+                            addNew = false;
+                            u.factor += selectedUpgrade.factor;
+                        }
+                    }
+                    if (addNew)
+                    {
+                        if (selectedUpgrade.color == GameModel.GameColor.WHITE)
+                        {
+                            Upgrade red = selectedUpgrade.MakeCopy();
+                            red.color = GameModel.GameColor.RED;
+                            player.upgrades.Add(red);
+                            UIManager.instance.AddNewPlayerUpgradeToPreview(red, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(red.color));
+
+                            Upgrade blue = selectedUpgrade.MakeCopy();
+                            blue.color = GameModel.GameColor.BLUE;
+                            player.upgrades.Add(blue);
+                            UIManager.instance.AddNewPlayerUpgradeToPreview(blue, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(blue.color));
+
+                            Upgrade yellow = selectedUpgrade.MakeCopy();
+                            yellow.color = GameModel.GameColor.YELLOW;
+                            player.upgrades.Add(yellow);
+                            UIManager.instance.AddNewPlayerUpgradeToPreview(yellow, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(yellow.color));
+
+                        }
+                        else
+                        {
+                            player.upgrades.Add(selectedUpgrade);
+                            UIManager.instance.AddNewPlayerUpgradeToPreview(selectedUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(selectedUpgrade.color));
+                        }
+                    }
                 }
             }
             selectedUpgrade = noUpgrade;
@@ -133,7 +177,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         foreach (EnemyBehavior e in activeEnemies)
         {
-            e.Die();
+            e.Die(false);
         }
 
         foreach (Bullet b in activeBullets)
@@ -159,48 +203,59 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         selectedUpgrade = noUpgrade;
     }
-
     public void addStartingUpgrades()
     {
         //Red Firing Speed
-        possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.RED, 3));
         //Blue Firing Speed
-        possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.BLUE, 3));
         //Yellow Firing Speed
-        possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.YELLOW, 3));
         
+        /*
         //Red Shot Speed
-        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.RED, 3));
         //Blue Shot Speed
-        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.BLUE));
+        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.BLUE, 3));
         //Yellow Shot Speed
-        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.YELLOW));
+        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.YELLOW, 3));
+        */
 
         //Red Shot Size
-        possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.RED, 3));
         //Blue Shot Size
-        possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.BLUE));
+        possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.BLUE, 3));
         //Yellow Shot Size
-        possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.YELLOW));
+        possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.YELLOW, 3));
         
         //Red Shot Spread
-        possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.RED, 3));
         //Blue Shot Spread
-        possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.BLUE));
+        possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.BLUE, 3));
         //Yellow Shot Spread
-        possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.YELLOW));
+        possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.YELLOW, 3));
         
         //Red Shot Spread
-        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.RED));
+        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.RED, 3));
         //Blue Shot Spread
-        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.BLUE));
+        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.BLUE, 3));
         //Yellow Shot Spread
-        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.YELLOW));
+        possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.YELLOW, 3));
         
-        //Shield Recharge
-        possibleUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE));
-        //Shield Recharge
-        possibleUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE));
+        for (int i = 0; i < GameModel.instance.shieldUpgradeFreq; i++)
+        {
+            //Shield Recharge
+            possibleUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE, 1));
+        }
+
+        for (int i = 0; i < GameModel.instance.basicUpgradeFreq; i++)
+        {
+            possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.WHITE, 1));
+            //possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.WHITE, 1));
+            possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.WHITE, 1));
+            possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.WHITE, 1));
+            possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.WHITE, 1));
+        }
     }
 
     public Upgrade getRandomUpgrade()

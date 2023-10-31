@@ -131,6 +131,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
             bool darkEnemy = currentWave[currentWaveIndex].darkened;
             enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
+            Debug.Log("Enemy initialized: Type: " + enemyScript.enemyType + " Color: " + enemyColor);
             enemyScript.SetVisualColor(enemyColor);
             if (gameManager.activeEnemies.Contains(enemyScript))
             {
@@ -629,14 +630,29 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 case 2:
                     for (int k = 0; k < chunkDifficulties.Count; k++)
                     {
-                        chunkDifficulties[k] += 2;
+                        //multiply all difficulties by 1.5
+                        chunkDifficulties[k] = (int)Math.Ceiling(chunkDifficulties[k] * 1.5f);
                     }
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
                     break;
             }
         }
+
+        /* Random chunk + 50%
         int rand = Random.Range(0, chunkDifficulties.Count);
-        chunkDifficulties[rand] = (int)Math.Ceiling(chunkDifficulties[rand] * 1.5f);
+        chunkDifficulties[rand] = (int)Math.Ceiling(chunkDifficulties[rand] * 1.5f);*/
+
+        //Add 1 to all, 1 to random.
+        int rand = Random.Range(0, chunkDifficulties.Count);
+        for (int k = 0; k < chunkDifficulties.Count; k++)
+        {
+            if (k == rand)
+            {
+                chunkDifficulties[k] += 1;
+            }
+            chunkDifficulties[k] += 1;
+        }
+
         repopulateChunks();
     }
 
@@ -851,19 +867,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             if (isMultiColor)
             {
                 difficulty *= 2;
-                if (difficulty < 6)
-                {
-                    difficulty = 6;
-                }
             }
 
             if (isDarkened)
             {
                 difficulty *= 2;
-                if (difficulty < 4)
-                {
-                    difficulty = 4;
-                }
             }
         }
         public virtual WaveObject ChunkToWaveObject(bool isTutorial)

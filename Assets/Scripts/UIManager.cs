@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public List<WaveModifier> WaveMods = new List<WaveModifier>();
     public GameObject previousUpgrades;
     public GameObject PostWaveUIPanel;
+    public GameObject WaveUIPanel;
     public GameObject WaveModPanel;
     public GameObject currentUpgradePanel;
     public Transform PreviewPanelRow1;
@@ -91,6 +92,9 @@ public class UIManager : MonoBehaviour, IDataPersistence
     private float interval1;
     private float interval2;
 
+    public Image[] UISHIELDS = new Image[3];
+    Player player;
+
     public enum WaveModifier
     {
         NUMEROUS,
@@ -109,6 +113,9 @@ public class UIManager : MonoBehaviour, IDataPersistence
             Debug.Log("Multiple UIManagers Detected.");
         }
         instance = this;
+        player = GameObject.Find("Player").GetComponent<Player>();
+
+
     }
 
     public void initialize()
@@ -257,12 +264,14 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void activateWinScreen()
     {
-        WinPanel.SetActive(true);   
+        WinPanel.SetActive(true);
+        WaveUIPanel.SetActive(false);
     }
     
     public void activateLoseScreen()
     {
         LosePanel.SetActive(true);
+        WaveUIPanel.SetActive(false);
     }
 
     public void deactivateWinLoseUI()
@@ -274,6 +283,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public void activatePostWaveUI()
     {
         PostWaveUIPanel.SetActive(true);
+        WaveUIPanel.SetActive(false);
         UpgradePanel.SetActive(true);
         WaveModPreview.SetActive(true);
         currentUpgradePanel.SetActive(true);
@@ -288,6 +298,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public void deactivatePostWaveUI()
     {
         PostWaveUIPanel.SetActive(false);
+        WaveUIPanel.SetActive(true);
         UpgradePanel.SetActive(false);
         WaveModPreview.SetActive(false);
         currentUpgradePanel.SetActive(false);
@@ -303,6 +314,12 @@ public class UIManager : MonoBehaviour, IDataPersistence
                 currentUpgradeRows[i].GetChild(k).gameObject.SetActive(isActive);
             }
         }
+
+        for (int i = UISHIELDS.Length - 1; i >= 0; i--)
+        {
+            UISHIELDS[i].enabled = (player.lives >= i + 1);
+        }
+
     }
 
     public void SetWaveModPreviews(bool isActive)
@@ -352,13 +369,44 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void SetupWaveModUI()
     {
-        foreach (WaveModifier mod in WaveMods)
+        ConstructAllWaveModPreviews();
+        foreach (Upgrade u in player.upgrades)
+        {
+            AddNewPlayerUpgradeToPreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+            updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+        }
+        SetCurrentPlayerUpgradePreviews(true);
+    }
+
+    void ConstructAllWaveModPreviews()
+    {
+        ConstructWaveModifierPreview(WaveModifier.NUMEROUS);
+        ConstructWaveModifierPreview(WaveModifier.FASTER);
+        ConstructWaveModifierPreview(WaveModifier.DIFFICULT);
+    }
+
+    void ConstructWaveModifierPreview(WaveModifier mod)
+    {
+        int count = 0;
+        foreach (WaveModifier nextMod in WaveMods)
+        {
+            if (nextMod == mod)
+            {
+                count++;
+            }
+        }
+        if (count > 0)
         {
             GameObject newWaveModPreview = Instantiate(WaveModPreview, WaveModPanelRow.transform);
-            GameObject newWaveModPreviewImage = Instantiate(PreviewImage, newWaveModPreview.transform);
-            Image modImage = newWaveModPreviewImage.GetComponent<Image>();
+            Image modImage = newWaveModPreview.transform.GetChild(0).GetComponent<Image>();
+            Image chevronImage = newWaveModPreview.transform.GetChild(1).GetComponent<Image>();
+            chevronImage.sprite = count < 7 ? modelGame.UpgradeImages[count + 5] : modelGame.UpgradeImages[11];
+            if (count >= 7)
+            {
+                newWaveModPreview.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "" + count;
+            }
             previewScript2 previewScript2 = newWaveModPreview.GetComponent<previewScript2>();
-            previewScript2.SetText(modelGame.GetWaveModTextFromType(mod));
+            previewScript2.SetText(modelGame.GetWaveModTextFromType(mod, count));
             previewScript2.setupCollider();
             modImage.sprite = modelGame.WaveModImageFromType(mod);
         }
@@ -369,6 +417,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
         GameObject newUpgradePreview = Instantiate(UpgradePreview, UpgradePreviewPanel);
         newUpgradePreview.GetComponent<UpgradeButton>().upp = u;
         Image upgradeImage = newUpgradePreview.transform.GetChild(0).GetComponent<Image>();
+        Image chevronImage = newUpgradePreview.transform.GetChild(1).GetComponent<Image>();
+        chevronImage.sprite = u.factor < 7 ? modelGame.UpgradeImages[u.factor+5] : modelGame.UpgradeImages[11];
         upgradeImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upgradeImage.color = modelGame.ColorToColor(u.color);
         newUpgradePreview.GetComponent<UpgradeButton>().initialize(u);
@@ -376,31 +426,53 @@ public class UIManager : MonoBehaviour, IDataPersistence
         newUpgradePreview.SetActive(true);
     }
 
-    public void AddNewPlayerUpgradeToPreview(GameManager.Upgrade u)
+    public void AddNewPlayerUpgradeToPreview(GameManager.Upgrade u, int colorRow)
     {
-        Transform rowToShowIn;
-        switch (u.color)
+        bool toCreateNew = true;
+        foreach (Transform upgradeToCheck in currentUpgradeRows[colorRow])
         {
-            case GameModel.GameColor.RED:
-                rowToShowIn = currentUpgradeRows[0];
-                break;
-            case GameModel.GameColor.BLUE:
-                rowToShowIn = currentUpgradeRows[1];
-                break;
-            case GameModel.GameColor.YELLOW:
-                rowToShowIn = currentUpgradeRows[2];
-                break;
-            default:
-                rowToShowIn = currentUpgradeRows[0];
-                break;
+            if (upgradeToCheck.name.Contains(u.type.ToString()))
+            {
+                toCreateNew = false;
+                updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+            }
         }
-        GameObject newUpgradePreview = Instantiate(WaveModPreview, rowToShowIn);
-        GameObject newUpgradePreviewImage = Instantiate(PreviewImage, newUpgradePreview.transform);
-        Image upImage = newUpgradePreviewImage.GetComponent<Image>();
+        if (toCreateNew)
+        {
+                createNewPlayerUpgradePreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+        }
+    }
+
+    void createNewPlayerUpgradePreview (GameManager.Upgrade u, int rowToCreateIn)
+    {
+        GameObject newUpgradePreview = Instantiate(WaveModPreview, currentUpgradeRows[rowToCreateIn]);
+        newUpgradePreview.name = u.type.ToString();
+        Image upImage = newUpgradePreview.transform.GetChild(0).GetComponent<Image>();
         upImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upImage.color = modelGame.ColorToColor(u.color);
         newUpgradePreview.GetComponent<previewScript2>().modText = modelGame.GetUpgradeTextFromType(u.type);
+        updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
     }
+
+    public void updateUpgradeChevrons(Upgrade u, int rowToCheck)
+    {
+            foreach (Transform upgradeToCheck in currentUpgradeRows[rowToCheck])
+            {
+                if (upgradeToCheck.name.Contains(u.type.ToString()))
+                {
+                    Debug.Log("Updating Upgrade chevron, type " + u.type.ToString() + " , factor" + u.factor);
+                    Image chevronImage = upgradeToCheck.transform.GetChild(1).GetComponent<Image>();
+                    chevronImage.sprite = u.factor < 7 ? modelGame.UpgradeImages[u.factor + 5] : modelGame.UpgradeImages[11];
+                    if (u.factor >= 7)
+                    {
+                        upgradeToCheck.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "" + u.factor;
+                    }
+                }
+            }
+    }
+
+
+
 
     void SetColor(Image i, Color c)
     {

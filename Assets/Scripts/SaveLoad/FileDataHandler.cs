@@ -37,7 +37,6 @@ public class FileDataHandler
                 {
                     for (int i = 0; i < loadedData.chunks.Count; i++)
                     {
-                        Debug.Log(loadedData.chunks.Count);
                         loadedData.chunks[i] = WaveSpawningSystem.instance.returnSpecialChunkFromGeneric(loadedData.chunks[i]);
                     }
                 }
