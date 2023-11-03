@@ -65,6 +65,7 @@ public class FastEnemyBehavior : EnemyBehavior
                 break;
         }
 
-        base.Move();
+        transform.position = Vector3.MoveTowards(currentPos, destination, Time.deltaTime * moveSpeed);
+        currentPos = transform.position;
     }
 }

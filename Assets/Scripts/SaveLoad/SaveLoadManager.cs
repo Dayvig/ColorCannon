@@ -43,8 +43,8 @@ public class SaveLoadManager : MonoBehaviour
         gameData.currentLevel = 1;
         Debug.Log("Level" + gameData.currentLevel);
         gameData.refreshActive = true;
-        gameData.undiscoveredEasyMechanics = new List<Mechanic> { Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG };
-        gameData.undiscoveredMedMechanics = new List<Mechanic> { Mechanic.DISGUISED, Mechanic.SWIRL };
+        gameData.undiscoveredEasyMechanics.Clear();
+        gameData.undiscoveredMedMechanics.Clear();
         gameData.chunkDifficulties = new int[] { 1, 1, 2 };
         gameData.currentNewMechanics.Clear();
         gameData.currentMechanics.Clear();
@@ -64,14 +64,12 @@ public class SaveLoadManager : MonoBehaviour
 
     public void WipeAllData()
     {
-        WipeMidRunDataOnly();
-        gameData.encounteredEnemies.Clear();
-        dataHandler.Save(gameData);
+        NewGame();
     }
 
     public void LoadGame()
     {
-
+        Debug.Log("Current Undiscovered med Mechanics" + WaveSpawningSystem.instance.medMechanics.Count);
         this.gameData = dataHandler.Load();
 
         if (this.gameData == null)
@@ -80,9 +78,10 @@ public class SaveLoadManager : MonoBehaviour
         }
 
         foreach (IDataPersistence saveLoadObj in saveLoadObjects)
-        {
+        { 
             saveLoadObj.LoadData(gameData);
         }
+        Debug.Log("Current Undiscovered med Mechanics" + WaveSpawningSystem.instance.medMechanics.Count);
     }
 
     public void SaveGame()

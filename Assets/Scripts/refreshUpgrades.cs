@@ -8,7 +8,8 @@ public class refreshUpgrades : MonoBehaviour
     public Button refresh;
     public GameManager manager;
     public UIManager uiManager;
-    
+    public bool infinite;
+
     void Start()
     {
         refresh.onClick.AddListener(TaskOnClick);
@@ -21,9 +22,12 @@ public class refreshUpgrades : MonoBehaviour
         UIManager.instance.WipeUpgrades();
         manager.currentOfferedUpgrades.Clear();
         manager.GenerateUpgrades();
-        this.gameObject.SetActive(false);
         UIManager.instance.SetUpgradesVisible(true);
-        UIManager.instance.refreshActive = false;
+        if (!infinite)
+        {
+            this.gameObject.SetActive(false);
+            UIManager.instance.refreshActive = false;
+        }
         SaveLoadManager.instance.SaveGame();
     }
 }

@@ -67,6 +67,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<EnemyBehavior> markedForDeathEnemies = new List<EnemyBehavior>();
     public List<Bullet> markedForDeathBullets = new List<Bullet>();
     public List<Bullet> inactiveBullets = new List<Bullet>();
+    public List<DeathEffect> inactiveSplatters = new List<DeathEffect>();
+    public List<DeathEffect> splatters = new List<DeathEffect>();
+    public List<DeathEffect> markedForDeathSplatters = new List<DeathEffect>();
     public Player player;
     public WaveSpawningSystem spawningSystem;
     public static GameModel gameModel;
@@ -78,6 +81,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
     private Upgrade noUpgrade = new Upgrade("None", UpgradeType.NONE);
     public Upgrade selectedUpgrade = new Upgrade("None", UpgradeType.NONE);
     public UpgradeType selectedUpgradeType;
+    public int shotsFired;
+    public int shotsHit;
 
     public AudioSource gameAudio;
     public static GameManager instance { get; private set; }
@@ -91,7 +96,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
             WaveSpawningSystem.currentChunks.Clear();
             spawningSystem.SetupNextWave();
             DisposeAllBullets();
-            UIManager.instance.activatePostWaveUI();
             selectedUpgrade = noUpgrade;
 
             UIManager.instance.activatePostWaveAnimations(true);
@@ -348,8 +352,41 @@ public class GameManager : MonoBehaviour, IDataPersistence
             inactiveBullets.Add(ded);
             ded.gameObject.SetActive(false);
         }
+        foreach (DeathEffect ded in markedForDeathSplatters)
+        {
+            splatters.Remove(ded);
+            inactiveSplatters.Add(ded);
+            ded.gameObject.SetActive(false);
+        }
+
         markedForDeathEnemies.Clear();
         markedForDeathBullets.Clear();
+        markedForDeathSplatters.Clear();
+
+    }
+
+    public void createSplatter(Vector3 location, Color color)
+    {
+        GameObject newSplatter;
+        location += (Vector3)(Random.insideUnitCircle * 0.3f);
+        if (inactiveSplatters.Count == 0)
+        {
+           newSplatter = Instantiate(GameModel.instance.DeathSplatter, location, Quaternion.identity);
+        }
+        else
+        {
+            newSplatter = inactiveSplatters[0].gameObject;
+        }
+        newSplatter.transform.position = location;
+        DeathEffect newDeathEffect = newSplatter.GetComponent<DeathEffect>();
+        newDeathEffect.initialize();
+        newDeathEffect.ren.color = color;
+        newSplatter.transform.localScale = newDeathEffect.baseScale;
+        newSplatter.transform.localScale *= Random.Range(0.5f, 2f);
+        Random.Range(0.6f, 1.4f);
+
+        splatters.Add(newSplatter.GetComponent<DeathEffect>());
+        inactiveSplatters.Remove(newDeathEffect);                    
     }
 
     void WaveUpdate()

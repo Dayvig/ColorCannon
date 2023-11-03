@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class FileDataHandler
@@ -47,6 +48,10 @@ public class FileDataHandler
             }
 
         }
+        loadedData.undiscoveredEasyMechanics = loadedData.undiscoveredEasyMechanics.Distinct().ToList();
+        loadedData.undiscoveredMedMechanics = loadedData.undiscoveredMedMechanics.Distinct().ToList();
+        loadedData.currentMechanics = loadedData.currentMechanics.Distinct().ToList();
+
         return loadedData;
     }
 

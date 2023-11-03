@@ -14,6 +14,6 @@ public class DeleteGameData : MonoBehaviour
 
     void TaskOnClick()
     {
-        SaveLoadManager.instance.NewGame();
+        SaveLoadManager.instance.WipeAllData();
     }
 }

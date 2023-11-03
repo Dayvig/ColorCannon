@@ -28,6 +28,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public static List<WaveObject> currentWave = new List<WaveObject>();
     public static List<Chunk> currentChunks = new List<Chunk>();
     public List<EnemyBehavior> inactiveEnemies = new List<EnemyBehavior>();
+    public List<DeathEffect> deathEffects = new List<DeathEffect>();
     public List<GameModel.GameColor> currentColors = new List<GameModel.GameColor>();
     public List<int> chunkDifficulties = new List<int>();
     public int currentWaveIndex = 0;
@@ -69,7 +70,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         SWARM,
         ZIGZAG,
         DISGUISED,
-        SWIRL
+        SWIRL,
+        RAGE
     }
 
     public List<Mechanic> basicMechanics;
@@ -126,6 +128,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 enemyObject = Instantiate(currentWave[currentWaveIndex].body, startPos, Quaternion.identity);
             }
 
+            enemyObject.SetActive(true);
             enemyObject.transform.position = startPos;
             enemyScript = enemyObject.GetComponent<EnemyBehavior>();
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
@@ -175,7 +178,14 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             Debug.Log("Spawning Normal Wave");
             generateWave();
             RandomizeWave();
-            gameManager.GenerateUpgrades();
+            if (Level % 2 == 0)
+            {
+                gameManager.GenerateUpgrades();
+            }
+            else
+            {
+                UIManager.instance.UpgradePanel.SetActive(false);
+            }
         }
         enemyTimer = currentWave[0].delayUntilNext;
         currentWaveIndex = 0;
@@ -525,10 +535,17 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             clearWave();
             generateWave();
             RandomizeWave();
-            gameManager.GenerateUpgrades();
+            UIManager.instance.activatePostWaveUI();
+            if (Level % 2 == 0)
+            {
+                gameManager.GenerateUpgrades();
+            }
+            else
+            {
+                UIManager.instance.UpgradePanel.SetActive(false);
+            }
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
-            UIManager.instance.activatePostWaveUI();
         }
 
         SaveLoadManager.instance.SaveGame();
@@ -566,11 +583,24 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public void IncreaseDifficulty()
     {
         Level++;
-        if (Level > 30){
+        if (Level > 15){
             gameManager.SetState(GameManager.GameState.WIN);
             return;
         }
-        //every 12th wave, adds an extra chunk
+        //Every wave spawns 3% faster.
+        globalWaveSpacing /= modelGame.baseWaveSpacingUpgrade;
+
+        //On waves 5, 9, 13 and 15, adds +1 enemy per chunk.
+        if (Level-1 % 4 == 0)
+        {
+            globalWaveNumber += modelGame.baseWaveNumberUpgrade;
+        }
+        if (Level == 15)
+        {
+            globalWaveNumber += modelGame.baseWaveNumberUpgrade;
+        }
+
+        //every 12th wave, adds an extra chunk and +1 enemy per chunk.
         if (Level % 12 == 0)
         {
             double sum = 0;
@@ -580,6 +610,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             }
             numChunks++;
             chunkDifficulties.Add((int)Math.Ceiling((sum/chunkDifficulties.Count)));
+            globalWaveNumber += modelGame.baseWaveNumberUpgrade;
         }
         //starting on wave 3, every 7th wave adds a guaranteed unique chunk
         if ((Level+4) % 7 == 0)
@@ -619,19 +650,19 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             switch (randomWaveMod)
             {
                 case 0:
-                    globalWaveNumber += 1;
-                    globalWaveSpacing /= 1.12f;
+                    globalWaveNumber += modelGame.baseNumerousNumberUpgrade;
+                    globalWaveSpacing /= modelGame.baseNumerousSpacingUpgrade;
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.NUMEROUS);
                     break;
                 case 1:
-                    globalWaveSpeed *= 1.2f;
+                    globalWaveSpeed *= modelGame.baseWaveSpeedUpgrade;
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.FASTER);
                     break;
                 case 2:
                     for (int k = 0; k < chunkDifficulties.Count; k++)
                     {
                         //multiply all difficulties by 1.5
-                        chunkDifficulties[k] = (int)Math.Ceiling(chunkDifficulties[k] * 1.5f);
+                        chunkDifficulties[k] = (int)Math.Ceiling(chunkDifficulties[k] * modelGame.baseWaveDifficultyUpgrade);
                     }
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
                     break;
@@ -648,9 +679,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             if (k == rand)
             {
-                chunkDifficulties[k] += 1;
+                chunkDifficulties[k] += modelGame.baseStandardDifficultyIncrease;
             }
-            chunkDifficulties[k] += 1;
+            chunkDifficulties[k] += modelGame.baseStandardDifficultyIncrease;
         }
 
         repopulateChunks();
@@ -714,6 +745,12 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             addAllChunkColors(new SwirlChunk(new[] { GameModel.GameColor.NONE }, false));
         }
+
+        if (newMechanics.Contains(Mechanic.RAGE) || currentMechanics.Contains(Mechanic.RAGE))
+        {
+            addAllChunkColors(new RageChunk(new[] { GameModel.GameColor.NONE }, false));
+        }
+
 
         //modifiers (Dark only for now)
         if (newMechanics.Contains(Mechanic.DARK) || currentMechanics.Contains(Mechanic.DARK))
@@ -1206,6 +1243,50 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
+    public class RageChunk : Chunk
+    {
+        public RageChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark, 0, false, 0, 0, "Basic", false, 1.0f)
+        {
+            name = "Rage";
+            baseDifficulty = 4;
+            imageID = 7;
+            SetDifficulty(spawnColors);
+        }
+        public RageChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Rage";
+            baseDifficulty = 4;
+            imageID = 7;
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[7], WaveSpawningSystem.instance.EnemyScripts[7], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.RAGE);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[7], WaveSpawningSystem.instance.EnemyScripts[7], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.RAGE);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new RageChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new RageChunk(colors, isDark);
+        }
+    }
+
     public bool ChunkIsMechanic(Mechanic m, Chunk c)
     {
         switch (m)
@@ -1242,6 +1323,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
+        Debug.Log("Spawning System loading data");
         Level = data.currentLevel;
         Debug.Log("Loaded Level :" + Level);
         currentMechanics = data.currentMechanics;
@@ -1301,7 +1383,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             SWARM,
             ZIGZAG,
             DISGUISED,
-            SWIRL
+            SWIRL,
+            RAGE
         }
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark, WaveObject.Type type)

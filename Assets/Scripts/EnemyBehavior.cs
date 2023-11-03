@@ -27,6 +27,12 @@ public class EnemyBehavior : MonoBehaviour
 
     public AudioSource enemySource;
     public float lifeTime = 0.0f;
+    private float swayTimer = 0.0f;
+    public float swayInterval = 0.15f;
+    public float swayAngle = 10;
+    private int mode = 0;
+    public bool enableSway = true;
+
     private GameModel.GameColor SetMixedColor(List<GameModel.GameColor> colors)
     {
         if (colors.Count == 0)
@@ -148,10 +154,70 @@ public class EnemyBehavior : MonoBehaviour
 
     public virtual void Move()
     {
+        if (enableSway)
+        {
+            SwayMovement();
+        }
+        else
+        {
+            BasicMovement();
+        }
+    }
+
+    void SwayMovement()
+    {
+        swayTimer += Time.deltaTime;
+        if (swayTimer < swayInterval)
+        {
+            if (mode == 0)
+            {
+                Vector3 newZ = Vector3.Lerp(new Vector3(transform.localRotation.x, transform.localRotation.y, 0), new Vector3(transform.localRotation.x, transform.localRotation.y, swayAngle), swayTimer / swayInterval);
+                transform.localRotation = Quaternion.Euler(newZ);
+                transform.position = Vector3.MoveTowards(currentPos, destination, Time.deltaTime * moveSpeed * 2);
+                currentPos = transform.position;
+            }
+            else if (mode == 1)
+            {
+                Vector3 newZ = Vector3.Lerp(new Vector3(transform.localRotation.x, transform.localRotation.y, swayAngle), new Vector3(transform.localRotation.x, transform.localRotation.y, 0), swayTimer / swayInterval);
+                transform.localRotation = Quaternion.Euler(newZ);
+            }
+            else if (mode == 2)
+            {
+                Vector3 newZ = Vector3.Lerp(new Vector3(transform.localRotation.x, transform.localRotation.y, 0), new Vector3(transform.localRotation.x, transform.localRotation.y, -swayAngle), swayTimer / swayInterval);
+                transform.localRotation = Quaternion.Euler(newZ);
+                transform.position = Vector3.MoveTowards(currentPos, destination, Time.deltaTime * moveSpeed * 2);
+                currentPos = transform.position;
+            }
+            else
+            {
+                Vector3 newZ = Vector3.Lerp(new Vector3(transform.localRotation.x, transform.localRotation.y, -swayAngle), new Vector3(transform.localRotation.x, transform.localRotation.y, 0), swayTimer / swayInterval);
+                transform.localRotation = Quaternion.Euler(newZ);
+            }
+        }
+        else
+        {
+            if (mode == 0 || mode == 2)
+            {
+                swayTimer = -swayInterval;
+            }
+            else
+            {
+                swayTimer = 0.0f;
+            }
+            mode++;
+            if (mode > 3)
+            {
+                mode = 0;
+            }
+        }
+    }
+
+    void BasicMovement()
+    {
         transform.position = Vector3.MoveTowards(currentPos, destination, Time.deltaTime * moveSpeed);
         currentPos = transform.position;
     }
-    
+
     public virtual void KnockBack()
     {
         knockBackTimer += Time.deltaTime;
@@ -187,7 +253,7 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
-    public void touchBullet(Bullet bullet)
+    public virtual void touchBullet(Bullet bullet)
     {
         if (bullet.immuneEnemies.Count > 0 && bullet.immuneEnemies.Contains(this))
         {
@@ -203,6 +269,7 @@ public class EnemyBehavior : MonoBehaviour
 
     public virtual void TakeHit(GameModel.GameColor bulletColor)
     {
+        GameManager.instance.createSplatter(this.transform.position, GameModel.instance.ColorToColor(enemyColor));
         if (isDarkened)
         {
             isDarkened = false;
@@ -220,6 +287,7 @@ public class EnemyBehavior : MonoBehaviour
             else { 
             StartKnockBack(true);
             }
+        GameManager.instance.shotsHit++;
     }
 
        public virtual void StartKnockBack(bool withSound)

@@ -42,6 +42,28 @@ public class GameModel : MonoBehaviour
 
     public float darkenedColorDivisor = 1.5f;
 
+    [Range(1f, 1.2f)]
+    public float baseWaveSpacingUpgrade = 1.03f;
+
+    [Range(1.1f, 1.5f)]
+    public float baseNumerousSpacingUpgrade = 1.25f;
+
+    [Range(0, 10)]
+    public int baseNumerousNumberUpgrade = 3;
+
+    [Range(1.1f, 1.5f)]
+    public float baseWaveSpeedUpgrade = 1.2f;
+
+    [Range(1.1f, 3f)]
+    public float baseWaveDifficultyUpgrade = 1.5f;
+
+    [Range(0, 10)]
+    public int baseStandardDifficultyIncrease = 1;
+
+    [Range(0, 5)]
+    public int baseWaveNumberUpgrade = 1;
+
+
     public Color redVisualColor = Color.red;
     public Color greenVisualColor = new Color(0f, 0.65f, 0.15f);
     public Color blueVisualColor = Color.blue;
@@ -56,6 +78,7 @@ public class GameModel : MonoBehaviour
     public List<AudioClip> enemySounds = new List<AudioClip>();
     public List<AudioClip> uiSounds = new List<AudioClip>();
 
+    public GameObject DeathSplatter;
     public static GameModel instance { get; private set; }
     // Start is called before the first frame update
     void Start()

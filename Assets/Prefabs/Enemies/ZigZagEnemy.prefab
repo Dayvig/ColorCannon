@@ -72,9 +72,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingLayerID: -123864301
+  m_SortingLayer: 4
+  m_SortingOrder: 8
   m_Sprite: {fileID: 21300000, guid: 693c6a669448f644f877066927b4c6c4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -134,6 +134,9 @@ MonoBehaviour:
   enemyType: 4
   enemySource: {fileID: 0}
   lifeTime: 0
+  swayInterval: 0.15
+  swayAngle: 10
+  enableSway: 1
   sneakTime: 0
   zigzagBehavior: 0
 --- !u!82 &8424085773759287117

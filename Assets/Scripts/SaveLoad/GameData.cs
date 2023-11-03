@@ -25,11 +25,10 @@ public class GameData
 
     public bool refreshActive;
     public GameData(){
-
         currentLevel = 0;
         refreshActive = true;
         undiscoveredEasyMechanics = new List<Mechanic> { Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG };
-        undiscoveredMedMechanics = new List<Mechanic> { Mechanic.DISGUISED, Mechanic.SWIRL };
+        undiscoveredMedMechanics = new List<Mechanic> { Mechanic.SWIRL, Mechanic.RAGE };
         chunkDifficulties = new int[]{ 1, 1, 2 };
         waveNumber = GameModel.instance.baseGlobalWaveNumber;
         waveSpacing = GameModel.instance.baseGlobalWaveSpacing;

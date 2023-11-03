@@ -48,6 +48,7 @@ public class Bullet : MonoBehaviour
         bulletColor = color;
         piercing = pierce;
         gameObject.SetActive(true);
+        thisCollider.enabled = true;
         bulletScale = scale;
         this.transform.localScale = new Vector3 (scale, scale, 1);
 
@@ -116,6 +117,7 @@ public class Bullet : MonoBehaviour
     public void Die()
     {
         gameManager.markedForDeathBullets.Add(this);
+        thisCollider.enabled = false;
     }
     
 }

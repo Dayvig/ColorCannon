@@ -178,14 +178,16 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
             }
-            
+
             //create and instantiate new bullet
+
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
             bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing, bulletSize);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             if (!gameManager.activeBullets.Contains(bulletScript))
             {
                 gameManager.activeBullets.Add(bulletScript);
+                GameManager.instance.shotsFired++;
             }
             gameManager.inactiveBullets.Remove(bulletScript);
 
@@ -218,6 +220,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 if (!gameManager.activeBullets.Contains(bulletScript))
                 {
                     gameManager.activeBullets.Add(bulletScript);
+                    GameManager.instance.shotsFired++;
                 }
                 gameManager.inactiveBullets.Remove(bulletScript);
             }
@@ -337,7 +340,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 for (int k = 0; k < u.factor; k++)
                 {
                     numShots += modelGame.numShotsUpgrade;
-                    shotSpread += 15;
+                    shotSpread += modelGame.baseSpreadAngle;
                 }
             }
         }
