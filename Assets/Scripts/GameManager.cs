@@ -389,6 +389,29 @@ public class GameManager : MonoBehaviour, IDataPersistence
         inactiveSplatters.Remove(newDeathEffect);                    
     }
 
+    public void createSplatter(Vector3 location, Color color, float scale)
+    {
+        GameObject newSplatter;
+        location += (Vector3)(Random.insideUnitCircle * 0.3f);
+        if (inactiveSplatters.Count == 0)
+        {
+            newSplatter = Instantiate(GameModel.instance.DeathSplatter, location, Quaternion.identity);
+        }
+        else
+        {
+            newSplatter = inactiveSplatters[0].gameObject;
+        }
+        newSplatter.transform.position = location;
+        DeathEffect newDeathEffect = newSplatter.GetComponent<DeathEffect>();
+        newDeathEffect.initialize();
+        newDeathEffect.ren.color = color;
+        newSplatter.transform.localScale = Vector3.one * scale;
+        Random.Range(0.6f, 1.4f);
+
+        splatters.Add(newSplatter.GetComponent<DeathEffect>());
+        inactiveSplatters.Remove(newDeathEffect);
+    }
+
     void WaveUpdate()
     {
         player.PlayerUpdate();

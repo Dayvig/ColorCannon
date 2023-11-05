@@ -10,8 +10,8 @@ public class Bullet : MonoBehaviour
     public float xSpeed;
     public float ySpeed;
     public Vector3 flight;
-    private float xBounds = 3;
-    private float yBounds = 5;
+    private float xBounds = GameModel.instance.xBounds;
+    private float yBounds = GameModel.instance.yBounds;
     private Vector3 positionTarget;
     private Vector3 positionCurrent;
     public SpriteRenderer ren;

@@ -99,6 +99,26 @@ public class EnemyBehavior : MonoBehaviour
         enemySource = GetComponent<AudioSource>();
     }
 
+    public void addColor(GameModel.GameColor color, bool isNewDarkColor)
+    {
+        if (!isDarkened && isNewDarkColor)
+        {
+            isDarkened = true;
+            SetVisualColor(enemyColor);
+        }
+        if (enemyColors.Contains(color))
+        {
+            return;
+        }
+        else
+        {
+            enemyColors.Add(color);
+            enemyColor = SetMixedColor(enemyColors);
+            isMultiColor = true;
+            SetVisualColor(enemyColor);
+        }
+    }
+
     private void initializeMixedColor(GameModel.GameColor color)
     {
         if (color.Equals(GameModel.GameColor.ORANGE))

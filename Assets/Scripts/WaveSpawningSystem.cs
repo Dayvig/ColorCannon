@@ -71,7 +71,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         ZIGZAG,
         DISGUISED,
         SWIRL,
-        RAGE
+        RAGE,
+        PAINTER
     }
 
     public List<Mechanic> basicMechanics;
@@ -134,7 +135,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
             bool darkEnemy = currentWave[currentWaveIndex].darkened;
             enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
-            Debug.Log("Enemy initialized: Type: " + enemyScript.enemyType + " Color: " + enemyColor);
             enemyScript.SetVisualColor(enemyColor);
             if (gameManager.activeEnemies.Contains(enemyScript))
             {
@@ -745,10 +745,13 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             addAllChunkColors(new SwirlChunk(new[] { GameModel.GameColor.NONE }, false));
         }
-
         if (newMechanics.Contains(Mechanic.RAGE) || currentMechanics.Contains(Mechanic.RAGE))
         {
             addAllChunkColors(new RageChunk(new[] { GameModel.GameColor.NONE }, false));
+        }
+        if (newMechanics.Contains(Mechanic.PAINTER) || currentMechanics.Contains(Mechanic.PAINTER))
+        {
+            addAllChunkColors(new PainterChunk(new[] { GameModel.GameColor.NONE }, false));
         }
 
 
@@ -787,12 +790,17 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return new NinjaChunk(c.colors, c.isDarkened);
             case "Swarm":
                 return new SwarmChunk(c.colors, c.isDarkened);
-            case "ZigZag":
+            case "Zigzag":
                 return new ZigZagChunk(c.colors, c.isDarkened);
             case "Disguiser":
                 return new DisguiserChunk(c.colors, c.isDarkened);
             case "Swirl":
                 return new SwirlChunk(c.colors, c.isDarkened);
+            case "Rage":
+                return new RageChunk(c.colors, c.isDarkened);
+            case "Painter":
+                return new PainterChunk(c.colors, c.isDarkened);
+
             default:
                 return new BasicChunk(c.colors, c.isDarkened);
         }
@@ -1287,6 +1295,54 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
+    public class PainterChunk : Chunk
+    {
+        public PainterChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark, 0, false, 0, 0, "Basic", false, 1.0f)
+        {
+            name = "Painter";
+            baseDifficulty = 4;
+            imageID = 8;
+            SetDifficulty(spawnColors);
+        }
+        public PainterChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Painter";
+            baseDifficulty = 4;
+            imageID = 8;
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[8], WaveSpawningSystem.instance.EnemyScripts[8], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.PAINTER);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[8], WaveSpawningSystem.instance.EnemyScripts[8], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.PAINTER);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+        public override void Generate(bool tutorial)
+        {
+            base.Generate(tutorial, (int)globalWaveNumber / 3);
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new PainterChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new PainterChunk(colors, isDark);
+        }
+    }
+
     public bool ChunkIsMechanic(Mechanic m, Chunk c)
     {
         switch (m)
@@ -1315,6 +1371,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return c is DisguiserChunk;
             case Mechanic.SWIRL:
                 return c is SwirlChunk;
+            case Mechanic.RAGE:
+                return c is RageChunk;
+            case Mechanic.PAINTER:
+                return c is PainterChunk;
+
 
         }
 
@@ -1384,7 +1445,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             ZIGZAG,
             DISGUISED,
             SWIRL,
-            RAGE
+            RAGE,
+            PAINTER
         }
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark, WaveObject.Type type)

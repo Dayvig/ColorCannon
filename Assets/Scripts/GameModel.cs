@@ -79,11 +79,27 @@ public class GameModel : MonoBehaviour
     public List<AudioClip> uiSounds = new List<AudioClip>();
 
     public GameObject DeathSplatter;
+
+    public int xBounds = 3;
+    public int yBounds = 5;
+
     public static GameModel instance { get; private set; }
     // Start is called before the first frame update
     void Start()
     {
         instance = this;  
+    }
+
+    public bool isInBounds(Vector3 location)
+    {
+        return location.x <= xBounds && location.x >= -xBounds && location.y >= -yBounds && location.y <= yBounds;
+    }
+
+    public bool isInBoundsPercent(Vector3 location, float percentage)
+    {
+        Debug.Log(-(xBounds * percentage));
+        Debug.Log(-(yBounds * percentage));
+        return location.x <= (xBounds * percentage) && location.x > (-xBounds * percentage) && location.y > (-yBounds * percentage) && location.y <= (yBounds * percentage);
     }
 
     public Color ColorToColor(GameColor col)

@@ -5707,6 +5707,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5a9a7902dd820b448bc1ca4b327ee0d3, type: 3}
   - {fileID: 8300000, guid: 15033cf66231914409d963977ac84adb, type: 3}
   DeathSplatter: {fileID: 777420956331959931, guid: 0de7c757535febf498f6fd97d56946f1, type: 3}
+  xBounds: 3
+  yBounds: 5
 --- !u!4 &1793738074
 Transform:
   m_ObjectHideFlags: 0
@@ -5742,6 +5744,7 @@ MonoBehaviour:
   - {fileID: 2828672357647286389, guid: ceb379202e7837449a9abdb3d1146e75, type: 3}
   - {fileID: 8069311381474920864, guid: 64a4022530e2e0145ae5788bd08519be, type: 3}
   - {fileID: 4714711941028254415, guid: a293a7e3a3d01c44dab6dfe8d334b798, type: 3}
+  - {fileID: 3366475905089424648, guid: 89cfd64eebdf1b843bca03eaa01490b8, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
@@ -5751,6 +5754,7 @@ MonoBehaviour:
   - {fileID: 3906329422095621827, guid: ceb379202e7837449a9abdb3d1146e75, type: 3}
   - {fileID: 1187610945692734044, guid: 64a4022530e2e0145ae5788bd08519be, type: 3}
   - {fileID: 3104159042906713003, guid: a293a7e3a3d01c44dab6dfe8d334b798, type: 3}
+  - {fileID: 8350767227774356235, guid: 89cfd64eebdf1b843bca03eaa01490b8, type: 3}
   Level: 0
   numUniqueChunks: 0
   numChunks: 0
@@ -5823,6 +5827,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8dd548d3f8823b847b3fef40a6e2b7db, type: 3}
   - {fileID: 21300000, guid: 56b0eb8e3e463904da2892582ea98287, type: 3}
   - {fileID: 21300000, guid: 2c2c81a890b8cfe43ab0486d44b5ac76, type: 3}
+  - {fileID: 21300000, guid: 6b4efde1e1245694aaf882ebdcf04a16, type: 3}
   WaveMods: 
   previousUpgrades: {fileID: 642733076}
   PostWaveUIPanel: {fileID: 1662487983}

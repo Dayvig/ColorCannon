@@ -28,7 +28,7 @@ public class GameData
         currentLevel = 0;
         refreshActive = true;
         undiscoveredEasyMechanics = new List<Mechanic> { Mechanic.FAST, Mechanic.NINJA, Mechanic.DARK, Mechanic.SWARM, Mechanic.ZIGZAG };
-        undiscoveredMedMechanics = new List<Mechanic> { Mechanic.SWIRL, Mechanic.RAGE };
+        undiscoveredMedMechanics = new List<Mechanic> { Mechanic.SWIRL, Mechanic.RAGE, Mechanic.PAINTER };
         chunkDifficulties = new int[]{ 1, 1, 2 };
         waveNumber = GameModel.instance.baseGlobalWaveNumber;
         waveSpacing = GameModel.instance.baseGlobalWaveSpacing;
