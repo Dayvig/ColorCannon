@@ -36,7 +36,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public List<Mechanic> newMechanics = new List<Mechanic>();
 
     [SerializeField]
-    private float enemyTimer = 0.0f;
+    public float enemyTimer = 0.0f;
     private float xBounds = 3;
     private float yBounds = 5;
     
@@ -194,6 +194,22 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         SaveLoadManager.instance.SaveGame();
 
         //Level = 1;
+    }
+
+    public void AddExtraEnemies()
+    {
+        List<WaveObject> newEnemies = new List<WaveObject>();
+        for (int k =0; k < currentWave.Count; k++)
+        {
+            if (k%2 == 0)
+            {
+                newEnemies.Add(currentWave[k].MakeCopy());
+            }
+        }
+        foreach (WaveObject w in newEnemies)
+        {
+            currentWave.Add(w);
+        }
     }
 
     List<GameModel.GameColor[]> twoColorPermutations(GameModel.GameColor[] colors)
@@ -1458,6 +1474,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             locationsToSpawn = loc;
             darkened = dark;
             enemyType = type;
+        }
+
+        public WaveObject MakeCopy()
+        {
+            return this;
         }
     }
 }

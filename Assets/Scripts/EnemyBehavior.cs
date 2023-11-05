@@ -321,6 +321,8 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
+    public delegate void EnemyDiedEvent();
+    public static event EnemyDiedEvent HasDied;
     public void Die(bool withSound)
     {
         if (withSound)
@@ -328,5 +330,9 @@ public class EnemyBehavior : MonoBehaviour
             SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
         }
         GameManager.instance.markedForDeathEnemies.Add(this);
+        if (HasDied != null)
+        {
+            HasDied();
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
@@ -67,6 +68,11 @@ public class Player : MonoBehaviour, IDataPersistence
     public float orbAnimTimer = 0.0f;
     public float orbAnimInterval = 1.0f;
 
+    public float rainbowMeter = 10.0f;
+    public float meterMax = 100.0f;
+    public rainbowMeter meter;
+    public bool rainbowRush = false;
+    public float rainbowTimer = 0.0f;
     private enum controlMode
     {
         TOUCH,
@@ -85,6 +91,7 @@ public class Player : MonoBehaviour, IDataPersistence
         setNextOrb();
         configureWeapon();
         playerAudio = GetComponent<AudioSource>();
+        EnemyBehavior.HasDied += this.IncreaseMeter;
     }
     
     // Update is called once per frame
@@ -93,6 +100,7 @@ public class Player : MonoBehaviour, IDataPersistence
         DoubleClickUpdate();
         LifeUpdate();
         OrbUpdate();
+        RainbowRushUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
         LookAtMouse(currentPos);
@@ -138,7 +146,20 @@ public class Player : MonoBehaviour, IDataPersistence
             lifeShields[i].enabled = (lives >= i+1);
         }
     }
-
+    private void RainbowRushUpdate()
+    {
+        if (rainbowRush)
+        {
+            rainbowTimer += Time.deltaTime;
+            WaveSpawningSystem.instance.enemyTimer -= Time.deltaTime * 2f;
+            if (rainbowTimer > rainbowMeter)
+            {
+                rainbowRush = false;
+                rainbowTimer = 0.0f;
+                configureWeapon();
+            }
+        }
+    }
     private void OrbUpdate()
     {
         if (orbAnimTimer != -1f)
@@ -182,7 +203,13 @@ public class Player : MonoBehaviour, IDataPersistence
             //create and instantiate new bullet
 
             Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-            bulletScript.initialize(transform.position, rotationTarget, bulletSpeed, playerColor, piercing, bulletSize);
+            float rotation = rotationTarget;
+            if (rainbowRush)
+            {
+                rotation += UnityEngine.Random.Range(-25f, 25f);
+                gameColor = colorOrder[UnityEngine.Random.Range(0, 3)];
+            }
+            bulletScript.initialize(transform.position, rotation, bulletSpeed, gameColor, piercing, bulletSize);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             if (!gameManager.activeBullets.Contains(bulletScript))
             {
@@ -203,6 +230,11 @@ public class Player : MonoBehaviour, IDataPersistence
                 float angleOffSet =
                     ((((float)s / (numShots + (1 - (2 * (numShots % 2))))) * shotSpread) -
                      (shotSpread / 2));
+                if (rainbowRush)
+                {
+                    angleOffSet += UnityEngine.Random.Range(-10f, 10f);
+                    gameColor = colorOrder[UnityEngine.Random.Range(0, 2)];
+                }
                 GameObject newBulletObject = null;
                 foreach (Bullet b in gameManager.inactiveBullets)
                 {
@@ -215,7 +247,7 @@ public class Player : MonoBehaviour, IDataPersistence
                     newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
                 }
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, playerColor, piercing, bulletSize);
+                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, gameColor, piercing, bulletSize);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
                 if (!gameManager.activeBullets.Contains(bulletScript))
                 {
@@ -285,6 +317,10 @@ public class Player : MonoBehaviour, IDataPersistence
 
     public float FinalShotSpeed(GameModel.GameColor currentColor)
     {
+        if (rainbowRush)
+        {
+            return baseBulletSpeed * 2f;
+        }
         bulletSpeed = baseBulletSpeed;
         foreach (GameManager.Upgrade u in upgrades)
         {
@@ -300,6 +336,10 @@ public class Player : MonoBehaviour, IDataPersistence
     }
     public float FinalShotSize(GameModel.GameColor currentColor)
     {
+        if (rainbowRush)
+        {
+            return baseBulletSize * modelGame.shotSizeMultiplier;
+        }
         bulletSize = baseBulletSize;
         foreach (GameManager.Upgrade u in upgrades)
         {
@@ -316,13 +356,34 @@ public class Player : MonoBehaviour, IDataPersistence
     public float FinalRateOfFire(GameModel.GameColor currentColor)
     {
         shotSpeed = baseShotSpeed;
-        foreach (GameManager.Upgrade u in upgrades)
+        if (rainbowRush)
         {
-            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
+            for (int i = 0; i < 3; i++)
             {
-                for (int k = 0; k < u.factor; k++)
+                foreach (GameManager.Upgrade u in upgrades)
                 {
-                    shotSpeed /= modelGame.rapidFireMultiplier;
+                    if ((u.color.Equals(colorOrder[i]) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
+                    {
+                        for (int k = 0; k < u.factor; k++)
+                        {
+                            shotSpeed /= modelGame.rapidFireMultiplier;
+                        }
+                    }
+                }
+
+            }
+            shotSpeed /= 8;
+        }
+        else
+        {
+            foreach (GameManager.Upgrade u in upgrades)
+            {
+                if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
+                {
+                    for (int k = 0; k < u.factor; k++)
+                    {
+                        shotSpeed /= modelGame.rapidFireMultiplier;
+                    }
                 }
             }
         }
@@ -331,6 +392,10 @@ public class Player : MonoBehaviour, IDataPersistence
     
     public int FinalNumShots(GameModel.GameColor currentColor)
     {
+        if (rainbowRush)
+        {
+            return 1;
+        }
         numShots = baseNumShots;
         shotSpread = modelGame.baseSpreadAngle;
         foreach (GameManager.Upgrade u in upgrades)
@@ -349,6 +414,10 @@ public class Player : MonoBehaviour, IDataPersistence
     
     public int FinalPiercing(GameModel.GameColor currentColor)
     {
+        if (rainbowRush)
+        {
+            return 1;
+        }
         piercing = basePiercing;
         foreach (GameManager.Upgrade u in upgrades)
         {
@@ -422,6 +491,7 @@ public class Player : MonoBehaviour, IDataPersistence
         if (Input.GetMouseButtonDown(0))
         {
             tapPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            tapPos = new Vector3(tapPos.x, tapPos.y, 0);
             if (clicks > 0)
             {
                 nextColor();
@@ -432,6 +502,30 @@ public class Player : MonoBehaviour, IDataPersistence
         if (Input.GetMouseButtonUp(0))
         {
             Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            newPos = new Vector3(newPos.x, newPos.y, 0);
+            Debug.Log(newPos);
+            Debug.Log(transform.position);
+            if (Vector3.Distance(transform.position, newPos) < 1f && meter.rainbows.fillAmount >= 1f )
+            {
+                meter.transform.localScale = meter.bigScale;
+                if (meter.selected)
+                {
+                    rainbowRush = true;
+                    meter.isActive = false;
+                    meter.rotationSpeed = 0.1f;
+                    WaveSpawningSystem.instance.AddExtraEnemies();
+                    configureWeapon();
+                }
+                else
+                {
+                    meter.selected = true;
+                }
+            }
+            else
+            {
+                meter.selected = false;
+                meter.transform.localScale = meter.baseScale;
+            }
             if (Vector3.Distance(tapPos, newPos) < 0.1f)
             {
                 clicks++;
@@ -477,6 +571,19 @@ public class Player : MonoBehaviour, IDataPersistence
             }
         }
         SoundManager.instance.PlaySound(playerAudio, GameModel.instance.bulletSounds[3]);
+    }
+
+    public void IncreaseMeter()
+    {
+        if (!rainbowRush)
+        {
+            meter.targetFill += (UnityEngine.Random.Range(meterMax / 20, meterMax / 5) / meterMax);
+            meter.fillTimer = 0.0f;
+            if (meter.targetFill > 1)
+            {
+                meter.targetFill = 1;
+            }
+        }
     }
 
     public void LoadData(GameData data)

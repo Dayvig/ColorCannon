@@ -96,6 +96,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
             WaveSpawningSystem.currentChunks.Clear();
             spawningSystem.SetupNextWave();
             DisposeAllBullets();
+            DisposeAllSplatters();
+            player.rainbowRush = false;
+            player.meter.rainbows.fillAmount = 0;
             selectedUpgrade = noUpgrade;
 
             UIManager.instance.activatePostWaveAnimations(true);
@@ -270,6 +273,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
         foreach (Bullet b in activeBullets)
         {
             markedForDeathBullets.Add(b);
+        }
+    }
+    void DisposeAllSplatters()
+    {
+        foreach (DeathEffect d in splatters)
+        {
+            markedForDeathSplatters.Add(d);
         }
     }
 
