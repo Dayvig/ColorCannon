@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    
+
+    [Range(0f, 1f)]
+    public float masterVolume;
+
     public static SoundManager instance { get; private set; }
 
     public SoundManager()
@@ -16,7 +19,7 @@ public class SoundManager : MonoBehaviour
     public void PlaySound(AudioSource source, AudioClip clip)
     {
         source.clip = clip;
-        source.PlayOneShot(clip);
+        source.PlayOneShot(clip, masterVolume);
     }
 
     public void PlaySound(AudioSource source, AudioClip clip, float minPitchOffset, float maxPitchOffset)
@@ -24,7 +27,7 @@ public class SoundManager : MonoBehaviour
         float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
         source.clip = clip;
         source.pitch *= pitchShift;
-        source.PlayOneShot(clip);
+        source.PlayOneShot(clip, masterVolume);
         source.pitch /= pitchShift;
     }
 
@@ -37,7 +40,7 @@ public class SoundManager : MonoBehaviour
     {
         source.clip = clip;
         source.priority = priority;
-        source.PlayOneShot(clip);
+        source.PlayOneShot(clip, masterVolume);
     }
 
     IEnumerator PlaySoundWithDelay(AudioSource source, AudioClip clip, float delaySeconds)

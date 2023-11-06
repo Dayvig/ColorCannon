@@ -68,7 +68,8 @@ public class Player : MonoBehaviour, IDataPersistence
     public float orbAnimTimer = 0.0f;
     public float orbAnimInterval = 1.0f;
 
-    public float rainbowMeter = 10.0f;
+    public float rainbowMeter = 0.0f;
+    public float rainbowRushTime = 10.0f;
     public float meterMax = 100.0f;
     public rainbowMeter meter;
     public bool rainbowRush = false;
@@ -151,8 +152,10 @@ public class Player : MonoBehaviour, IDataPersistence
         if (rainbowRush)
         {
             rainbowTimer += Time.deltaTime;
-            WaveSpawningSystem.instance.enemyTimer -= Time.deltaTime * 2f;
-            if (rainbowTimer > rainbowMeter)
+            WaveSpawningSystem.instance.enemyTimer -= Time.deltaTime * 3f;
+            rainbowMeter = Mathf.Lerp(meterMax, 0f, rainbowTimer / rainbowRushTime);
+            meter.targetFill = rainbowMeter / meterMax;
+            if (rainbowTimer > rainbowRushTime)
             {
                 rainbowRush = false;
                 rainbowTimer = 0.0f;
@@ -505,7 +508,7 @@ public class Player : MonoBehaviour, IDataPersistence
             newPos = new Vector3(newPos.x, newPos.y, 0);
             Debug.Log(newPos);
             Debug.Log(transform.position);
-            if (Vector3.Distance(transform.position, newPos) < 1f && meter.rainbows.fillAmount >= 1f )
+            if (Vector3.Distance(transform.position, newPos) < 1f && rainbowMeter >= meterMax )
             {
                 meter.transform.localScale = meter.bigScale;
                 if (meter.selected)
@@ -577,10 +580,13 @@ public class Player : MonoBehaviour, IDataPersistence
     {
         if (!rainbowRush)
         {
-            meter.targetFill += (UnityEngine.Random.Range(meterMax / 20, meterMax / 5) / meterMax);
+            float fillAmnt = UnityEngine.Random.Range(meterMax / 60, meterMax / 45);
+            rainbowMeter += fillAmnt;
+            meter.targetFill = rainbowMeter / meterMax;
             meter.fillTimer = 0.0f;
             if (meter.targetFill > 1)
             {
+                rainbowMeter = meterMax;
                 meter.targetFill = 1;
             }
         }
@@ -596,11 +602,26 @@ public class Player : MonoBehaviour, IDataPersistence
             UIManager.instance.updateUpgradeChevrons(newUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(newUpgrade.color));
         }
         lives = data.playerLives;
+        rainbowMeter = data.rainbowMeter;
+        if (rainbowMeter > meterMax)
+        {
+            rainbowMeter = meterMax;
+        }
+        meter.rainbows.fillAmount = rainbowMeter / meterMax;
+        if (rainbowMeter >= meterMax)
+        {
+            meter.SetToActive();
+        }
+        else
+        {
+            meter.SetToInactive();
+        }
     }
 
     public void SaveData(ref GameData data)
     {
         data.playerUpgrades = upgrades;
         data.playerLives = lives;
+        data.rainbowMeter = rainbowMeter;
     }
 }

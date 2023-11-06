@@ -37,16 +37,14 @@ public class rainbowMeter : MonoBehaviour
 
         if (!prevActive && isActive)
         {
-            rainbows.color = new Color(1f, 1f, 1f, 1f);
-            rotationSpeed = fastRotationSpeed;
+            SetToActive();
             prevActive = isActive;
         }
         else if (prevActive && !isActive)
         {
-            rainbows.color = new Color(1f, 1f, 1f, 0.5f);
             rainbows.fillAmount = 0.0f;
-            transform.localScale = baseScale;
             targetFill = 0.0f;
+            SetToInactive();
             prevActive = isActive;
         }
         if (targetFill - rainbows.fillAmount < 0.05f)
@@ -66,5 +64,20 @@ public class rainbowMeter : MonoBehaviour
         {
             isActive = true;
         }
+    }
+
+    public void SetToActive()
+    {
+        rainbows.color = new Color(1f, 1f, 1f, 1f);
+        meter.color = new Color(1f, 1f, 1f, 1f);
+        rotationSpeed = fastRotationSpeed;
+    }
+
+    public void SetToInactive()
+    {
+        rainbows.color = new Color(1f, 1f, 1f, 0.5f);
+        meter.color = new Color(1f, 1f, 1f, 0.2f);
+        transform.localScale = baseScale;
+        rotationSpeed = 0.1f;
     }
 }

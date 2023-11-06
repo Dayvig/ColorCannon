@@ -7,6 +7,7 @@ public class GameData
 {
     public int currentLevel;
     public List<GameManager.Upgrade> playerUpgrades = new List<GameManager.Upgrade>();
+    public float rainbowMeter;
     public List<UIManager.WaveModifier> waveUpgrades = new List<UIManager.WaveModifier>();
     public List<GameManager.Upgrade> currentUpgradesOffered = new List<GameManager.Upgrade>();
     public List<WaveSpawningSystem.Mechanic> currentNewMechanics = new List<WaveSpawningSystem.Mechanic>();
@@ -36,5 +37,6 @@ public class GameData
         numChunks = GameModel.instance.baseNumChunks;
         uniqueChunks = GameModel.instance.baseNumUniqueChunks;
         playerLives = 3;
+        rainbowMeter = 0.0f;
     }
 }

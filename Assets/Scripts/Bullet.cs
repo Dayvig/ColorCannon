@@ -10,8 +10,6 @@ public class Bullet : MonoBehaviour
     public float xSpeed;
     public float ySpeed;
     public Vector3 flight;
-    private float xBounds = GameModel.instance.xBounds;
-    private float yBounds = GameModel.instance.yBounds;
     private Vector3 positionTarget;
     private Vector3 positionCurrent;
     public SpriteRenderer ren;
@@ -88,8 +86,8 @@ public class Bullet : MonoBehaviour
             Collide(c);
         }
         transform.position = positionCurrent;
-        if (positionCurrent.x > xBounds || positionCurrent.x < -xBounds ||
-            positionCurrent.y > yBounds || positionCurrent.y < -yBounds)
+        if (positionCurrent.x > GameModel.instance.xBounds || positionCurrent.x < -GameModel.instance.xBounds ||
+            positionCurrent.y > GameModel.instance.yBounds || positionCurrent.y < -GameModel.instance.yBounds)
         { 
             Die();
         }
