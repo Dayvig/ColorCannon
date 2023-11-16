@@ -9,6 +9,9 @@ public class SoundManager : MonoBehaviour
     [Range(0f, 1f)]
     public float masterVolume;
 
+    public AudioSource mainMusic;
+    public bool mainMusicPlaying = false;
+
     public static SoundManager instance { get; private set; }
 
     public SoundManager()
@@ -40,6 +43,13 @@ public class SoundManager : MonoBehaviour
     {
         source.clip = clip;
         source.priority = priority;
+        source.PlayOneShot(clip, masterVolume);
+    }
+
+    public void PlaySoundAndLoop(AudioSource source, AudioClip clip)
+    {
+        source.clip = clip;
+        source.loop = true;
         source.PlayOneShot(clip, masterVolume);
     }
 

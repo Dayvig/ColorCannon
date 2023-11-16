@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static GameManager;
@@ -35,6 +36,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public GameObject LosePanel;
     public GameObject RefreshUpgradesButton;
     public TextMeshProUGUI WaveText;
+    public GameObject MainMenuPanel;
     
     public GameModel modelGame;
     public GameManager gameManager;
@@ -126,6 +128,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
         WinRect = WinPanel.GetComponent<RectTransform>();
         LoseRect = LosePanel.GetComponent<RectTransform>();
+        activateMainMenuUI();
     }
 
     public void WaveUIUpdate()
@@ -264,12 +267,21 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void activateWinScreen()
     {
+        MainMenuPanel.SetActive(false);
         WinPanel.SetActive(true);
         WaveUIPanel.SetActive(false);
+    }
+
+    public void activateMainMenuUI()
+    {
+        deactivatePostWaveUI();
+        deactivateWinLoseUI();
+        MainMenuPanel.SetActive(true);
     }
     
     public void activateLoseScreen()
     {
+        MainMenuPanel.SetActive(false);
         LosePanel.SetActive(true);
         WaveUIPanel.SetActive(false);
     }
@@ -282,6 +294,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void activatePostWaveUI()
     {
+        MainMenuPanel.SetActive(false);
         PostWaveUIPanel.SetActive(true);
         WaveUIPanel.SetActive(false);
         UpgradePanel.SetActive(true);
@@ -362,7 +375,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
                 enemyImage.color = new Color(newColor.r / div, newColor.g / div, newColor.b / div, newColor.a);
             }
         }
-        previewScript2 thisPreview = newChunkPreview.GetComponent<previewScript2>();
+        genericPreviewScript thisPreview = newChunkPreview.GetComponent<genericPreviewScript>();
         thisPreview.modText = modelGame.GetChunkTextFromType(c);
         thisPreview.setupCollider();
     }
@@ -405,9 +418,9 @@ public class UIManager : MonoBehaviour, IDataPersistence
             {
                 newWaveModPreview.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "" + count;
             }
-            previewScript2 previewScript2 = newWaveModPreview.GetComponent<previewScript2>();
-            previewScript2.SetText(modelGame.GetWaveModTextFromType(mod, count));
-            previewScript2.setupCollider();
+            genericPreviewScript previewScript = newWaveModPreview.GetComponent<genericPreviewScript>();
+            previewScript.SetText(modelGame.GetWaveModTextFromType(mod, count));
+            previewScript.setupCollider();
             modImage.sprite = modelGame.WaveModImageFromType(mod);
         }
     }
@@ -422,7 +435,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         upgradeImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upgradeImage.color = modelGame.ColorToColor(u.color);
         newUpgradePreview.GetComponent<UpgradeButton>().initialize(u);
-        newUpgradePreview.GetComponent<previewScript2>().modText = modelGame.GetUpgradeTextFromType(u.type);
+        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u.type);
         newUpgradePreview.SetActive(true);
     }
 
@@ -450,7 +463,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         Image upImage = newUpgradePreview.transform.GetChild(0).GetComponent<Image>();
         upImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upImage.color = modelGame.ColorToColor(u.color);
-        newUpgradePreview.GetComponent<previewScript2>().modText = modelGame.GetUpgradeTextFromType(u.type);
+        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u.type);
         updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
     }
 

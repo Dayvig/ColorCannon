@@ -164,7 +164,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         
         gameManager.addStartingUpgrades();
         clearWave();
-        UIManager.instance.activatePostWaveUI();
 
         if (Level == 0 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
         {

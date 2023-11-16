@@ -162,14 +162,14 @@ GameObject:
   - component: {fileID: 6150505354085260521}
   - component: {fileID: 8965787030112649745}
   - component: {fileID: 6534421091581344514}
-  - component: {fileID: 1628730365105062024}
+  - component: {fileID: 1470086408845613359}
   m_Layer: 5
   m_Name: WaveModPreview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5869635355071061215
 RectTransform:
   m_ObjectHideFlags: 0
@@ -256,7 +256,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 59.79, y: 59.4}
   m_EdgeRadius: 0
---- !u!114 &1628730365105062024
+--- !u!114 &1470086408845613359
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -265,13 +265,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2699191724977984989}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 413e0470988fa2247a85bc96f723f094, type: 3}
+  m_Script: {fileID: 11500000, guid: de1a67df31dbf81489541a255302152a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   thisCollider: {fileID: 6534421091581344514}
   modText: 
-  chevronSprite: {fileID: 0}
-  text: {fileID: 0}
 --- !u!1 &3832455733258348326
 GameObject:
   m_ObjectHideFlags: 0

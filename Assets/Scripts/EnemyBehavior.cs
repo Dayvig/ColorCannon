@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour
@@ -251,14 +252,14 @@ public class EnemyBehavior : MonoBehaviour
     
     public virtual void SetVisualColor(GameModel.GameColor thisColor)
     {
-        Color c = GameModel.instance.ColorToColor(thisColor);
+        UnityEngine.Color c = GameModel.instance.ColorToColor(thisColor);
         if (!isDarkened)
         {
             rend.color = c;
         }
         else
         {
-            rend.color = new Color(c.r / 1.5f, c.g / 1.5f, c.b / 1.5f, c.a);
+            rend.color = new UnityEngine.Color(c.r / 1.5f, c.g / 1.5f, c.b / 1.5f, c.a);
         }
     }
 
@@ -279,7 +280,7 @@ public class EnemyBehavior : MonoBehaviour
         {
             return;
         }
-        if (enemyColors.Contains(bullet.bulletColor) || enemyColor == bullet.bulletColor)
+        if (enemyColors.Contains(bullet.bulletColor) || enemyColor == bullet.bulletColor || checkForMultiColoredBullet(bullet.bulletColor))
         {
             TakeHit(bullet.bulletColor);
             bullet.TakeHit();
@@ -297,7 +298,10 @@ public class EnemyBehavior : MonoBehaviour
             StartKnockBack(true);
             return;
         }
-        enemyColors.Remove(bulletColor);
+
+        if (!removeMultiColoredBullet(bulletColor)) {
+            enemyColors.Remove(bulletColor);
+        }
         enemyColor = SetMixedColor(enemyColors);
         SetVisualColor(enemyColor);
             if (enemyColors.Count == 0)
@@ -310,7 +314,58 @@ public class EnemyBehavior : MonoBehaviour
         GameManager.instance.shotsHit++;
     }
 
-       public virtual void StartKnockBack(bool withSound)
+    bool removeMultiColoredBullet(GameModel.GameColor bulletColor)
+    {
+        if (bulletColor.Equals(GameModel.GameColor.ORANGE))
+        {
+            enemyColors.Remove(GameModel.GameColor.RED);
+            enemyColors.Remove(GameModel.GameColor.YELLOW);
+            return true;
+        }
+        else if (bulletColor.Equals(GameModel.GameColor.PURPLE))
+        {
+            enemyColors.Remove(GameModel.GameColor.RED);
+            enemyColors.Remove(GameModel.GameColor.BLUE);
+            return true;
+        }
+        else if (bulletColor.Equals(GameModel.GameColor.GREEN))
+        {
+            enemyColors.Remove(GameModel.GameColor.BLUE);
+            enemyColors.Remove(GameModel.GameColor.YELLOW);
+            return true;
+        }
+        else if (bulletColor.Equals(GameModel.GameColor.WHITE))
+        {
+            enemyColors.Remove(GameModel.GameColor.RED);
+            enemyColors.Remove(GameModel.GameColor.YELLOW);
+            enemyColors.Remove(GameModel.GameColor.BLUE);
+            return true;
+        }
+        return false;
+    }
+
+    bool checkForMultiColoredBullet(GameModel.GameColor bulletColor)
+    {
+        if (bulletColor.Equals(GameModel.GameColor.ORANGE))
+        {
+            return enemyColors.Contains(GameModel.GameColor.RED) || enemyColors.Contains(GameModel.GameColor.YELLOW);
+        }
+        else if (bulletColor.Equals(GameModel.GameColor.PURPLE))
+        {
+            return enemyColors.Contains(GameModel.GameColor.RED) || enemyColors.Contains(GameModel.GameColor.BLUE);
+        }
+        else if (bulletColor.Equals(GameModel.GameColor.GREEN))
+        {
+            return enemyColors.Contains(GameModel.GameColor.BLUE) || enemyColors.Contains(GameModel.GameColor.YELLOW);
+        }
+        else if (bulletColor.Equals(GameModel.GameColor.WHITE))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public virtual void StartKnockBack(bool withSound)
     {
         SetVisualColor(enemyColor);
         knockBack = true;

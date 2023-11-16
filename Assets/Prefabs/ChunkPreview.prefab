@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3795374665585484694}
   - component: {fileID: 1113396705619805728}
   - component: {fileID: 4451288410859069818}
-  - component: {fileID: 488033459564914968}
+  - component: {fileID: 4252861096394964827}
   m_Layer: 5
   m_Name: ChunkPreview
   m_TagString: Untagged
@@ -130,7 +130,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 74.90073, y: 75.03064}
   m_EdgeRadius: 0
---- !u!114 &488033459564914968
+--- !u!114 &4252861096394964827
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7904462183665939546}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 413e0470988fa2247a85bc96f723f094, type: 3}
+  m_Script: {fileID: 11500000, guid: de1a67df31dbf81489541a255302152a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   thisCollider: {fileID: 4451288410859069818}

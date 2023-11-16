@@ -14,6 +14,7 @@ public class SaveLoadManager : MonoBehaviour
     private GameData gameData;
     public List<IDataPersistence> saveLoadObjects = new List<IDataPersistence>();
     private FileDataHandler dataHandler;
+    public bool isWebGL;
     public void initialize()
     {
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
@@ -70,7 +71,14 @@ public class SaveLoadManager : MonoBehaviour
     public void LoadGame()
     {
         Debug.Log("Current Undiscovered med Mechanics" + WaveSpawningSystem.instance.medMechanics.Count);
-        this.gameData = dataHandler.Load();
+        if (!isWebGL)
+        {
+            this.gameData = dataHandler.Load();
+        }
+        else
+        {
+            NewGame();
+        }
 
         if (this.gameData == null)
         {

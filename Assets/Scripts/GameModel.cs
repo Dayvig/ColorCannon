@@ -12,6 +12,8 @@ public class GameModel : MonoBehaviour
         RED, YELLOW, BLUE, ORANGE, PURPLE, GREEN, WHITE, NONE
     }
 
+    public GameColor gameColors;
+
     public enum UIColor
     {
         UPGRADESELECTED,
@@ -77,6 +79,7 @@ public class GameModel : MonoBehaviour
     public List<AudioClip> bulletSounds = new List<AudioClip>();
     public List<AudioClip> enemySounds = new List<AudioClip>();
     public List<AudioClip> uiSounds = new List<AudioClip>();
+    public List<AudioClip> music = new List<AudioClip>();
 
     public GameObject DeathSplatter;
 
@@ -264,6 +267,12 @@ public class GameModel : MonoBehaviour
                 break;
             case "Zigzag":
                 returnText = ChunkTexts[6];
+                break;
+            case "Rage":
+                returnText = ChunkTexts[7];
+                break;
+            case "Painter":
+                returnText = ChunkTexts[8];
                 break;
             default:
                 return "Something went wrong";

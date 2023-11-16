@@ -74,6 +74,9 @@ public class Player : MonoBehaviour, IDataPersistence
     public rainbowMeter meter;
     public bool rainbowRush = false;
     public float rainbowTimer = 0.0f;
+
+    public ringScript SelectorRing;
+    public bool movementLocked = false;
     private enum controlMode
     {
         TOUCH,
@@ -104,7 +107,10 @@ public class Player : MonoBehaviour, IDataPersistence
         RainbowRushUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
-        LookAtMouse(currentPos);
+        if (!movementLocked)
+        {
+            LookAtMouse(currentPos);
+        }
 
         if (Input.touchCount == 1)
         {
@@ -209,8 +215,8 @@ public class Player : MonoBehaviour, IDataPersistence
             float rotation = rotationTarget;
             if (rainbowRush)
             {
-                rotation += UnityEngine.Random.Range(-25f, 25f);
-                gameColor = colorOrder[UnityEngine.Random.Range(0, 3)];
+                rotation += UnityEngine.Random.Range(-15f, 15f);
+                gameColor = (GameModel.GameColor)UnityEngine.Random.Range(0, 6);
             }
             bulletScript.initialize(transform.position, rotation, bulletSpeed, gameColor, piercing, bulletSize);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
@@ -444,8 +450,7 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         if (mouseTimer > dClickInterval)
         {
-            mouseTimer = -1.0f;
-            clicks = 0;
+            //clicks = 0;
         }
         if (playerControlMode == controlMode.TOUCH) {
             takeTouchInput();
@@ -486,29 +491,34 @@ public class Player : MonoBehaviour, IDataPersistence
             }
         }
     }
+
+    public float selectorTimer = 0.0f;
+    public Vector3 firstTapPos;
     void takeMouseInput()
     {
+
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos = new Vector3(mousePos.x, mousePos.y, 0);
+
         //Begin click
         //Track the clickposition
         //if one click has already been executed, switch color
         if (Input.GetMouseButtonDown(0))
         {
-            tapPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            tapPos = new Vector3(tapPos.x, tapPos.y, 0);
+            if (clicks == 0)
+            {
+                firstTapPos = mousePos;
+            }
             if (clicks > 0)
             {
-                nextColor();
+                //nextColor();
             }
         }
         //End click
         //If the position is close to where it began, increment clicks
         if (Input.GetMouseButtonUp(0))
         {
-            Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            newPos = new Vector3(newPos.x, newPos.y, 0);
-            Debug.Log(newPos);
-            Debug.Log(transform.position);
-            if (Vector3.Distance(transform.position, newPos) < 1f && rainbowMeter >= meterMax )
+            if (Vector3.Distance(transform.position, mousePos) < 1f && rainbowMeter >= meterMax )
             {
                 meter.transform.localScale = meter.bigScale;
                 if (meter.selected)
@@ -523,19 +533,24 @@ public class Player : MonoBehaviour, IDataPersistence
                 {
                     meter.selected = true;
                 }
+                return;
             }
             else
             {
                 meter.selected = false;
                 meter.transform.localScale = meter.baseScale;
             }
-            if (Vector3.Distance(tapPos, newPos) < 0.1f)
+
+
+            clicks++;
+            mouseTimer = 0f;
+            if (clicks == 1)
             {
-                clicks++;
-                mouseTimer = 0f;
+                SelectorRing.Open();
             }
             else
             {
+                SelectorRing.StartAnimation(true);
                 mouseTimer = -1.0f;
                 clicks = 0;
             }

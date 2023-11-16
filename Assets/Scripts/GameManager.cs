@@ -1,12 +1,7 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour, IDataPersistence
@@ -18,7 +13,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         POSTWAVE,
         UIANIMATIONS,
         WIN,
-        LOSE
+        LOSE,
+        MAINMENU
     }
 
     public enum UpgradeType
@@ -77,7 +73,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<Upgrade> currentOfferedUpgrades = new List<Upgrade>();
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
 
-    public GameState currentState;
+    public GameState currentState = GameState.POSTWAVE;
     private Upgrade noUpgrade = new Upgrade("None", UpgradeType.NONE);
     public Upgrade selectedUpgrade = new Upgrade("None", UpgradeType.NONE);
     public UpgradeType selectedUpgradeType;
@@ -90,7 +86,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void SetState(GameState nextState)
     {
-        if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
+        if ((currentState == GameState.WAVE || currentState == GameState.MAINMENU) && nextState == GameState.POSTWAVE)
         {
             UnityEngine.Debug.Log("New Wave Generated");
             WaveSpawningSystem.currentChunks.Clear();
@@ -139,6 +135,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         if (currentState == GameState.UIANIMATIONS && nextState == GameState.WAVE)
         {
             UIManager.instance.deactivatePostWaveUI();
+            if (!SoundManager.instance.mainMusicPlaying)
+            {
+                SoundManager.instance.PlaySoundAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
+            }
+            SoundManager.instance.mainMusicPlaying = true;
         }
         currentState = nextState;
 
@@ -146,6 +147,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     void addNewUpgrade(Upgrade selected)
     {
+        Debug.Log("Adding new Upgrade: Type " + selected.type + " Color " + selected.color);
         if (selected.color == GameModel.GameColor.WHITE)
         {
             Upgrade red = selected.MakeCopy();
@@ -165,10 +167,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
             bool addNew = true;
             foreach (Upgrade u in player.upgrades)
             {
-                if (u.type == selected.type && u.color == selectedUpgrade.color)
+                if (u.type == selected.type && u.color == selected.color)
                 {
+                    Debug.Log("Incrementing existing");
                     addNew = false;
-                    u.factor += selectedUpgrade.factor;
+                    u.factor += selected.factor;
                 }
             }
             if (addNew)
@@ -204,7 +207,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         
         UIManager.instance.initialize();
         spawningSystem.initialize();
-        currentState = GameState.POSTWAVE;
+        currentState = GameState.MAINMENU;
 
         selectedUpgrade = noUpgrade;
     }
@@ -334,6 +337,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 break;
             case GameState.UIANIMATIONS:
                 UIManager.instance.PostWaveUIAndAnimationUpdate();
+                break;
+            case GameState.MAINMENU:
+                //Mainmenuupdates
                 break;
             default:
                 WaveUpdate();
