@@ -41,7 +41,7 @@ public class RageEnemyBehavior : EnemyBehavior
                 if (enableSway)
                 {
                     rageWaitTimer = rageDelay;
-                    SoundManager.instance.PlaySound(this.enemySource, GameModel.instance.enemySounds[3]);
+                    SoundManager.instance.PlaySFX(this.enemySource, GameModel.instance.enemySounds[3]);
                     moveSpeed *= rageSpeedMultInit;
                 }
                 enableSway = false;

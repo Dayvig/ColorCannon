@@ -149,7 +149,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         postWaveUITimer = 0.0f;
         currentAnimationTarget.anchoredPosition = start;
 
-        SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[2], -0.5f, 0.5f);
+        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[2], -0.5f, 0.5f);
 
     }
 
@@ -168,11 +168,11 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
         if (win)
         {
-            SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[3], -0.5f, 0.5f);
+            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[3], -0.5f, 0.5f);
         }
         else
         {
-           SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.uiSounds[4], -0.5f, 0.5f);
+           SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[4], -0.5f, 0.5f);
         }
     }
 

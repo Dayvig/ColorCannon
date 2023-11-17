@@ -8,6 +8,7 @@ public class ringScript : MonoBehaviour
 {
     public float animTimer = 0.0f;
     public float animInterval = 0.4f;
+    public float ringCloseRadius = 0.1f;
     public bool reverse = false;
     public bool playAnimation = false;
     public bool activated = false;
@@ -78,7 +79,7 @@ public class ringScript : MonoBehaviour
         float yDiff = newMousePos.y - transform.position.y;
         float xDiff = newMousePos.x - transform.position.x;
         Debug.Log(xDiff + "|"+ yDiff);
-        if (Mathf.Abs(xDiff) > 0.4f || Mathf.Abs(yDiff) > 0.4f)
+        if (Mathf.Abs(xDiff) > ringCloseRadius || Mathf.Abs(yDiff) > ringCloseRadius)
         {
             StartAnimation(true);
             player.clicks = 0;

@@ -8,6 +8,8 @@ public class SoundManager : MonoBehaviour
 
     [Range(0f, 1f)]
     public float masterVolume;
+    [Range(0f, 1f)]
+    public float musicVolume;
 
     public AudioSource mainMusic;
     public bool mainMusicPlaying = false;
@@ -19,13 +21,13 @@ public class SoundManager : MonoBehaviour
         instance = this;
     }
 
-    public void PlaySound(AudioSource source, AudioClip clip)
+    public void PlaySFX(AudioSource source, AudioClip clip)
     {
         source.clip = clip;
         source.PlayOneShot(clip, masterVolume);
     }
 
-    public void PlaySound(AudioSource source, AudioClip clip, float minPitchOffset, float maxPitchOffset)
+    public void PlaySFX(AudioSource source, AudioClip clip, float minPitchOffset, float maxPitchOffset)
     {
         float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
         source.clip = clip;
@@ -34,29 +36,30 @@ public class SoundManager : MonoBehaviour
         source.pitch /= pitchShift;
     }
 
-    public void PlaySound(AudioSource source, AudioClip clip, float delaySeconds)
+    public void PlaySFX(AudioSource source, AudioClip clip, float delaySeconds)
     {
-        StartCoroutine(PlaySoundWithDelay(source, clip, delaySeconds));
+        StartCoroutine(PlaySFXWithDelay(source, clip, delaySeconds));
     }
 
-    public void PlaySound(AudioSource source, AudioClip clip, int priority)
+    public void PlaySFX(AudioSource source, AudioClip clip, int priority)
     {
         source.clip = clip;
         source.priority = priority;
         source.PlayOneShot(clip, masterVolume);
     }
 
-    public void PlaySoundAndLoop(AudioSource source, AudioClip clip)
+    public void PlayMusicAndLoop(AudioSource source, AudioClip clip)
     {
         source.clip = clip;
         source.loop = true;
-        source.PlayOneShot(clip, masterVolume);
+        source.volume = masterVolume * musicVolume;
+        source.Play();
     }
 
-    IEnumerator PlaySoundWithDelay(AudioSource source, AudioClip clip, float delaySeconds)
+    IEnumerator PlaySFXWithDelay(AudioSource source, AudioClip clip, float delaySeconds)
     {
         yield return new WaitForSeconds(delaySeconds);
-        PlaySound(source, clip);
+        PlaySFX(source, clip);
     }
 
 }

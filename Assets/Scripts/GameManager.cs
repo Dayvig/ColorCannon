@@ -88,11 +88,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         if ((currentState == GameState.WAVE || currentState == GameState.MAINMENU) && nextState == GameState.POSTWAVE)
         {
-            UnityEngine.Debug.Log("New Wave Generated");
+            Debug.Log("New Wave Generated");
             WaveSpawningSystem.currentChunks.Clear();
             spawningSystem.SetupNextWave();
             DisposeAllBullets();
             DisposeAllSplatters();
+            DisposeAllEnemies();
             player.rainbowRush = false;
             player.meter.rainbows.fillAmount = 0;
             selectedUpgrade = noUpgrade;
@@ -137,7 +138,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
             UIManager.instance.deactivatePostWaveUI();
             if (!SoundManager.instance.mainMusicPlaying)
             {
-                SoundManager.instance.PlaySoundAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
+                SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
+            }
+            else
+            {
+                SoundManager.instance.mainMusic.clip = GameModel.instance.music[0];
             }
             SoundManager.instance.mainMusicPlaying = true;
         }
@@ -208,6 +213,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.initialize();
         spawningSystem.initialize();
         currentState = GameState.MAINMENU;
+        SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[1]);
 
         selectedUpgrade = noUpgrade;
     }
@@ -286,6 +292,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
     }
 
+    void DisposeAllEnemies()
+    {
+        foreach (EnemyBehavior e in activeEnemies)
+        {
+            markedForDeathEnemies.Add(e);
+        }
+    }
+
     public void GenerateUpgrades()
     {
         if (currentOfferedUpgrades.Count == 0)
@@ -311,6 +325,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         switch (currentState)
         {
             case GameState.WAVE:
+                WaveFixedUpdate();
+                break;
+            case GameState.MAINMENU:
                 WaveFixedUpdate();
                 break;
         }
@@ -339,7 +356,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 UIManager.instance.PostWaveUIAndAnimationUpdate();
                 break;
             case GameState.MAINMENU:
-                //Mainmenuupdates
+                DemoUpdate();
                 break;
             default:
                 WaveUpdate();
@@ -428,11 +445,17 @@ public class GameManager : MonoBehaviour, IDataPersistence
         inactiveSplatters.Remove(newDeathEffect);
     }
 
+    void DemoUpdate()
+    {
+        player.PlayerDemoUpdate();
+        spawningSystem.EnemyDemoUpdate();
+    }
+
     void WaveUpdate()
     {
         player.PlayerUpdate();
         spawningSystem.EnemyUpdate();
-        if ((spawningSystem.currentWaveIndex >= WaveSpawningSystem.currentWave.Count-1) && (activeEnemies.Count <= 0))
+        if ((spawningSystem.currentWaveIndex >= WaveSpawningSystem.currentWave.Count - 1) && (activeEnemies.Count <= 0))
         {
             if (WaveSpawningSystem.instance.Level >= 15)
             {

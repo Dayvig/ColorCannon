@@ -370,9 +370,9 @@ public class EnemyBehavior : MonoBehaviour
         SetVisualColor(enemyColor);
         knockBack = true;
         knockBackTimer = 0.0f;
-        if (withSound)
+        if (withSound && GameManager.instance.currentState != GameManager.GameState.MAINMENU)
         {
-            SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
+            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
         }
     }
 
@@ -380,9 +380,9 @@ public class EnemyBehavior : MonoBehaviour
     public static event EnemyDiedEvent HasDied;
     public void Die(bool withSound)
     {
-        if (withSound)
+        if (withSound && GameManager.instance.currentState != GameManager.GameState.MAINMENU)
         {
-            SoundManager.instance.PlaySound(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
+            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
         }
         GameManager.instance.markedForDeathEnemies.Add(this);
         if (HasDied != null)

@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.U2D.IK;
 using UnityEngine.UIElements;
+using UnityEngine.XR;
 using static GameManager;
 using Random = UnityEngine.Random;
 
@@ -25,6 +26,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public int numChunks;
     public List<Chunk> availableChunks = new List<Chunk>();
     public List<Chunk> availableSpecialChunks = new List<Chunk>();
+    public List<Chunk> demoChunks = new List<Chunk>();
     public static List<WaveObject> currentWave = new List<WaveObject>();
     public static List<Chunk> currentChunks = new List<Chunk>();
     public List<EnemyBehavior> inactiveEnemies = new List<EnemyBehavior>();
@@ -150,6 +152,90 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
+    private int demoCount = 0;
+
+    public void EnemyDemoUpdate()
+    {
+        enemyTimer -= Time.deltaTime;
+        if (enemyTimer <= 0.0f)
+        {
+            WaveObject enemy = returnRandomChunk(demoChunks).ChunkToWaveObject(false);
+            int EdgeToSpawnFrom = enemy.locationsToSpawn[Random.Range(0, enemy.locationsToSpawn.Length)];
+            Vector3 startPos;
+            switch (EdgeToSpawnFrom)
+            {
+                case 0:
+                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
+                    break;
+                case 1:
+                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), -yBounds, 0);
+                    break;
+                case 2:
+                    startPos = new Vector3(-xBounds * 1.2f, Random.Range(yBounds / 2, -yBounds / 2), 0);
+                    break;
+                case 3:
+                    startPos = new Vector3(xBounds * 1.2f, Random.Range(yBounds / 2, -yBounds / 2), 0);
+                    break;
+                default:
+                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
+                    break;
+            }
+
+            GameObject enemyObject = null;
+            EnemyBehavior enemyScript;
+            foreach (EnemyBehavior w in inactiveEnemies)
+            {
+                if (w.enemyType == enemy.enemyType)
+                {
+                    enemyObject = w.gameObject;
+                    break;
+                }
+            }
+            if (enemyObject == null)
+            {
+                enemyObject = Instantiate(enemy.body, startPos, Quaternion.identity);
+            }
+
+            enemyObject.SetActive(true);
+            enemyObject.transform.position = startPos;
+            enemyScript = enemyObject.GetComponent<EnemyBehavior>();
+            GameModel.GameColor enemyColor = enemy.color;
+            bool darkEnemy = enemy.darkened;
+            enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
+            enemyScript.SetVisualColor(enemyColor);
+            if (gameManager.activeEnemies.Contains(enemyScript))
+            {
+                gameManager.activeEnemies.Remove(enemyScript);
+            }
+            gameManager.activeEnemies.Add(enemyScript);
+            inactiveEnemies.Remove(enemyScript);
+            enemyTimer = enemy.delayUntilNext;
+            demoCount++;
+            if (demoCount % 20 == 0)
+            {
+                int rand = Random.Range(0, 4);
+                switch (rand)
+                {
+                    case 0:
+                        addAllChunkColors(new FastChunk(new[] { GameModel.GameColor.NONE }, false), true);
+                        break;
+                    case 1:
+                        addAllChunkColors(new NinjaChunk(new[] { GameModel.GameColor.NONE }, false), true);
+                        break;
+                    case 2:
+                        addAllChunkColors(new ZigZagChunk(new[] { GameModel.GameColor.NONE }, false), true);
+                        break;
+                    case 3:
+                        addAllChunkColors(new SwarmChunk(new[] { GameModel.GameColor.NONE }, false), true);
+                        break;
+                    case 4:
+                        addAllChunkColors(new PainterChunk(new[] { GameModel.GameColor.NONE }, false), true);
+                        break;
+                }
+            }
+        }
+    }
+
     void Awake()
     {
         instance = this;
@@ -161,6 +247,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public void initialize()
     { 
         repopulateChunks();
+        populateDemoChunks();
         
         gameManager.addStartingUpgrades();
         clearWave();
@@ -280,16 +367,31 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         return readOut;
     }
 
-    void addAllChunkColors(Chunk toAdd)
+    void addAllChunkColors(Chunk toAdd, bool toDemo)
     {
         GameModel.GameColor[] standardColors = {GameModel.GameColor.YELLOW, GameModel.GameColor.BLUE, GameModel.GameColor.RED};
         GameModel.GameColor[] additionalColors = additionalColorsReadout().ToArray();
-        addChunks(standardColors, toAdd);
-        addChunks(additionalColors, toAdd);
+        if (!toDemo)
+        {
+            addChunks(standardColors, toAdd);
+            addChunks(additionalColors, toAdd);
+        }
+        else
+        {
+            addChunksToDemo(standardColors, toAdd);
+            addChunksToDemo(additionalColors, toAdd);
+        }
 
         if (newMechanics.Contains(Mechanic.WHITE) || currentMechanics.Contains(Mechanic.WHITE))
         {
-            addChunks(new[] { GameModel.GameColor.WHITE }, toAdd);
+            if (!toDemo)
+            {
+                addChunks(new[] { GameModel.GameColor.WHITE }, toAdd);
+            }
+            else
+            {
+                addChunksToDemo(new[] { GameModel.GameColor.WHITE }, toAdd);
+            }
         }
     }
 
@@ -348,6 +450,31 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 availableSpecialChunks.Add(newChunk);
             }
 
+        }
+
+    }
+
+    void addChunksToDemo(GameModel.GameColor[] colors, Chunk toAdd)
+    {
+        Chunk newChunk;
+        foreach (GameModel.GameColor[] singleColor in oneColorPermutations(colors))
+        {
+            newChunk = toAdd.MakeCopy(singleColor, false);
+            demoChunks.Add(newChunk);
+        }
+        if (colors.Length > 1)
+        {
+            foreach (GameModel.GameColor[] colorPair in twoColorPermutations(colors))
+            {
+                newChunk = toAdd.MakeCopy(colorPair, false);
+                demoChunks.Add(newChunk);
+
+            }
+        }
+        if (colors.Length > 2)
+        {
+            newChunk = toAdd.MakeCopy(new[] { colors[0], colors[1], colors[2] }, false);
+            demoChunks.Add(newChunk);
         }
 
     }
@@ -735,38 +862,38 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         Debug.Log("Repopulating Chunks");
 
         //enemy types
-        addAllChunkColors(new BasicChunk(new[] { GameModel.GameColor.NONE }, false));
+        addAllChunkColors(new BasicChunk(new[] { GameModel.GameColor.NONE }, false), false);
         if (newMechanics.Contains(Mechanic.FAST) || currentMechanics.Contains(Mechanic.FAST))
         {
-            addAllChunkColors(new FastChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new FastChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
         if (newMechanics.Contains(Mechanic.NINJA) || currentMechanics.Contains(Mechanic.NINJA))
         {
-            addAllChunkColors(new NinjaChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new NinjaChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
         if (newMechanics.Contains(Mechanic.SWARM) || currentMechanics.Contains(Mechanic.SWARM))
         {
-            addAllChunkColors(new SwarmChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new SwarmChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
         if (newMechanics.Contains(Mechanic.ZIGZAG) || currentMechanics.Contains(Mechanic.ZIGZAG))
         {
-            addAllChunkColors(new ZigZagChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new ZigZagChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
         if (newMechanics.Contains(Mechanic.DISGUISED) || currentMechanics.Contains(Mechanic.DISGUISED))
         {
-            addAllChunkColors(new DisguiserChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new DisguiserChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
         if (newMechanics.Contains(Mechanic.SWIRL) || currentMechanics.Contains(Mechanic.SWIRL))
         {
-            addAllChunkColors(new SwirlChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new SwirlChunk(new[] { GameModel.GameColor.NONE }, false),false);
         }
         if (newMechanics.Contains(Mechanic.RAGE) || currentMechanics.Contains(Mechanic.RAGE))
         {
-            addAllChunkColors(new RageChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new RageChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
         if (newMechanics.Contains(Mechanic.PAINTER) || currentMechanics.Contains(Mechanic.PAINTER))
         {
-            addAllChunkColors(new PainterChunk(new[] { GameModel.GameColor.NONE }, false));
+            addAllChunkColors(new PainterChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
 
 
@@ -775,7 +902,12 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             addAllDarkChunks();
         }
-    }   
+    }
+    
+    public void populateDemoChunks()
+    {
+        addAllChunkColors(new BasicChunk(new[] { GameModel.GameColor.NONE }, false), true);
+    }
 
     public void clearWave()
     {

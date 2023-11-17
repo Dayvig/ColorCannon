@@ -139,11 +139,41 @@ public class Player : MonoBehaviour, IDataPersistence
         }
     }
 
+    float randomRotateTimer = 0.0f;
+    float randomRotateInterval = 5f;
+
+    public void PlayerDemoUpdate()
+    {
+        OrbUpdate();
+        Vector3 currentPos = gameObject.transform.position;
+        Quaternion rot = gameObject.transform.rotation;
+        gameObject.transform.rotation = Quaternion.Euler(new Vector3(rot.x, rot.y, rotationTarget));
+        shotTimer += Time.deltaTime;
+        if (shotTimer > shotSpeed)
+        {
+            SpreadFire(playerColor, numShots);
+            shotTimer = 0.0f;
+        }
+        Rotate(40f);
+        randomRotateTimer += Time.deltaTime;
+        if (randomRotateTimer > randomRotateInterval)
+        {
+            nextColor();
+            randomRotateTimer = 0.0f;
+            randomRotateInterval = UnityEngine.Random.Range(1f, 10f);
+        }
+    }
+
     private void LookAtMouse(Vector3 current)
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float angle = ((180 / Mathf.PI) * Mathf.Atan2(mousePos.y - current.y, mousePos.x - current.x)) - 90;
         rotationTarget = angle;
+    }
+
+    private void Rotate(float speed)
+    {
+        rotationTarget += (1 * speed * Mathf.Deg2Rad);
     }
 
     private void LifeUpdate()
@@ -228,7 +258,10 @@ public class Player : MonoBehaviour, IDataPersistence
             gameManager.inactiveBullets.Remove(bulletScript);
 
             //Play firing sound
-            SoundManager.instance.PlaySound(playerAudio, GameModel.instance.bulletSounds[0]);
+            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+            {
+                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
+            }
         }
         else
         {
@@ -267,12 +300,14 @@ public class Player : MonoBehaviour, IDataPersistence
             }
 
             //Play firing sounds
-            SoundManager.instance.PlaySound(playerAudio, GameModel.instance.bulletSounds[0]);
-            for (int k = 1; k < numShots; k++)
+            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
             {
-                SoundManager.instance.PlaySound(playerAudio, GameModel.instance.bulletSounds[0], 0.03f * k);
+                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
+                for (int k = 1; k < numShots; k++)
+                {
+                    SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0], 0.03f * k);
+                }
             }
-
         }
     }
     
@@ -544,7 +579,7 @@ public class Player : MonoBehaviour, IDataPersistence
 
             clicks++;
             mouseTimer = 0f;
-            if (clicks == 1)
+            if (clicks == 1 && Vector3.Distance(firstTapPos, mousePos) <= 0.1f)
             {
                 SelectorRing.Open();
             }
@@ -572,7 +607,10 @@ public class Player : MonoBehaviour, IDataPersistence
 
     public void TakeHit()
     {
-        lives--;
+        if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+        {
+            lives--;
+        }
         if (lives < 0)
         {
             GameManager.instance.Lose();
@@ -588,7 +626,10 @@ public class Player : MonoBehaviour, IDataPersistence
                 }
             }
         }
-        SoundManager.instance.PlaySound(playerAudio, GameModel.instance.bulletSounds[3]);
+        if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+        {
+            SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[3]);
+        }
     }
 
     public void IncreaseMeter()
