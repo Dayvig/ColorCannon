@@ -83,20 +83,35 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public AudioSource gameAudio;
     public static GameManager instance { get; private set; }
 
+    public bool justLaunched = true;
+
 
     public void SetState(GameState nextState)
     {
         if ((currentState == GameState.WAVE || currentState == GameState.MAINMENU) && nextState == GameState.POSTWAVE)
         {
-            Debug.Log("New Wave Generated");
-            WaveSpawningSystem.currentChunks.Clear();
-            spawningSystem.SetupNextWave();
+            if (!justLaunched)
+            {
+                Debug.Log("New Wave Generated");
+                WaveSpawningSystem.currentChunks.Clear();
+                spawningSystem.SetupNextWave();
+            }
+            else
+            {
+                UIManager.instance.activatePostWaveUI();
+                justLaunched = false;
+                player.rainbowMeter = 0.0f;
+                player.rainbowRush = false;
+                selectedUpgrade = noUpgrade;
+            }
             DisposeAllBullets();
             DisposeAllSplatters();
             DisposeAllEnemies();
-            player.rainbowRush = false;
-            player.meter.rainbows.fillAmount = 0;
-            selectedUpgrade = noUpgrade;
+
+            if (player.rainbowRush)
+            {
+                player.rainbowRush = false;
+            }
 
             UIManager.instance.activatePostWaveAnimations(true);
             nextState = GameState.UIANIMATIONS;
@@ -140,11 +155,34 @@ public class GameManager : MonoBehaviour, IDataPersistence
             {
                 SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
             }
-            else
+            else if (SoundManager.instance.mainMusic.clip == GameModel.instance.music[1])
             {
-                SoundManager.instance.mainMusic.clip = GameModel.instance.music[0];
+                SoundManager.instance.mainMusic.Stop();
+                SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
             }
             SoundManager.instance.mainMusicPlaying = true;
+        }
+
+        if (nextState == GameState.PAUSED)
+        {
+            SoundManager.instance.mainMusic.Pause();
+        }
+        if (currentState == GameState.PAUSED && nextState != GameState.PAUSED)
+        {
+            SoundManager.instance.mainMusic.UnPause();
+        }
+        if (currentState == GameState.PAUSED && nextState == GameState.MAINMENU)
+        {
+            DisposeAllBullets();
+            DisposeAllSplatters();
+            DisposeAllEnemies();
+            PostProcessingManager.instance.SetBlur(true);
+            UIManager.instance.deactivateWaveUI();
+            UIManager.instance.activateMainMenuUI();
+            UIManager.instance.titleTextScript.Reset();
+            SoundManager.instance.mainMusic.Stop();
+            SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[1]);
+            
         }
         currentState = nextState;
 
@@ -516,6 +554,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void PlayAgain()
     {
+        PostProcessingManager.instance.SetBlur(false);
         UIManager.instance.deactivateWinLoseUI();
         SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.LoadGame();

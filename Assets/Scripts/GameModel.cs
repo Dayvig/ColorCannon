@@ -274,6 +274,9 @@ public class GameModel : MonoBehaviour
             case "Painter":
                 returnText = ChunkTexts[8];
                 break;
+            case "Explosive":
+                returnText = ChunkTexts[9];
+                break;
             default:
                 return "Something went wrong";
         }

@@ -17,6 +17,12 @@ public class TitleTextScript : MonoBehaviour
         fade = true;
     }
 
+    public void Reset()
+    {
+        fade = true;
+        fadeInTimer = 0.0f;
+    }
+
     // Update is called once per frame
     void Update()
     {

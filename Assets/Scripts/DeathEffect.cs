@@ -21,7 +21,7 @@ public class DeathEffect : MonoBehaviour
     {
         fadeTimer += Time.deltaTime;
         Color col = ren.color;
-        ren.color = new Color(ren.color.r, ren.color.g, ren.color.b, (fadeInterval - fadeTimer) * 0.7f / fadeInterval);
+        ren.color = new Color(ren.color.r, ren.color.g, ren.color.b, (fadeInterval - fadeTimer) * 0.6f / fadeInterval);
         if (fadeTimer > fadeInterval)
         {
             GameManager.instance.markedForDeathSplatters.Add(this);

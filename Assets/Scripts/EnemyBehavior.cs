@@ -378,7 +378,7 @@ public class EnemyBehavior : MonoBehaviour
 
     public delegate void EnemyDiedEvent();
     public static event EnemyDiedEvent HasDied;
-    public void Die(bool withSound)
+    public virtual void Die(bool withSound)
     {
         if (withSound && GameManager.instance.currentState != GameManager.GameState.MAINMENU)
         {

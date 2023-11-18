@@ -498,31 +498,61 @@ public class Player : MonoBehaviour, IDataPersistence
 
     void takeTouchInput()
     {
-        //Begin touch
-        //Track the touchposition
-        //if one tap has already been executed, switch color
-        if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Began)
+        if (Input.touches.Length > 0)
         {
-            tapPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-            if (clicks > 0)
+            Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+            touchPos = new Vector3(touchPos.x, touchPos.y, 0);
+
+            //Begin click
+            //Track the clickposition
+            //if one click has already been executed, switch color
+            if (Input.touches[0].phase == TouchPhase.Began)
             {
-                nextColor();
+                if (clicks == 0)
+                {
+                    firstTapPos = touchPos;
+                }
             }
-        }
-        //End Touch
-        //If the position is close to where it began, increment clicks
-        if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Ended)
-        {
-            Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-            if (Vector3.Distance(tapPos, newPos) < 0.1f)
+            //End click
+            //If the position is close to where it began, increment clicks
+            if (Input.touches[0].phase == TouchPhase.Ended)
             {
+                if (Vector3.Distance(transform.position, touchPos) < 1f && rainbowMeter >= meterMax)
+                {
+                    meter.transform.localScale = meter.bigScale;
+                    if (meter.selected)
+                    {
+                        rainbowRush = true;
+                        meter.isActive = false;
+                        meter.rotationSpeed = 0.1f;
+                        WaveSpawningSystem.instance.AddExtraEnemies();
+                        configureWeapon();
+                    }
+                    else
+                    {
+                        meter.selected = true;
+                    }
+                    return;
+                }
+                else
+                {
+                    meter.selected = false;
+                    meter.transform.localScale = meter.baseScale;
+                }
+
+
                 clicks++;
                 mouseTimer = 0f;
-            }
-            else
-            {
-                mouseTimer = -1.0f;
-                clicks = 0;
+                if (clicks == 1 && Vector3.Distance(firstTapPos, touchPos) <= 0.1f && !SelectorRing.activated)
+                {
+                    SelectorRing.Open();
+                }
+                else
+                {
+                    SelectorRing.StartAnimation(true);
+                    mouseTimer = -1.0f;
+                    clicks = 0;
+                }
             }
         }
     }

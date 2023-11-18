@@ -97,6 +97,12 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public Image[] UISHIELDS = new Image[3];
     Player player;
 
+    public PlayGameButton playButton;
+    public GameObject newGameButton;
+    public TitleTextScript titleTextScript;
+    public GameObject mainMenuButton;
+    public PauseButton pause;
+
     public enum WaveModifier
     {
         NUMEROUS,
@@ -128,7 +134,10 @@ public class UIManager : MonoBehaviour, IDataPersistence
         PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
         WinRect = WinPanel.GetComponent<RectTransform>();
         LoseRect = LosePanel.GetComponent<RectTransform>();
+        playButton.initialize();
+
         activateMainMenuUI();
+
     }
 
     public void WaveUIUpdate()
@@ -276,9 +285,13 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         deactivatePostWaveUI();
         deactivateWinLoseUI();
+        WaveUIPanel.SetActive(false);
         MainMenuPanel.SetActive(true);
+        newGameButton.SetActive(!(WaveSpawningSystem.instance.Level == 0 || WaveSpawningSystem.instance.Level == 1));
+        playButton.initialize();
+        player.SelectorRing.StartAnimation(true);
     }
-    
+
     public void activateLoseScreen()
     {
         MainMenuPanel.SetActive(false);
@@ -310,12 +323,20 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void deactivatePostWaveUI()
     {
-        PostWaveUIPanel.SetActive(false);
         WaveUIPanel.SetActive(true);
+        mainMenuButton.SetActive(false);
+        pause.ren.sprite = GameModel.instance.UpgradeImages[12];
+
+        PostWaveUIPanel.SetActive(false);
         UpgradePanel.SetActive(false);
         WaveModPreview.SetActive(false);
         currentUpgradePanel.SetActive(false);
         RefreshUpgradesButton.SetActive(false);
+    }
+
+    public void deactivateWaveUI()
+    {
+        WaveUIPanel.SetActive(false);
     }
 
     public void SetCurrentPlayerUpgradePreviews(bool isActive)

@@ -74,7 +74,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         DISGUISED,
         SWIRL,
         RAGE,
-        PAINTER
+        PAINTER,
+        EXPLOSIVE,
+        SPLITTER,
+        SWOOPER
     }
 
     public List<Mechanic> basicMechanics;
@@ -895,6 +898,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             addAllChunkColors(new PainterChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
+        if (newMechanics.Contains(Mechanic.EXPLOSIVE) || currentMechanics.Contains(Mechanic.EXPLOSIVE))
+        {
+            addAllChunkColors(new ExplosiveChunk(new[] { GameModel.GameColor.NONE }, false), false);
+        }
 
 
         //modifiers (Dark only for now)
@@ -947,6 +954,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return new RageChunk(c.colors, c.isDarkened);
             case "Painter":
                 return new PainterChunk(c.colors, c.isDarkened);
+            case "Explosive":
+                return new ExplosiveChunk(c.colors, c.isDarkened);
 
             default:
                 return new BasicChunk(c.colors, c.isDarkened);
@@ -1490,6 +1499,55 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
+    public class ExplosiveChunk : Chunk
+    {
+        public ExplosiveChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark, 0, false, 0, 0, "Basic", false, 1.0f)
+        {
+            name = "Explosive";
+            baseDifficulty = 2;
+            imageID = 9;
+            SetDifficulty(spawnColors);
+        }
+        public ExplosiveChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Explosive";
+            baseDifficulty = 2;
+            imageID = 9;
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[9], WaveSpawningSystem.instance.EnemyScripts[9], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.EXPLOSIVE);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[9], WaveSpawningSystem.instance.EnemyScripts[9], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.EXPLOSIVE);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+        public override void Generate(bool tutorial)
+        {
+            base.Generate(tutorial, globalWaveNumber);
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new ExplosiveChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new ExplosiveChunk(colors, isDark);
+        }
+    }
+
+
     public bool ChunkIsMechanic(Mechanic m, Chunk c)
     {
         switch (m)
@@ -1522,6 +1580,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return c is RageChunk;
             case Mechanic.PAINTER:
                 return c is PainterChunk;
+            case Mechanic.EXPLOSIVE:
+                return c is ExplosiveChunk;
+
 
 
         }
@@ -1593,7 +1654,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             DISGUISED,
             SWIRL,
             RAGE,
-            PAINTER
+            PAINTER,
+            EXPLOSIVE,
+            SPLITTER,
+            SWOOPER
         }
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark, WaveObject.Type type)

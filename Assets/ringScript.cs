@@ -81,8 +81,8 @@ public class ringScript : MonoBehaviour
         Debug.Log(xDiff + "|"+ yDiff);
         if (Mathf.Abs(xDiff) > ringCloseRadius || Mathf.Abs(yDiff) > ringCloseRadius)
         {
-            StartAnimation(true);
-            player.clicks = 0;
+            //StartAnimation(true);
+            //player.clicks = 0;
         }
         if (yDiff > 0 && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
         {
