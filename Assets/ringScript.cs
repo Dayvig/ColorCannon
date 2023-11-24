@@ -78,7 +78,6 @@ public class ringScript : MonoBehaviour
         Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
         float yDiff = newMousePos.y - transform.position.y;
         float xDiff = newMousePos.x - transform.position.x;
-        Debug.Log(xDiff + "|"+ yDiff);
         if (Mathf.Abs(xDiff) > ringCloseRadius || Mathf.Abs(yDiff) > ringCloseRadius)
         {
             //StartAnimation(true);

@@ -127,7 +127,6 @@ public class GameModel : MonoBehaviour
                 return Color.gray;
         }
     }
-
     public Color OppositeColor(GameColor col)
     {
         switch (col)
@@ -276,6 +275,9 @@ public class GameModel : MonoBehaviour
                 break;
             case "Explosive":
                 returnText = ChunkTexts[9];
+                break;
+            case "Splitter":
+                returnText = ChunkTexts[10];
                 break;
             default:
                 return "Something went wrong";

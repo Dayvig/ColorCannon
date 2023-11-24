@@ -34,7 +34,7 @@ public class EnemyBehavior : MonoBehaviour
     private int mode = 0;
     public bool enableSway = true;
 
-    private GameModel.GameColor SetMixedColor(List<GameModel.GameColor> colors)
+    public GameModel.GameColor SetMixedColor(List<GameModel.GameColor> colors)
     {
         if (colors.Count == 0)
         {
@@ -154,7 +154,7 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
-    void setDestination(Vector3 dest)
+    public void setDestination(Vector3 dest)
     {
         destination = dest;
     }
@@ -314,7 +314,7 @@ public class EnemyBehavior : MonoBehaviour
         GameManager.instance.shotsHit++;
     }
 
-    bool removeMultiColoredBullet(GameModel.GameColor bulletColor)
+    public bool removeMultiColoredBullet(GameModel.GameColor bulletColor)
     {
         if (bulletColor.Equals(GameModel.GameColor.ORANGE))
         {

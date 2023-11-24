@@ -97,62 +97,105 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         enemyTimer -= Time.deltaTime;
         if (enemyTimer <= 0.0f && currentWaveIndex < currentWave.Count-1)
         {
-            WaveObject enemy = currentWave[currentWaveIndex];
-            int EdgeToSpawnFrom = enemy.locationsToSpawn[Random.Range(0, enemy.locationsToSpawn.Length)];
-            Vector3 startPos;
-            switch (EdgeToSpawnFrom)
-            {
-                case 0:
-                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
-                    break;
-                case 1:
-                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), -yBounds, 0);
-                    break;
-                case 2:
-                    startPos = new Vector3(-xBounds * 1.2f, Random.Range(yBounds/2, -yBounds/2), 0);
-                    break;
-                case 3:
-                    startPos = new Vector3(xBounds * 1.2f, Random.Range(yBounds/2, -yBounds/2), 0);
-                    break;
-                default:
-                    startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
-                    break;
-            }
-
-            GameObject enemyObject = null;
-            EnemyBehavior enemyScript;
-            foreach (EnemyBehavior w in inactiveEnemies)
-            {
-                if (w.enemyType == currentWave[currentWaveIndex].enemyType)
-                {
-                    enemyObject = w.gameObject;
-                    break;
-                }
-            }
-            if (enemyObject == null)
-            {
-                enemyObject = Instantiate(currentWave[currentWaveIndex].body, startPos, Quaternion.identity);
-            }
-
-            enemyObject.SetActive(true);
-            enemyObject.transform.position = startPos;
-            enemyScript = enemyObject.GetComponent<EnemyBehavior>();
-            GameModel.GameColor enemyColor = currentWave[currentWaveIndex].color;
-            bool darkEnemy = currentWave[currentWaveIndex].darkened;
-            enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
-            enemyScript.SetVisualColor(enemyColor);
-            if (gameManager.activeEnemies.Contains(enemyScript))
-            {
-                gameManager.activeEnemies.Remove(enemyScript);
-            }
-            gameManager.activeEnemies.Add(enemyScript);
-            inactiveEnemies.Remove(enemyScript);
+            CreateEnemy(currentWave[currentWaveIndex]);
             enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
             
             if (currentWaveIndex < currentWave.Count-1){
                 currentWaveIndex++;
             }
         }
+    }
+
+    public GameObject CreateEnemy(WaveObject nextWaveObject)
+    {
+        WaveObject enemy = nextWaveObject;
+        int EdgeToSpawnFrom = enemy.locationsToSpawn[Random.Range(0, enemy.locationsToSpawn.Length)];
+        Vector3 startPos;
+        switch (EdgeToSpawnFrom)
+        {
+            case 0:
+                startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
+                break;
+            case 1:
+                startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), -yBounds, 0);
+                break;
+            case 2:
+                startPos = new Vector3(-xBounds * 1.2f, Random.Range(yBounds / 2, -yBounds / 2), 0);
+                break;
+            case 3:
+                startPos = new Vector3(xBounds * 1.2f, Random.Range(yBounds / 2, -yBounds / 2), 0);
+                break;
+            default:
+                startPos = new Vector3(Random.Range(xBounds * 1.2f, -xBounds * 1.2f), yBounds, 0);
+                break;
+        }
+
+        GameObject enemyObject = null;
+        EnemyBehavior enemyScript;
+        foreach (EnemyBehavior w in inactiveEnemies)
+        {
+            if (w.enemyType == nextWaveObject.enemyType)
+            {
+                enemyObject = w.gameObject;
+                break;
+            }
+        }
+        if (enemyObject == null)
+        {
+            enemyObject = Instantiate(nextWaveObject.body, startPos, Quaternion.identity);
+        }
+
+        enemyObject.SetActive(true);
+        enemyObject.transform.position = startPos;
+        enemyScript = enemyObject.GetComponent<EnemyBehavior>();
+        GameModel.GameColor enemyColor = nextWaveObject.color;
+        bool darkEnemy = nextWaveObject.darkened;
+        enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
+        enemyScript.SetVisualColor(enemyColor);
+        if (gameManager.activeEnemies.Contains(enemyScript))
+        {
+            gameManager.activeEnemies.Remove(enemyScript);
+        }
+        gameManager.activeEnemies.Add(enemyScript);
+        inactiveEnemies.Remove(enemyScript);
+
+        return enemyObject;
+    }
+
+    public GameObject CreateEnemyAtLocation(Vector3 location, WaveObject nextWaveObject)
+    {
+        WaveObject enemy = nextWaveObject;
+
+        GameObject enemyObject = null;
+        EnemyBehavior enemyScript;
+        foreach (EnemyBehavior w in inactiveEnemies)
+        {
+            if (w.enemyType == nextWaveObject.enemyType)
+            {
+                enemyObject = w.gameObject;
+                break;
+            }
+        }
+        if (enemyObject == null)
+        {
+            enemyObject = Instantiate(nextWaveObject.body, location, Quaternion.identity);
+        }
+
+        enemyObject.SetActive(true);
+        enemyObject.transform.position = location;
+        enemyScript = enemyObject.GetComponent<EnemyBehavior>();
+        GameModel.GameColor enemyColor = nextWaveObject.color;
+        bool darkEnemy = nextWaveObject.darkened;
+        enemyScript.initialize(player.transform.position, enemyColor, darkEnemy, enemyScript.enemyType);
+        enemyScript.SetVisualColor(enemyColor);
+        if (gameManager.activeEnemies.Contains(enemyScript))
+        {
+            gameManager.activeEnemies.Remove(enemyScript);
+        }
+        gameManager.activeEnemies.Add(enemyScript);
+        inactiveEnemies.Remove(enemyScript);
+
+        return enemyObject;
     }
 
     private int demoCount = 0;
@@ -902,6 +945,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             addAllChunkColors(new ExplosiveChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
+        if (newMechanics.Contains(Mechanic.SPLITTER) || currentMechanics.Contains(Mechanic.SPLITTER))
+        {
+            addAllChunkColors(new SplitterChunk(new[] { GameModel.GameColor.NONE }, false), false);
+        }
 
 
         //modifiers (Dark only for now)
@@ -956,6 +1003,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return new PainterChunk(c.colors, c.isDarkened);
             case "Explosive":
                 return new ExplosiveChunk(c.colors, c.isDarkened);
+            case "Splitter":
+                return new SplitterChunk(c.colors, c.isDarkened);
 
             default:
                 return new BasicChunk(c.colors, c.isDarkened);
@@ -1547,6 +1596,114 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
+    public class SplitterChunk : Chunk
+    {
+        public SplitterChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark, 0, false, 0, 0, "Basic", false, 1.0f)
+        {
+            name = "Splitter";
+            baseDifficulty = 5;
+            imageID = 10;
+            SetDifficulty(spawnColors);
+        }
+        public SplitterChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Explosive";
+            baseDifficulty = 5;
+            imageID = 10;
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[10], WaveSpawningSystem.instance.EnemyScripts[10], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SPLITTER);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[10], WaveSpawningSystem.instance.EnemyScripts[10], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SPLITTER);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+        public override void Generate(bool tutorial)
+        {
+            base.Generate(tutorial, (int)globalWaveNumber / 2);
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new SplitterChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new SplitterChunk(colors, isDark);
+        }
+
+        public override void SetDifficulty(GameModel.GameColor[] spawnColors)
+        {
+            difficulty = baseDifficulty + spawnColors.Length;
+            if (isMultiColor)
+            {
+                difficulty *= 4;
+            }
+
+            if (isDarkened)
+            {
+                difficulty *= 2;
+            }
+        }
+    }
+    public class SplitterBlob : Chunk
+    {
+        public SplitterBlob(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark, 0, false, 0, 0, "Basic", false, 1.0f)
+        {
+            name = "SplitterBlob";
+            baseDifficulty = 1;
+            imageID = 11;
+            SetDifficulty(spawnColors);
+        }
+        public SplitterBlob(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "SplitterBlob";
+            baseDifficulty = 1;
+            imageID = 11;
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[11], WaveSpawningSystem.instance.EnemyScripts[11], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SPLITTERBLOB);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[11], WaveSpawningSystem.instance.EnemyScripts[11], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SPLITTERBLOB);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+        public override void Generate(bool tutorial)
+        {
+            base.Generate(tutorial, (int)globalWaveNumber);
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new SplitterBlob(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new SplitterBlob(colors, isDark);
+        }
+    }
 
     public bool ChunkIsMechanic(Mechanic m, Chunk c)
     {
@@ -1582,9 +1739,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return c is PainterChunk;
             case Mechanic.EXPLOSIVE:
                 return c is ExplosiveChunk;
-
-
-
+            case Mechanic.SPLITTER:
+                return c is SplitterChunk;
         }
 
         return false;
@@ -1657,6 +1813,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             PAINTER,
             EXPLOSIVE,
             SPLITTER,
+            SPLITTERBLOB,
             SWOOPER
         }
         
