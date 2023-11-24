@@ -949,6 +949,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             addAllChunkColors(new SplitterChunk(new[] { GameModel.GameColor.NONE }, false), false);
         }
+        if (newMechanics.Contains(Mechanic.SWOOPER) || currentMechanics.Contains(Mechanic.SWOOPER))
+        {
+            addAllChunkColors(new SwooperChunk(new[] { GameModel.GameColor.NONE }, false), false);
+        }
 
 
         //modifiers (Dark only for now)
@@ -1005,6 +1009,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return new ExplosiveChunk(c.colors, c.isDarkened);
             case "Splitter":
                 return new SplitterChunk(c.colors, c.isDarkened);
+            case "Swooper":
+                return new SwooperChunk(c.colors, c.isDarkened);
 
             default:
                 return new BasicChunk(c.colors, c.isDarkened);
@@ -1704,6 +1710,53 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             return new SplitterBlob(colors, isDark);
         }
     }
+    public class SwooperChunk : Chunk
+    {
+        public SwooperChunk(GameModel.GameColor[] spawnColors, bool dark) : base(spawnColors, dark, 0, false, 0, 0, "Basic", false, 1.0f)
+        {
+            name = "Swooper";
+            baseDifficulty = 4;
+            imageID = 12;
+            SetDifficulty(spawnColors);
+        }
+        public SwooperChunk(GameModel.GameColor[] spawnColors) : base(spawnColors)
+        {
+            name = "Swooper";
+            baseDifficulty = 4;
+            imageID = 12;
+            SetDifficulty(spawnColors);
+        }
+
+        public override WaveObject ChunkToWaveObject(bool isTutorial)
+        {
+            float spacing = isTutorial ? tutorialSpacing : globalWaveSpacing;
+            WaveObject toReturn;
+            if (colors.Length == 1)
+            {
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[12], WaveSpawningSystem.instance.EnemyScripts[12], colors[0], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SWOOPER);
+            }
+            else
+            {
+                int rand = Random.Range(0, colors.Length);
+                toReturn = new WaveObject(WaveSpawningSystem.instance.Enemies[12], WaveSpawningSystem.instance.EnemyScripts[12], colors[rand], spacing, TOPBOTTOM, isDarkened, WaveObject.Type.SWOOPER);
+            }
+            toReturn.isTutorial = isTutorial;
+            return toReturn;
+        }
+        public override void Generate(bool tutorial)
+        {
+            base.Generate(tutorial, (int)globalWaveNumber);
+        }
+
+        public override Chunk MakeCopy()
+        {
+            return new SwooperChunk(colors, isDarkened);
+        }
+        public override Chunk MakeCopy(GameModel.GameColor[] colors, bool isDark)
+        {
+            return new SwooperChunk(colors, isDark);
+        }
+    }
 
     public bool ChunkIsMechanic(Mechanic m, Chunk c)
     {
@@ -1741,6 +1794,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 return c is ExplosiveChunk;
             case Mechanic.SPLITTER:
                 return c is SplitterChunk;
+            case Mechanic.SWOOPER:
+                return c is SwooperChunk;
+
         }
 
         return false;

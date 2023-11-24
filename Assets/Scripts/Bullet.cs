@@ -68,7 +68,17 @@ public class Bullet : MonoBehaviour
             positionCurrent, 
             positionTarget, 
             Time.deltaTime * 30.0f);
+        if (thisCollider.enabled)
+        {
+            CheckCollisions();
+        }
+        
+    }
+
+    void CheckCollisions()
+    {
         RaycastHit2D[] hits = Physics2D.LinecastAll(transform.position, positionCurrent, 7);
+        Debug.DrawLine(transform.position, positionCurrent, Color.blue, 1f);
         if (hits.Length != 0)
         {
             foreach (RaycastHit2D h in hits)
@@ -88,7 +98,7 @@ public class Bullet : MonoBehaviour
         transform.position = positionCurrent;
         if (positionCurrent.x > GameModel.instance.xBounds || positionCurrent.x < -GameModel.instance.xBounds ||
             positionCurrent.y > GameModel.instance.yBounds || positionCurrent.y < -GameModel.instance.yBounds)
-        { 
+        {
             Die();
         }
     }

@@ -8196,6 +8196,7 @@ MonoBehaviour:
   - Meanders around the arena, periodically painting nearby enemies with its color.
   - Explodes on death, painting nearby enemies with its color.
   - Splits into smaller enemies on death. More dangerous when multicolored.
+  - Swoops around the arena a few times before attacking.
   UpgradeTexts:
   - Bullets move faster.
   - Fires an extra shot in a spread pattern.
@@ -8205,7 +8206,7 @@ MonoBehaviour:
   - Bullets pierce an extra enemy and move slightly faster.
   shotSpeedMultiplier: 1.2
   rapidFireMultiplier: 1.075
-  shotSizeMultiplier: 1.35
+  shotSizeMultiplier: 1.55
   numShotsUpgrade: 1
   piercingUpgrade: 1
   baseSpreadAngle: 12.5
@@ -8295,6 +8296,7 @@ MonoBehaviour:
   - {fileID: 6816194638443201153, guid: 52724d38253a7d545841f1977712f4f9, type: 3}
   - {fileID: 8334122461629934150, guid: e8901459642b80949ad31317efe2fe1e, type: 3}
   - {fileID: 6983244189932566179, guid: 104ed5d29d9ebfa44ba23320f5ed70a8, type: 3}
+  - {fileID: 1724863897217116077, guid: 7cb614c6f158d114fa0bd01783bb0808, type: 3}
   EnemyScripts:
   - {fileID: 3912943898272142280, guid: cdd4bdf433fbd774a8300814ca31347b, type: 3}
   - {fileID: 6012673365218420761, guid: f4dc0826964a0f741b38af445b89ddac, type: 3}
@@ -8308,6 +8310,7 @@ MonoBehaviour:
   - {fileID: 3457547960169422741, guid: 52724d38253a7d545841f1977712f4f9, type: 3}
   - {fileID: 6696136593564286913, guid: e8901459642b80949ad31317efe2fe1e, type: 3}
   - {fileID: 1577129711797779762, guid: 104ed5d29d9ebfa44ba23320f5ed70a8, type: 3}
+  - {fileID: 7744493498335708605, guid: 7cb614c6f158d114fa0bd01783bb0808, type: 3}
   Level: 0
   numUniqueChunks: 0
   numChunks: 0
@@ -8385,6 +8388,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 447b17be60a52604e97b322943e59b3f, type: 3}
   - {fileID: 21300000, guid: 8dd548d3f8823b847b3fef40a6e2b7db, type: 3}
   - {fileID: 21300000, guid: 4403fa27bfdb2c74ebf3a60867f377e4, type: 3}
+  - {fileID: 21300000, guid: be6e4a8268e609d4491eb1e983c96ee3, type: 3}
   WaveMods: 
   previousUpgrades: {fileID: 642733076}
   PostWaveUIPanel: {fileID: 1662487983}

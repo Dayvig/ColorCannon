@@ -107,7 +107,7 @@ public class Player : MonoBehaviour, IDataPersistence
         RainbowRushUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
-        if (!movementLocked)
+        if (!SelectorRing.activated)
         {
             LookAtMouse(currentPos);
         }

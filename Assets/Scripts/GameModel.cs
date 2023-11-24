@@ -279,6 +279,9 @@ public class GameModel : MonoBehaviour
             case "Splitter":
                 returnText = ChunkTexts[10];
                 break;
+            case "Swooper":
+                returnText = ChunkTexts[11];
+                break;
             default:
                 return "Something went wrong";
         }

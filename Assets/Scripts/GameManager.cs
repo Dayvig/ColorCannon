@@ -25,6 +25,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SHOTSIZE,
         PIERCING,
         SHIELDS,
+        MAXSHIELDS,
+        SHIELDPULSE,
+        ROCKETS,
+        COMBINER,
+        DEATHBLAST,
         NONE
     }
 
@@ -421,6 +426,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             activeBullets.Remove(ded);
             inactiveBullets.Add(ded);
+            ded.thisCollider.enabled = false;
             ded.gameObject.SetActive(false);
         }
         foreach (DeathEffect ded in markedForDeathSplatters)
