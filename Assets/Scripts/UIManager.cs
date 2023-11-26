@@ -432,7 +432,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         if (count > 0)
         {
             GameObject newWaveModPreview = Instantiate(WaveModPreview, WaveModPanelRow.transform);
-            Image modImage = newWaveModPreview.transform.GetChild(0).GetComponent<Image>();
+            Image modImage = newWaveModPreview.transform.GetChild(0).GetChild(0).GetComponent<Image>();
             Image chevronImage = newWaveModPreview.transform.GetChild(1).GetComponent<Image>();
             chevronImage.sprite = count < 7 ? modelGame.UpgradeImages[count + 5] : modelGame.UpgradeImages[11];
             if (count >= 7)
@@ -450,7 +450,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         GameObject newUpgradePreview = Instantiate(UpgradePreview, UpgradePreviewPanel);
         newUpgradePreview.GetComponent<UpgradeButton>().upp = u;
-        Image upgradeImage = newUpgradePreview.transform.GetChild(0).GetComponent<Image>();
+        Image upgradeImage = newUpgradePreview.transform.GetChild(0).GetChild(1).GetComponent<Image>();
         Image chevronImage = newUpgradePreview.transform.GetChild(1).GetComponent<Image>();
         chevronImage.sprite = u.factor < 7 ? modelGame.UpgradeImages[u.factor+5] : modelGame.UpgradeImages[11];
         upgradeImage.sprite = modelGame.UpgradeImageFromType(u.type);
@@ -481,7 +481,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         GameObject newUpgradePreview = Instantiate(WaveModPreview, currentUpgradeRows[rowToCreateIn]);
         newUpgradePreview.name = u.type.ToString();
-        Image upImage = newUpgradePreview.transform.GetChild(0).GetComponent<Image>();
+        Image upImage = newUpgradePreview.transform.GetChild(0).GetChild(0).GetComponent<Image>();
         upImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upImage.color = modelGame.ColorToColor(u.color);
         newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u.type);
