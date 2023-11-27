@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ public class UpgradeButton : MonoBehaviour
     public GameManager manager;
     public GameManager.Upgrade upp;
     public GameModel model;
+    public TextMeshProUGUI upgradeText;
     void Start()
     {
         upgrade.onClick.AddListener(TaskOnClick);
@@ -19,6 +21,7 @@ public class UpgradeButton : MonoBehaviour
     public void initialize(GameManager.Upgrade thisUpgrade)
     {
         upp = thisUpgrade;
+        upgradeText.text = upp.name;
         this.gameObject.SetActive(true);
         for (int i = 0; i < transform.childCount; i++)
         {

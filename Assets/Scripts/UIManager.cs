@@ -449,14 +449,15 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public void SetupNextUpgradePreview(GameManager.Upgrade u)
     {
         GameObject newUpgradePreview = Instantiate(UpgradePreview, UpgradePreviewPanel);
-        newUpgradePreview.GetComponent<UpgradeButton>().upp = u;
+        UpgradeButton button = newUpgradePreview.GetComponent<UpgradeButton>();
+        button.upp = u;
         Image upgradeImage = newUpgradePreview.transform.GetChild(0).GetChild(1).GetComponent<Image>();
         Image chevronImage = newUpgradePreview.transform.GetChild(1).GetComponent<Image>();
         chevronImage.sprite = u.factor < 7 ? modelGame.UpgradeImages[u.factor+5] : modelGame.UpgradeImages[11];
         upgradeImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upgradeImage.color = modelGame.ColorToColor(u.color);
-        newUpgradePreview.GetComponent<UpgradeButton>().initialize(u);
-        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u.type);
+        button.initialize(u);
+        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u);
         newUpgradePreview.SetActive(true);
     }
 
@@ -484,7 +485,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         Image upImage = newUpgradePreview.transform.GetChild(0).GetChild(0).GetComponent<Image>();
         upImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upImage.color = modelGame.ColorToColor(u.color);
-        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u.type);
+        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u);
         updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
     }
 

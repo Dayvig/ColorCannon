@@ -23,7 +23,7 @@ public class RageEnemyBehavior : EnemyBehavior
         {
             return;
         }
-        if (enemyColors.Contains(bullet.bulletColor) || enemyColor == bullet.bulletColor)
+        if (enemyColors.Contains(bullet.bulletColor) || enemyColor == bullet.bulletColor || checkForMultiColoredBullet(bullet.bulletColor))
         {
             TakeHit(bullet.bulletColor);
             bullet.TakeHit();

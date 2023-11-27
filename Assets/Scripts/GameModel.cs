@@ -299,10 +299,10 @@ public class GameModel : MonoBehaviour
         return returnText;
     }
 
-    public string GetUpgradeTextFromType(GameManager.UpgradeType upgradeType)
+    public string GetUpgradeTextFromType(GameManager.Upgrade upgrade)
     {
         string returnText = "";
-        switch (upgradeType)
+        switch (upgrade.type)
         {
             case GameManager.UpgradeType.SHOTSPEED:
                 returnText = UpgradeTexts[0];
@@ -324,6 +324,15 @@ public class GameModel : MonoBehaviour
                 break;
             default:
                 return "Something went wrong";
+        }
+
+        if (upgrade.color == GameColor.WHITE)
+        {
+            returnText += UpgradeTexts[6];
+        }
+        else
+        {
+            returnText += UpgradeTexts[7] + upgrade.factor + UpgradeTexts[8] + upgrade.color.ToString().ToLower() + UpgradeTexts[9];
         }
         return returnText;
     }

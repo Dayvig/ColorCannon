@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 156f932ad30175740aeb22ad181c445b
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Christmas Gladness
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 32de940a2526d4e44acb1a5b5bcdac0e, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -313,6 +313,7 @@ MonoBehaviour:
     color: 0
     factor: 0
   model: {fileID: 0}
+  upgradeText: {fileID: 8884139069229000361}
 --- !u!114 &2126703116319560556
 MonoBehaviour:
   m_ObjectHideFlags: 0

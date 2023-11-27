@@ -344,7 +344,7 @@ public class EnemyBehavior : MonoBehaviour
         return false;
     }
 
-    bool checkForMultiColoredBullet(GameModel.GameColor bulletColor)
+    public bool checkForMultiColoredBullet(GameModel.GameColor bulletColor)
     {
         if (bulletColor.Equals(GameModel.GameColor.ORANGE))
         {
