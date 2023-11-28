@@ -626,7 +626,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             currentChunks.Add(nextChunk);
         }
         enemiesToSpawn = currentWave.Count - 1;
-        UIManager.instance.SetupWaveModUI();
     }
 
     void generateFromSavedChunks()
@@ -670,14 +669,12 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
         enemiesToSpawn = currentWave.Count - 1;
         currentWave[0].delayUntilNext += 3f;
-        UIManager.instance.SetupWaveModUI();
     }
 
 
     public void generateFirstWave()
     {
         UIManager.instance.WipePreviewImages();
-        UIManager.instance.HideWaveMods();
         UIManager.instance.RefreshUpgradesButton.SetActive(false);
         Chunk nextChunk = new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW});
         currentChunks.Add(nextChunk);

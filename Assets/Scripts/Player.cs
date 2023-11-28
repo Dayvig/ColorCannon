@@ -491,12 +491,12 @@ public class Player : MonoBehaviour, IDataPersistence
     }
     public float FinalShieldPulseRadius()
     {
-        float shieldPulse = GameModel.instance.shieldPulseRadius;
+        float shieldPulse = modelGame.shieldPulseRadius;
         foreach (GameManager.Upgrade u in upgrades)
         {
             if (u.type.Equals(GameManager.UpgradeType.SHIELDPULSE))
             {
-                shieldPulse += (u.factor * GameModel.instance.shieldPulseInc);
+                shieldPulse += (u.factor * modelGame.shieldPulseInc);
             }
         }
         return shieldPulse;
@@ -512,6 +512,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 for (int i = 0; i < u.factor; i++)
                 {
                     rocketColors.Add(u.color);
+                    rocketColors.Add(u.color);
                 }
             }
         }
@@ -526,7 +527,7 @@ public class Player : MonoBehaviour, IDataPersistence
         {
             if (u.type.Equals(GameManager.UpgradeType.COMBINER))
             {
-                chance += (u.factor * GameModel.instance.combinerBaseChance);
+                chance += (u.factor * modelGame.combinerBaseChance);
             }
         }
         return chance;
@@ -863,12 +864,6 @@ public class Player : MonoBehaviour, IDataPersistence
     public void LoadData(GameData data)
     {
         upgrades = data.playerUpgrades;
-        foreach (GameManager.Upgrade newUpgrade in upgrades)
-        {
-            Debug.Log("Adding new upgrade to preview");
-            UIManager.instance.AddNewPlayerUpgradeToPreview(newUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(newUpgrade.color));
-            UIManager.instance.updateUpgradeChevrons(newUpgrade, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(newUpgrade.color));
-        }
         lives = data.playerLives;
         rainbowMeter = data.rainbowMeter;
         if (rainbowMeter > meterMax)

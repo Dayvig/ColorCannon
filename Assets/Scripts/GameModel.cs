@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameManager;
 
 public class GameModel : MonoBehaviour
 {
@@ -274,6 +275,8 @@ public class GameModel : MonoBehaviour
                 return 1;
             case GameColor.YELLOW:
                 return 2;
+            case GameColor.NONE:
+                return 3;
         }
         Debug.Log("Heck");
         return 0;
@@ -344,26 +347,53 @@ public class GameModel : MonoBehaviour
         {
             case GameManager.UpgradeType.SHOTSPEED:
                 returnText = UpgradeTexts[0];
+                returnText += WeaponUpgradeText(upgrade);
                 break;
             case GameManager.UpgradeType.SHOTS:
                 returnText = UpgradeTexts[1];
+                returnText += WeaponUpgradeText(upgrade);
                 break;
             case GameManager.UpgradeType.ATTACKSPEED:
                 returnText = UpgradeTexts[2];
+                returnText += WeaponUpgradeText(upgrade);
                 break;
             case GameManager.UpgradeType.SHIELDS:
                 returnText = UpgradeTexts[3];
                 break;
             case GameManager.UpgradeType.SHOTSIZE:
                 returnText = UpgradeTexts[4];
+                returnText += WeaponUpgradeText(upgrade);
                 break;
             case GameManager.UpgradeType.PIERCING:
                 returnText = UpgradeTexts[5];
+                returnText += WeaponUpgradeText(upgrade);
+                break;
+            case GameManager.UpgradeType.COMBINER:
+                returnText = UpgradeTexts[10] + combinerBaseChance * upgrade.factor + UpgradeTexts[11];
+                break;
+            case GameManager.UpgradeType.SHIELDPULSE:
+                returnText = UpgradeTexts[12];
+                break;
+            case GameManager.UpgradeType.DEATHBLAST:
+                returnText = UpgradeTexts[13];
+                break;
+            case GameManager.UpgradeType.ROCKETS:
+                returnText = UpgradeTexts[14] + upgrade.factor * 2 +" "+ upgrade.color.ToString().ToLower() + UpgradeTexts[15] + rocketInterval + "s";
                 break;
             default:
                 return "Something went wrong";
         }
 
+        return returnText;
+    }
+
+    private String WeaponUpgradeText(GameManager.Upgrade upgrade)
+    {
+        String returnText = "";
+        if (upgrade.isPlayerUpgrade)
+        {
+            return returnText;
+        }
         if (upgrade.color == GameColor.WHITE)
         {
             returnText += UpgradeTexts[6];

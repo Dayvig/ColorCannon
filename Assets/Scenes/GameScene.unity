@@ -458,7 +458,7 @@ GameObject:
   - component: {fileID: 51298277}
   - component: {fileID: 51298278}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Special UpgradeRows
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -859,7 +859,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6f62865a56cd7f2489f590bb5a984d59, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e2b03c2d8f7f853499ad408201dea8fb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1552,7 +1552,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3540,7 +3540,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: -60
+  m_Spacing: -48
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -4430,8 +4430,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Color Cannon
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: faefe90514fd2c447af219f16f8b3357, type: 2}
-  m_sharedMaterial: {fileID: 983159223326055481, guid: faefe90514fd2c447af219f16f8b3357, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 838accccc62bba847b7bfd948cfa929b, type: 2}
+  m_sharedMaterial: {fileID: 4759976931229359760, guid: 838accccc62bba847b7bfd948cfa929b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4455,8 +4455,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 141.97
-  m_fontSizeBase: 141.97
+  m_fontSize: 170
+  m_fontSizeBase: 170
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4520,6 +4520,8 @@ MonoBehaviour:
   fadeInTimer: 0
   fadeInInterval: 2
   fade: 0
+  refreshSpeed: 0.04
+  count: 0
 --- !u!1001 &839686507
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4882,10 +4884,10 @@ RectTransform:
   m_Father: {fileID: 690111647}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 319.185, y: -86.51}
-  m_SizeDelta: {x: 638.37, y: 173.02}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &889954884
 MonoBehaviour:
@@ -4995,7 +4997,7 @@ GameObject:
   - component: {fileID: 914262296}
   - component: {fileID: 914262297}
   m_Layer: 5
-  m_Name: YellowRow
+  m_Name: Row1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5057,7 +5059,7 @@ GameObject:
   - component: {fileID: 923596318}
   - component: {fileID: 923596319}
   m_Layer: 5
-  m_Name: YellowRow (1)
+  m_Name: Row2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5526,6 +5528,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NextWaveButton
       objectReference: {fileID: 0}
+    - target: {fileID: 6355493466701754190, guid: 29c135124d25e384487b552281852bbe, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0788488c9e7da334980a8d6785e05eca, type: 3}
     - target: {fileID: 6355493466701754191, guid: 29c135124d25e384487b552281852bbe, type: 3}
       propertyPath: m_Colors.m_HighlightedColor.b
       value: 0.4481132
@@ -6058,7 +6064,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1203098081
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6264,7 +6270,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: faefe90514fd2c447af219f16f8b3357, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 838accccc62bba847b7bfd948cfa929b, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8566,7 +8572,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6f62865a56cd7f2489f590bb5a984d59, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e2b03c2d8f7f853499ad408201dea8fb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8851,6 +8857,12 @@ MonoBehaviour:
   - ' Upgrades '
   - ' times but affects '
   - ' bullets only.'
+  - 'When you fire a bullet, '
+  - '% chance to fire a combined color bullet instead.'
+  - Increases radius of shield pulse when hit.
+  - When hit, splat enemies with your shield pulse.
+  - 'Fire '
+  - ' homing rockets every '
   shotSpeedMultiplier: 1.2
   rapidFireMultiplier: 1.075
   shotSizeMultiplier: 1.55
@@ -9009,6 +9021,7 @@ MonoBehaviour:
     type: 0
     color: 0
     factor: 1
+    isPlayerUpgrade: 0
   selectedUpgradeType: 0
   shotsFired: 0
   shotsHit: 0
@@ -9053,6 +9066,8 @@ MonoBehaviour:
   - {fileID: 1976919242}
   - {fileID: 865838101}
   - {fileID: 310026155}
+  - {fileID: 914262296}
+  - {fileID: 923596318}
   WaveModPanelRow: {fileID: 1236444431}
   ChunkPreview: {fileID: 7904462183665939546, guid: 4be793e236e4da046ad5112f5f3009f6, type: 3}
   WaveModPreview: {fileID: 2699191724977984989, guid: db0fb71001df8dc48aef9ea9f691da14, type: 3}
@@ -9074,7 +9089,7 @@ MonoBehaviour:
   toolTipActive: 0
   refreshActive: 1
   toolTipTimer: 0
-  baseToolTipOffset: 2800000037000000
+  baseToolTipOffset: 6400000000000000
   baseToolTipSize: 5e01000096000000
   extendedToolTipSize: 5e010000e6000000
   postWaveUITimer: 0
@@ -9085,10 +9100,10 @@ MonoBehaviour:
   currentAnimationTarget: {fileID: 0}
   swingStart: {x: -1076, y: -7.2, z: 0}
   swingMid: {x: -68, y: 4, z: 0}
-  swingEnd: {x: -26, y: 0, z: 0}
+  swingEnd: {x: -20, y: 0, z: 0}
   swingRotStart: {x: 0, y: 0, z: 14}
   swingRotMid: {x: 0, y: 0, z: -1.4}
-  swingRotEnd: {x: 0, y: 0, z: -3.6}
+  swingRotEnd: {x: 0, y: 0, z: -3}
   winLoseStartPos: {x: 37, y: 1604, z: 0}
   winLosMidPos: {x: 37, y: -57, z: 0}
   winLoseEndPos: {x: 0, y: 0, z: 0}
@@ -11144,7 +11159,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6f62865a56cd7f2489f590bb5a984d59, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e2b03c2d8f7f853499ad408201dea8fb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

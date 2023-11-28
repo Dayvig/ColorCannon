@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         public GameManager.UpgradeType type;
         public GameModel.GameColor color;
         public int factor;
+        public bool isPlayerUpgrade;
 
         [JsonConstructor]
         public Upgrade(String upgradeName, GameManager.UpgradeType upgradeType, GameModel.GameColor upgradeColor, int factor)
@@ -109,6 +110,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 player.rainbowMeter = 0.0f;
                 player.rainbowRush = false;
                 selectedUpgrade = noUpgrade;
+                if (WaveSpawningSystem.instance.Level % 2 == 0 && WaveSpawningSystem.instance.Level != 0)
+                {
+                    GenerateUpgrades();
+                }
+                else
+                {
+                    GenerateSpecialUpgrades();
+                }
             }
             DisposeAllBullets();
             DisposeAllSplatters();
@@ -121,6 +130,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
             UIManager.instance.activatePostWaveAnimations(true);
             nextState = GameState.UIANIMATIONS;
+
+            UIManager.instance.SetupWaveModUI();
         }
 
         if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
@@ -225,8 +236,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
             }
             if (addNew)
             {
-                player.upgrades.Add(selected);
-                UIManager.instance.AddNewPlayerUpgradeToPreview(selected, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(selected.color));
+                Upgrade newU = selected.MakeCopy();
+                newU.isPlayerUpgrade = true;
+                player.upgrades.Add(newU);
             }
         }
     }
@@ -306,9 +318,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
 
         //Add special upgrades
-        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.RED, 2));
-        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.BLUE, 2));
-        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.YELLOW, 2));
+        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.RED, 1));
+        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.BLUE, 1));
+        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.YELLOW, 1));
 
         specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
         specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));

@@ -403,11 +403,22 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void SetupWaveModUI()
     {
+        HideWaveMods();
         ConstructAllWaveModPreviews();
         foreach (Upgrade u in player.upgrades)
         {
-            AddNewPlayerUpgradeToPreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
-            updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+            Debug.Log(u.name);
+            if (u.color.Equals(GameModel.GameColor.NONE) && currentUpgradeRows[3].childCount >= 2)
+            {
+                Debug.Log("Hit");
+                AddNewPlayerUpgradeToPreview(u, 4);
+                updateUpgradeChevrons(u, 4);
+            }
+            else
+            {
+                AddNewPlayerUpgradeToPreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+                updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+            }
         }
         SetCurrentPlayerUpgradePreviews(true);
     }
@@ -469,17 +480,18 @@ public class UIManager : MonoBehaviour, IDataPersistence
             if (upgradeToCheck.name.Contains(u.type.ToString()))
             {
                 toCreateNew = false;
-                updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+                updateUpgradeChevrons(u, colorRow);
             }
         }
         if (toCreateNew)
         {
-            createNewPlayerUpgradePreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
+            createNewPlayerUpgradePreview(u, colorRow);
         }
     }
 
     void createNewPlayerUpgradePreview (GameManager.Upgrade u, int rowToCreateIn)
     {
+        Debug.Log("Creating new upgrade preview in row " + rowToCreateIn);  
         GameObject newUpgradePreview = Instantiate(WaveModPreview, currentUpgradeRows[rowToCreateIn]);
         newUpgradePreview.name = u.type.ToString();
         Image upImage = newUpgradePreview.transform.GetChild(0).GetChild(0).GetComponent<Image>();
@@ -495,7 +507,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
             {
                 if (upgradeToCheck.name.Contains(u.type.ToString()))
                 {
-                    Debug.Log("Updating Upgrade chevron, type " + u.type.ToString() + " , factor" + u.factor);
                     Image chevronImage = upgradeToCheck.transform.GetChild(1).GetComponent<Image>();
                     chevronImage.sprite = u.factor < 7 ? modelGame.UpgradeImages[u.factor + 5] : modelGame.UpgradeImages[11];
                     if (u.factor >= 7)
@@ -570,9 +581,17 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void HideWaveMods()
     {
+        Debug.Log("Destroying Wave Mods");
         for (int i = 0; i < WaveModPanelRow.childCount; i++)
         {
             Destroy(WaveModPanelRow.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < currentUpgradeRows.Count; i++)
+        {
+            for (int k = 0; k < currentUpgradeRows[i].childCount; k++)
+            {
+                Destroy(currentUpgradeRows[i].GetChild(k).gameObject);
+            }
         }
     }
 
@@ -615,7 +634,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public void LoadData(GameData data)
     {
         WaveMods = data.waveUpgrades;
-        SetupWaveModUI();
         refreshActive = data.refreshActive;
         RefreshUpgradesButton.gameObject.SetActive(refreshActive);
     }
