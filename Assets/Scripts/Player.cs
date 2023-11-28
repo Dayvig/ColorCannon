@@ -37,6 +37,7 @@ public class Player : MonoBehaviour, IDataPersistence
     public int combineChance;
     public bool deathPulse = false;
     public float shieldPulseRadius;
+    public float meterMult;
     
     private float shotTimer;
     public float rocketTimer;
@@ -478,6 +479,7 @@ public class Player : MonoBehaviour, IDataPersistence
         numShots = FinalNumShots(playerColor);
         piercing = FinalPiercing(playerColor);
         combineChance = FinalCombineChance();
+        meterMult = FinalMeterMult();
         deathPulse = false;
         foreach (GameManager.Upgrade u in upgrades)
         {
@@ -488,6 +490,21 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         shieldPulseRadius = FinalShieldPulseRadius();
         rocketColors = FinalRocketColors();
+    }
+
+    public float FinalMeterMult()
+    {
+        float mult = 1f;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.RAINBOWMULT))
+            {
+                mult += (u.factor * modelGame.meterMultInc);
+            }
+        }
+        mult *= WaveSpawningSystem.instance.globalRainbowMult;
+        return mult;
+
     }
     public float FinalShieldPulseRadius()
     {
@@ -849,7 +866,7 @@ public class Player : MonoBehaviour, IDataPersistence
     {
         if (!rainbowRush)
         {
-            float fillAmnt = UnityEngine.Random.Range(meterMax / 60, meterMax / 45);
+            float fillAmnt = UnityEngine.Random.Range(meterMax / (60 / (meterMult)), meterMax / (45 / (meterMult)));
             rainbowMeter += fillAmnt;
             meter.targetFill = rainbowMeter / meterMax;
             meter.fillTimer = 0.0f;

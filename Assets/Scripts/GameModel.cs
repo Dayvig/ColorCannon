@@ -50,6 +50,8 @@ public class GameModel : MonoBehaviour
     public float shieldPulseRadius;
     [Range(1f, 10f)]
     public float rocketInterval;
+    [Range(0.1f, 2f)]
+    public float meterMultInc;
 
     public float darkenedColorDivisor = 1.5f;
 
@@ -67,6 +69,9 @@ public class GameModel : MonoBehaviour
 
     [Range(1.1f, 3f)]
     public float baseWaveDifficultyUpgrade = 1.5f;
+
+    [Range(0.05f, 1f)]
+    public float baseWaveMonochrome = 0.2f;
 
     [Range(0, 10)]
     public int baseStandardDifficultyIncrease = 1;
@@ -218,6 +223,8 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[16];
             case GameManager.UpgradeType.DEATHBLAST:
                 return UpgradeImages[17];
+            case GameManager.UpgradeType.RAINBOWMULT:
+                return UpgradeImages[19];
             default:
                 return UpgradeImages[3];
         }
@@ -235,6 +242,8 @@ public class GameModel : MonoBehaviour
                 return WaveModImages[2];
             case UIManager.WaveModifier.BIGGER_WAVE:
                 return WaveModImages[3];
+            case UIManager.WaveModifier.MONOCHROME:
+                return WaveModImages[4];
             default:
                 return WaveModImages[0];
         }
@@ -260,6 +269,8 @@ public class GameModel : MonoBehaviour
                 }
             case UIManager.WaveModifier.BIGGER_WAVE:
                 return WaveModTexts[3];
+            case UIManager.WaveModifier.MONOCHROME:
+                return WaveModTexts[7] + baseWaveMonochrome * count * 100 + WaveModTexts[8];
             default:
                 return "Huh";
         }
@@ -379,6 +390,9 @@ public class GameModel : MonoBehaviour
                 break;
             case GameManager.UpgradeType.ROCKETS:
                 returnText = UpgradeTexts[14] + upgrade.factor * 2 +" "+ upgrade.color.ToString().ToLower() + UpgradeTexts[15] + rocketInterval + "s";
+                break;
+            case GameManager.UpgradeType.RAINBOWMULT:
+                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17];
                 break;
             default:
                 return "Something went wrong";

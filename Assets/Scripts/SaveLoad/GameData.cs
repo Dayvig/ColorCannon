@@ -23,6 +23,7 @@ public class GameData
     public float waveSpeed;
     public int playerLives;
     public int numChunks;
+    public float rainbowMult;
 
     public bool refreshActive;
     public GameData(){
@@ -38,5 +39,6 @@ public class GameData
         uniqueChunks = GameModel.instance.baseNumUniqueChunks;
         playerLives = 3;
         rainbowMeter = 0.0f;
+        rainbowMult = 1f;
     }
 }

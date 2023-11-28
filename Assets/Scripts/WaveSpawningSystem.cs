@@ -21,6 +21,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public static int globalWaveNumber;
     public static float globalWaveSpacing;
     public static float globalWaveSpeed;
+    public float globalRainbowMult;
     public static float tutorialSpacing;
     public int numUniqueChunks;
     public int numChunks;
@@ -310,14 +311,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             Debug.Log("Spawning Normal Wave");
             generateWave();
             RandomizeWave();
-            if (Level % 2 == 0)
-            {
-                gameManager.GenerateUpgrades();
-            }
-            else
-            {
-                UIManager.instance.UpgradePanel.SetActive(false);
-            }
+
         }
         enemyTimer = currentWave[0].delayUntilNext;
         currentWaveIndex = 0;
@@ -723,11 +717,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             UIManager.instance.activatePostWaveUI();
             if (Level % 2 == 0 && Level != 0)
             {
-                gameManager.GenerateUpgrades();
+                gameManager.GenerateSpecialUpgrades();
             }
             else
             {
-                gameManager.GenerateSpecialUpgrades();
+                gameManager.GenerateUpgrades();
             }
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
@@ -831,7 +825,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         if (Level % 2 == 0)
         {
             //Every other wave makes waves harder with a modifier.
-            int randomWaveMod = Random.Range(0, 3);
+            int randomWaveMod = Random.Range(0, 4);
             switch (randomWaveMod)
             {
                 case 0:
@@ -851,6 +845,12 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                     }
                     UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
                     break;
+                case 3:
+                    Debug.Log("Eh: " + (1 - modelGame.baseWaveMonochrome));
+                    globalRainbowMult *= (1 - modelGame.baseWaveMonochrome);
+                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.MONOCHROME);
+                    break;
+
             }
         }
 
@@ -1812,6 +1812,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         globalWaveNumber = data.waveNumber;
         globalWaveSpacing = data.waveSpacing;
         globalWaveSpeed = data.waveSpeed;
+        globalRainbowMult = data.rainbowMult;
         if (data.chunks == null)
         {
             currentChunks = new List<Chunk>();
@@ -1838,6 +1839,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         data.chunks = currentChunks;
         data.uniqueChunks = numUniqueChunks;
         data.numChunks = numChunks;
+        data.rainbowMult = globalRainbowMult;
     }
 
     // ========================================================= End of Chunks =================================================================

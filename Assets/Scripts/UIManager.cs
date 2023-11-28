@@ -108,7 +108,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
         NUMEROUS,
         FASTER,
         BIGGER_WAVE,
-        DIFFICULT
+        DIFFICULT,
+        MONOCHROME
     }
 
     void Start(){
@@ -284,6 +285,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public void activateMainMenuUI()
     {
         deactivatePostWaveUI();
+        HideWaveMods();
         deactivateWinLoseUI();
         WaveUIPanel.SetActive(false);
         MainMenuPanel.SetActive(true);
@@ -403,7 +405,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void SetupWaveModUI()
     {
-        HideWaveMods();
         ConstructAllWaveModPreviews();
         foreach (Upgrade u in player.upgrades)
         {
@@ -425,9 +426,11 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     void ConstructAllWaveModPreviews()
     {
+        HideWaveMods();
         ConstructWaveModifierPreview(WaveModifier.NUMEROUS);
         ConstructWaveModifierPreview(WaveModifier.FASTER);
         ConstructWaveModifierPreview(WaveModifier.DIFFICULT);
+        ConstructWaveModifierPreview(WaveModifier.MONOCHROME);
     }
 
     void ConstructWaveModifierPreview(WaveModifier mod)
@@ -529,7 +532,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         HideWave();
         WipeUpgrades();
-        HideWaveMods();
     }
 
     public void WipeUpgrades()

@@ -8818,11 +8818,13 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 399d23f557ea63a4085076eea8a40609, type: 3}
   - {fileID: 21300000, guid: 22723018d9b45c348b65eba5ec5b48a5, type: 3}
   - {fileID: 21300000, guid: 1808d780fad50a04e9ae93ff40aa8fbb, type: 3}
+  - {fileID: 21300000, guid: 31301211f6e126949982cc24746c7605, type: 3}
   WaveModImages:
   - {fileID: 21300000, guid: 6e0611e8e8a0db74db100964591b8169, type: 3}
   - {fileID: 21300000, guid: 62bfd42671a4c194889bc59e770238c1, type: 3}
   - {fileID: 21300000, guid: eb1cb849d9f4055419ee48807517c6f9, type: 3}
   - {fileID: 21300000, guid: 6b607c7204193704e9c72cab4c24de00, type: 3}
+  - {fileID: 21300000, guid: 8c54851409b88ea4eb22d77b3f144d17, type: 3}
   WaveModTexts:
   - Spawns more difficult enemies.
   - 'Enemies move '
@@ -8831,6 +8833,8 @@ MonoBehaviour:
   - '% faster. Adds '
   - ' extra enemy per chunk.'
   - ' extra enemies per chunk.'
+  - 'Reduces rainbow meter gained from enemies by '
+  - '%.'
   ChunkTexts:
   - Basic enemy that moves in a straight line.
   - Fast enemy that lingers at the edge, before zooming forward.
@@ -8863,6 +8867,8 @@ MonoBehaviour:
   - When hit, splat enemies with your shield pulse.
   - 'Fire '
   - ' homing rockets every '
+  - 'Increases rainbow meter gained from enemies by '
+  - '%.'
   shotSpeedMultiplier: 1.2
   rapidFireMultiplier: 1.075
   shotSizeMultiplier: 1.55
@@ -8881,12 +8887,14 @@ MonoBehaviour:
   combinerBaseChance: 10
   shieldPulseRadius: 1.6
   rocketInterval: 5
+  meterMultInc: 0.3
   darkenedColorDivisor: 1.5
   baseWaveSpacingUpgrade: 1.03
   baseNumerousSpacingUpgrade: 1.25
   baseNumerousNumberUpgrade: 3
   baseWaveSpeedUpgrade: 1.12
   baseWaveDifficultyUpgrade: 1.5
+  baseWaveMonochrome: 0.3
   baseStandardDifficultyIncrease: 1
   baseWaveNumberUpgrade: 1
   redVisualColor: {r: 1, g: 0.3160377, b: 0.3160377, a: 1}
@@ -8975,6 +8983,7 @@ MonoBehaviour:
   - {fileID: 1577129711797779762, guid: 104ed5d29d9ebfa44ba23320f5ed70a8, type: 3}
   - {fileID: 7744493498335708605, guid: 7cb614c6f158d114fa0bd01783bb0808, type: 3}
   Level: 0
+  globalRainbowMult: 1
   numUniqueChunks: 0
   numChunks: 0
   inactiveEnemies: []

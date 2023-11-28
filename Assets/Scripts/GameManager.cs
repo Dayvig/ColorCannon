@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         ROCKETS,
         COMBINER,
         DEATHBLAST,
+        RAINBOWMULT,
         NONE
     }
 
@@ -112,11 +113,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 selectedUpgrade = noUpgrade;
                 if (WaveSpawningSystem.instance.Level % 2 == 0 && WaveSpawningSystem.instance.Level != 0)
                 {
-                    GenerateUpgrades();
+                    GenerateSpecialUpgrades();
                 }
                 else
                 {
-                    GenerateSpecialUpgrades();
+                    GenerateUpgrades();
                 }
             }
             DisposeAllBullets();
@@ -333,6 +334,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         specialUpgrades.Add(new Upgrade("Combiner", UpgradeType.COMBINER, GameModel.GameColor.NONE, 1));
         specialUpgrades.Add(new Upgrade("Combiner", UpgradeType.COMBINER, GameModel.GameColor.NONE, 1));
 
+        specialUpgrades.Add(new Upgrade("More Rainbows!", UpgradeType.RAINBOWMULT, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("More Rainbows!", UpgradeType.RAINBOWMULT, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("More Rainbows!", UpgradeType.RAINBOWMULT, GameModel.GameColor.NONE, 1));
 
     }
 
