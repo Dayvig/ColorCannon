@@ -34,8 +34,12 @@ public class Player : MonoBehaviour, IDataPersistence
     public int piercing;
     public int lives;
     public float shotSpread;
+    public int combineChance;
+    public bool deathPulse = false;
+    public float shieldPulseRadius;
     
     private float shotTimer;
+    public float rocketTimer;
     public GameObject bullet;
 
     public GameObject enemy;
@@ -58,6 +62,8 @@ public class Player : MonoBehaviour, IDataPersistence
 
     private GameModel.GameColor[] colorOrder =
         {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW};
+
+    public List<GameModel.GameColor> rocketColors = new List<GameModel.GameColor>();
 
     private int colorPlace = 0;
 
@@ -136,6 +142,16 @@ public class Player : MonoBehaviour, IDataPersistence
         {
             SpreadFire(playerColor, numShots);
             shotTimer = 0.0f;
+        }
+
+        if (rocketColors.Count != 0)
+        {
+            rocketTimer += Time.deltaTime;
+            if (rocketTimer > GameModel.instance.rocketInterval)
+            {
+                RocketFire(rocketColors);
+                rocketTimer = 0.0f;
+            }
         }
     }
 
@@ -248,7 +264,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 rotation += UnityEngine.Random.Range(-15f, 15f);
                 gameColor = (GameModel.GameColor)UnityEngine.Random.Range(0, 6);
             }
-            bulletScript.initialize(transform.position, rotation, bulletSpeed, gameColor, piercing, bulletSize);
+            bulletScript.initialize(transform.position, rotation, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, false);
             bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
             if (!gameManager.activeBullets.Contains(bulletScript))
             {
@@ -289,7 +305,7 @@ public class Player : MonoBehaviour, IDataPersistence
                     newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
                 }
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
-                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, gameColor, piercing, bulletSize);
+                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, false);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
                 if (!gameManager.activeBullets.Contains(bulletScript))
                 {
@@ -309,6 +325,110 @@ public class Player : MonoBehaviour, IDataPersistence
                 }
             }
         }
+    }
+
+    private void RocketFire(List<GameModel.GameColor> colors)
+    {
+        if (colors.Count == 1)
+        {
+            GameModel.GameColor gameColor = colors[0];
+            GameObject newBulletObject = null;
+            foreach (Bullet b in gameManager.inactiveBullets)
+            {
+                newBulletObject = b.gameObject;
+                break;
+            }
+            if (newBulletObject == null)
+            {
+                newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+            }
+
+            //create and instantiate new bullet
+
+            Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
+            float rotation = rotationTarget;
+            if (rainbowRush)
+            {
+                rotation += UnityEngine.Random.Range(-15f, 15f);
+                gameColor = (GameModel.GameColor)UnityEngine.Random.Range(0, 6);
+            }
+            bulletScript.initialize(transform.position, rotation, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, true);
+            bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+            if (!gameManager.activeBullets.Contains(bulletScript))
+            {
+                gameManager.activeBullets.Add(bulletScript);
+                GameManager.instance.shotsFired++;
+            }
+            gameManager.inactiveBullets.Remove(bulletScript);
+
+            //Play firing sound
+            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+            {
+                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
+            }
+        }
+        else
+        {
+            //Sets initial to 0 if odd and 1 if even
+            int initial = 1 - (colors.Count % 2);
+            for (int s = initial; s < colors.Count + initial; s++)
+            {
+                GameModel.GameColor gameColor;
+
+                if (initial == 1)
+                {
+                    gameColor = colors[s - 1];
+                }
+                else
+                {
+                    gameColor = colors[s];
+                }
+                float angleOffSet =
+                    ((((float)s / (colors.Count + (1 - (2 * (colors.Count % 2))))) * 180) -
+                     (180 / 2));
+                if (rainbowRush)
+                {
+                    angleOffSet += UnityEngine.Random.Range(-10f, 10f);
+                    gameColor = colorOrder[UnityEngine.Random.Range(0, 2)];
+                }
+                GameObject newBulletObject = null;
+                foreach (Bullet b in gameManager.inactiveBullets)
+                {
+                    //some conditional later
+                    newBulletObject = b.gameObject;
+                    break;
+                }
+                if (newBulletObject == null)
+                {
+                    newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
+                }
+                Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
+
+                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, true);
+                bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+                if (!gameManager.activeBullets.Contains(bulletScript))
+                {
+                    gameManager.activeBullets.Add(bulletScript);
+                    GameManager.instance.shotsFired++;
+                }
+                gameManager.inactiveBullets.Remove(bulletScript);
+            }
+
+            //Play firing sounds
+            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+            {
+                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
+                for (int k = 1; k < numShots; k++)
+                {
+                    SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0], 0.03f * k);
+                }
+            }
+        }
+    }
+
+        public GameModel.GameColor ApplyCombiners(GameModel.GameColor testColor)
+    {
+        return combineChance > UnityEngine.Random.Range(0, 100) ? GameModel.instance.ReturnRandomMixedColor(testColor) : testColor;
     }
     
     public void setColor(int index)
@@ -357,6 +477,59 @@ public class Player : MonoBehaviour, IDataPersistence
         shotSpeed = FinalRateOfFire(playerColor);
         numShots = FinalNumShots(playerColor);
         piercing = FinalPiercing(playerColor);
+        combineChance = FinalCombineChance();
+        deathPulse = false;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.DEATHBLAST))
+            {
+                deathPulse = true;
+            }
+        }
+        shieldPulseRadius = FinalShieldPulseRadius();
+        rocketColors = FinalRocketColors();
+    }
+    public float FinalShieldPulseRadius()
+    {
+        float shieldPulse = GameModel.instance.shieldPulseRadius;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.SHIELDPULSE))
+            {
+                shieldPulse += (u.factor * GameModel.instance.shieldPulseInc);
+            }
+        }
+        return shieldPulse;
+    }
+
+    public List<GameModel.GameColor> FinalRocketColors()
+    {
+        rocketColors.Clear();
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.ROCKETS))
+            {
+                for (int i = 0; i < u.factor; i++)
+                {
+                    rocketColors.Add(u.color);
+                }
+            }
+        }
+        return rocketColors;
+    }
+
+
+    public int FinalCombineChance()
+    {
+        int chance = 0;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.COMBINER))
+            {
+                chance += (u.factor * GameModel.instance.combinerBaseChance);
+            }
+        }
+        return chance;
     }
 
     public float FinalShotSpeed(GameModel.GameColor currentColor)
@@ -647,12 +820,21 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         else
         {
-            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, 2);
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, shieldPulseRadius);
+            Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x + shieldPulseRadius, this.transform.position.y, 0), Color.blue, 4f);
             foreach (Collider2D c in hitColliders)
             {
                 if (c.gameObject.tag == "Enemy")
                 {
-                    c.gameObject.GetComponent<EnemyBehavior>().StartKnockBack(false);
+                    EnemyBehavior thisB = c.gameObject.GetComponent<EnemyBehavior>();
+                    if (deathPulse)
+                    {
+                        thisB.TakeHit(thisB.enemyColor);
+                    }
+                    else
+                    {
+                        thisB.StartKnockBack(false);
+                    }
                 }
             }
         }

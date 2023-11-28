@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental;
@@ -7,10 +8,11 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 public class Bullet : MonoBehaviour
 {
-    public float xSpeed;
-    public float ySpeed;
+    private float xSpeed;
+    private float ySpeed;
+    public float overallSpeed;
     public Vector3 flight;
-    private Vector3 positionTarget;
+    public Vector3 positionTarget;
     private Vector3 positionCurrent;
     public SpriteRenderer ren;
     public Light2D lightRen;
@@ -25,6 +27,11 @@ public class Bullet : MonoBehaviour
     private float bulletScale;
     private float baseOuterRadius = 4.2f;
 
+    public bool isSeeking;
+    private float seekingFactor = 0.05f;
+    public GameObject seekingTarget = null;
+    private float lifeTime = 0.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,13 +39,19 @@ public class Bullet : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    public void initialize(Vector3 initialPos, float rotation, float speed, GameModel.GameColor color, int pierce, float scale)
+    public void initialize(Vector3 initialPos, float rotation, float speed, GameModel.GameColor color, int pierce, float scale, bool seeking)
     {
         rotation = -(rotation * (Mathf.PI / 180));
+        if (seeking)
+        {
+            speed *= 0.8f;
+        }
         
         xSpeed = Mathf.Sin(rotation);
         ySpeed = Mathf.Cos(rotation);
+
         flight = new Vector3(xSpeed, ySpeed, 0).normalized * speed;
+        overallSpeed = speed;
 
         transform.position = initialPos;
         positionCurrent = initialPos;
@@ -49,6 +62,16 @@ public class Bullet : MonoBehaviour
         thisCollider.enabled = true;
         bulletScale = scale;
         this.transform.localScale = new Vector3 (scale, scale, 1);
+        isSeeking = seeking;
+        if (isSeeking)
+        {
+            //flight *= 0.6f;
+        }
+        lifeTime = 0.0f;
+        if (isSeeking)
+        {
+            AcquireTarget();
+        }
 
         immuneEnemies.Clear();
     }
@@ -63,7 +86,26 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     public void BulletUpdate()
     {
-        positionTarget += flight;
+        lifeTime += Time.deltaTime;
+
+        if (isSeeking && (seekingTarget == null || !seekingTarget.activeInHierarchy))
+        {
+            lifeTime += Time.deltaTime;
+            if (lifeTime > 0.5f)
+            {
+                AcquireTarget();
+            }
+        }
+        if (isSeeking && seekingTarget != null)
+        {
+            Debug.Log("Hit");
+            positionTarget = Vector3.MoveTowards(positionTarget, seekingTarget.transform.position, overallSpeed);
+            //flight = positionTarget;
+        }
+        else
+        {
+            positionTarget += flight;
+        }
         positionCurrent = Vector3.Lerp(
             positionCurrent, 
             positionTarget, 
@@ -73,6 +115,30 @@ public class Bullet : MonoBehaviour
             CheckCollisions();
         }
         
+    }
+
+    public void AcquireTarget()
+    {
+        seekingTarget = null;
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, 1.5f);
+        float shortestDist = -1;
+        foreach (Collider2D c in hitColliders)
+        {
+            if (c.gameObject.CompareTag("Enemy") && c.gameObject.activeInHierarchy)
+            {
+                EnemyBehavior e = c.GetComponent<EnemyBehavior>();
+                if (e.enemyColors.Contains(bulletColor))
+                {
+                    float dist = Vector3.Distance(c.gameObject.transform.position, this.transform.position);
+                    if (dist < shortestDist || shortestDist == -1)
+                    {
+                        shortestDist = dist;
+                        seekingTarget = c.gameObject;
+                    }
+                }
+            }
+        }
+        lifeTime = 0.0f;
     }
 
     void CheckCollisions()

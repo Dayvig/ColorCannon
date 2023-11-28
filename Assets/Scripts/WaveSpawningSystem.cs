@@ -724,13 +724,13 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             generateWave();
             RandomizeWave();
             UIManager.instance.activatePostWaveUI();
-            if (Level % 2 == 0)
+            if (Level % 2 == 0 && Level != 0)
             {
                 gameManager.GenerateUpgrades();
             }
             else
             {
-                UIManager.instance.UpgradePanel.SetActive(false);
+                gameManager.GenerateSpecialUpgrades();
             }
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;

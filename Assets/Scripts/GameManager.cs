@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public WaveSpawningSystem spawningSystem;
     public static GameModel gameModel;
     private List<Upgrade> possibleUpgrades = new List<Upgrade>();
+    private List<Upgrade> specialUpgrades = new List<Upgrade>();
     public List<Upgrade> currentOfferedUpgrades = new List<Upgrade>();
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
 
@@ -268,15 +269,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.BLUE, 3));
         //Yellow Firing Speed
         possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.YELLOW, 3));
-        
-        /*
-        //Red Shot Speed
-        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.RED, 3));
-        //Blue Shot Speed
-        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.BLUE, 3));
-        //Yellow Shot Speed
-        possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.YELLOW, 3));
-        */
 
         //Red Shot Size
         possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.RED, 3));
@@ -298,26 +290,43 @@ public class GameManager : MonoBehaviour, IDataPersistence
         possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.BLUE, 3));
         //Yellow Shot Spread
         possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.YELLOW, 3));
-        
-        for (int i = 0; i < GameModel.instance.shieldUpgradeFreq; i++)
-        {
-            //Shield Recharge
-            possibleUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE, 1));
-        }
 
         for (int i = 0; i < GameModel.instance.basicUpgradeFreq; i++)
         {
             possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.WHITE, 1));
-            //possibleUpgrades.Add(new Upgrade("Shot Speed", UpgradeType.SHOTSPEED, GameModel.GameColor.WHITE, 1));
             possibleUpgrades.Add(new Upgrade("Shot Size", UpgradeType.SHOTSIZE, GameModel.GameColor.WHITE, 1));
             possibleUpgrades.Add(new Upgrade("Shot Spread", UpgradeType.SHOTS, GameModel.GameColor.WHITE, 1));
             possibleUpgrades.Add(new Upgrade("Shot Piercing", UpgradeType.PIERCING, GameModel.GameColor.WHITE, 1));
         }
+
+        for (int i = 0; i < GameModel.instance.shieldUpgradeFreq; i++)
+        {
+            //Shield Recharge
+            specialUpgrades.Add(new Upgrade("Recharge", UpgradeType.SHIELDS, GameModel.GameColor.WHITE, 1));
+        }
+
+        //Add special upgrades
+        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.RED, 2));
+        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.BLUE, 2));
+        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.YELLOW, 2));
+
+        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
+
+        specialUpgrades.Add(new Upgrade("Splat Pulse", UpgradeType.DEATHBLAST, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Splat Pulse", UpgradeType.DEATHBLAST, GameModel.GameColor.NONE, 1));
+
+        specialUpgrades.Add(new Upgrade("Combiner", UpgradeType.COMBINER, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Combiner", UpgradeType.COMBINER, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Combiner", UpgradeType.COMBINER, GameModel.GameColor.NONE, 1));
+
+
     }
 
-    public Upgrade getRandomUpgrade()
+    public Upgrade getRandomUpgrade(List<Upgrade> upgradeList)
     {
-        return possibleUpgrades[Random.Range(0, possibleUpgrades.Count)];
+        return upgradeList[Random.Range(0, upgradeList.Count)];
     }
 
     void DisposeAllBullets()
@@ -349,7 +358,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             for (int i = 0; i < 3; i++)
             {
-                Upgrade nextUpgrade = getRandomUpgrade();
+                Upgrade nextUpgrade = getRandomUpgrade(possibleUpgrades);
                 currentOfferedUpgrades.Add(nextUpgrade);
                 UIManager.instance.SetupNextUpgradePreview(nextUpgrade);
             }
@@ -362,7 +371,27 @@ public class GameManager : MonoBehaviour, IDataPersistence
             }
         }
     }
-    
+
+    public void GenerateSpecialUpgrades()
+    {
+        if (currentOfferedUpgrades.Count == 0)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Upgrade nextUpgrade = getRandomUpgrade(specialUpgrades);
+                currentOfferedUpgrades.Add(nextUpgrade);
+                UIManager.instance.SetupNextUpgradePreview(nextUpgrade);
+            }
+        }
+        else
+        {
+            foreach (Upgrade u in currentOfferedUpgrades)
+            {
+                UIManager.instance.SetupNextUpgradePreview(u);
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
         switch (currentState)

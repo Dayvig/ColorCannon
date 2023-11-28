@@ -33,6 +33,8 @@ public class GameModel : MonoBehaviour
     [Range(1, 10)] public int piercingUpgrade;
     [Range(10, 180)] 
     public float baseSpreadAngle;
+    [Range(0.05f, 1f)] public float shieldPulseInc;
+
     public int baseGlobalWaveNumber;
     public float baseGlobalWaveSpacing;
     public float baseTutorialSpacing;
@@ -41,6 +43,12 @@ public class GameModel : MonoBehaviour
     public int baseNumUniqueChunks;
     public int shieldUpgradeFreq = 9;
     public int basicUpgradeFreq = 3;
+    [Range (5, 50)]
+    public int combinerBaseChance = 10;
+    [Range(1f, 10f)]
+    public float shieldPulseRadius;
+    [Range(1f, 10f)]
+    public float rocketInterval;
 
     public float darkenedColorDivisor = 1.5f;
 
@@ -124,7 +132,7 @@ public class GameModel : MonoBehaviour
             case GameColor.WHITE:
                 return whiteVisualColor;
             default:
-                return Color.gray;
+                return whiteVisualColor;
         }
     }
     public Color OppositeColor(GameColor col)
@@ -147,6 +155,28 @@ public class GameModel : MonoBehaviour
                 return Color.white;
             default:
                 return Color.gray;
+        }
+    }
+
+    public GameColor ReturnRandomMixedColor(GameColor col)
+    {
+        int rand = UnityEngine.Random.Range(0, 2);
+        switch (col)
+        {
+            case GameColor.RED:
+                return rand == 0 ? GameColor.PURPLE : GameColor.ORANGE;
+            case GameColor.BLUE:
+                return rand == 0 ? GameColor.PURPLE : GameColor.GREEN;
+            case GameColor.YELLOW:
+                return rand == 0 ? GameColor.GREEN : GameColor.ORANGE;
+            case GameColor.ORANGE:
+                return GameColor.WHITE;
+            case GameColor.GREEN:
+                return GameColor.WHITE;
+            case GameColor.PURPLE:
+                return GameColor.WHITE;
+            default:
+                return col;
         }
     }
 
@@ -179,6 +209,14 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[4];
             case GameManager.UpgradeType.SHIELDS:
                 return UpgradeImages[5];
+            case GameManager.UpgradeType.COMBINER:
+                return UpgradeImages[14];
+            case GameManager.UpgradeType.ROCKETS:
+                return UpgradeImages[15];
+            case GameManager.UpgradeType.SHIELDPULSE:
+                return UpgradeImages[16];
+            case GameManager.UpgradeType.DEATHBLAST:
+                return UpgradeImages[17];
             default:
                 return UpgradeImages[3];
         }
