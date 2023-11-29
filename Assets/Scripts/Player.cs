@@ -58,6 +58,7 @@ public class Player : MonoBehaviour, IDataPersistence
 
     public Transform[] orbs = new Transform[3];
     public Transform mainOrb;
+    public GameObject shieldPulse;
     public Vector3[] orbPositions = new Vector3[] { new Vector3(-0.13f, 0.482f, 0), new Vector3(-0.355f, 0.263f, 0f), new Vector3(-0.415f, 0.09f, 0f) };
     public Vector3[] orbTargetPos = new Vector3[3];
 
@@ -212,7 +213,9 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 rainbowRush = false;
                 rainbowTimer = 0.0f;
+                PulseShield();
                 configureWeapon();
+
             }
         }
     }
@@ -826,6 +829,30 @@ public class Player : MonoBehaviour, IDataPersistence
         }
     }
 
+    void PulseShield()
+    {
+        GameObject newPulse = Instantiate(shieldPulse, this.transform.position, Quaternion.identity);
+        newPulse.GetComponent<pulseEffect>().initialize(shieldPulseRadius);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, shieldPulseRadius);
+        Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x + shieldPulseRadius, this.transform.position.y, 0), Color.blue, 4f);
+        foreach (Collider2D c in hitColliders)
+        {
+            if (c.gameObject.tag == "Enemy")
+            {
+                EnemyBehavior thisB = c.gameObject.GetComponent<EnemyBehavior>();
+                if (deathPulse)
+                {
+                    thisB.TakeHit(thisB.enemyColor);
+                }
+                else
+                {
+                    thisB.StartKnockBack(false, shieldPulseRadius);
+                }
+            }
+        }
+        
+    }
+
     public void TakeHit()
     {
         if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
@@ -838,23 +865,7 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         else
         {
-            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, shieldPulseRadius);
-            Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x + shieldPulseRadius, this.transform.position.y, 0), Color.blue, 4f);
-            foreach (Collider2D c in hitColliders)
-            {
-                if (c.gameObject.tag == "Enemy")
-                {
-                    EnemyBehavior thisB = c.gameObject.GetComponent<EnemyBehavior>();
-                    if (deathPulse)
-                    {
-                        thisB.TakeHit(thisB.enemyColor);
-                    }
-                    else
-                    {
-                        thisB.StartKnockBack(false);
-                    }
-                }
-            }
+            PulseShield();
         }
         if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
         {

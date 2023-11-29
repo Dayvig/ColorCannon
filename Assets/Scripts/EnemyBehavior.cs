@@ -33,6 +33,8 @@ public class EnemyBehavior : MonoBehaviour
     public float swayAngle = 10;
     private int mode = 0;
     public bool enableSway = true;
+    private float knockbackTargetDistance;
+    private bool specialKnockBack = false;
 
     public GameModel.GameColor SetMixedColor(List<GameModel.GameColor> colors)
     {
@@ -241,12 +243,24 @@ public class EnemyBehavior : MonoBehaviour
 
     public virtual void KnockBack()
     {
-        knockBackTimer += Time.deltaTime;
-        transform.position = Vector3.MoveTowards(currentPos, destination, -Time.deltaTime * Mathf.Lerp(knockbackSpeed, 0, knockBackTimer/knockBackDuration));
+        transform.position = Vector3.MoveTowards(currentPos, destination, -Time.deltaTime * Mathf.Lerp(knockbackSpeed, 0, knockBackTimer / knockBackDuration));
         currentPos = transform.position;
-        if (knockBackTimer > knockBackDuration)
+
+        if (specialKnockBack)
         {
-            knockBack = false;
+            if (Vector3.Distance(currentPos, Vector3.one * 0) >= knockbackTargetDistance)
+            {
+                knockBack = false;
+                specialKnockBack = false;
+            }
+        }
+        else
+        {
+            knockBackTimer += Time.deltaTime;
+            if (knockBackTimer > knockBackDuration)
+            {
+                knockBack = false;
+            }
         }
     }
     
@@ -375,6 +389,20 @@ public class EnemyBehavior : MonoBehaviour
             SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
         }
     }
+
+    public virtual void StartKnockBack(bool withSound, float targetDistance)
+    {
+        SetVisualColor(enemyColor);
+        knockBack = true;
+        knockBackTimer = 0.0f;
+        knockbackTargetDistance = targetDistance;
+        specialKnockBack = true;
+        if (withSound && GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+        {
+            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[1]);
+        }
+    }
+
 
     public delegate void EnemyDiedEvent();
     public static event EnemyDiedEvent HasDied;
