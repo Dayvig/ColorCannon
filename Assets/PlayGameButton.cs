@@ -21,7 +21,7 @@ public class PlayGameButton : MonoBehaviour
 
     public void initialize()
     {
-        if (WaveSpawningSystem.instance.Level == 0 || WaveSpawningSystem.instance.Level == 1)
+        if (WaveSpawningSystem.instance.Level == 0)
         {
             playText.text = "New Game";
             waveText.gameObject.SetActive(false);

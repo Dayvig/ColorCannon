@@ -24,5 +24,6 @@ public class genericButtonScript : MonoBehaviour, IPointerEnterHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[0]);
+        Debug.Log("Sound");
     }
 }

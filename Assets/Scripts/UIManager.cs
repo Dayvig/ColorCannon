@@ -289,7 +289,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         deactivateWinLoseUI();
         WaveUIPanel.SetActive(false);
         MainMenuPanel.SetActive(true);
-        newGameButton.SetActive(!(WaveSpawningSystem.instance.Level == 0 || WaveSpawningSystem.instance.Level == 1));
+        newGameButton.SetActive(!(WaveSpawningSystem.instance.Level == 0));
         playButton.initialize();
         player.SelectorRing.StartAnimation(true);
     }
@@ -405,6 +405,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void SetupWaveModUI()
     {
+        HidePlayerModsOnly();
         ConstructAllWaveModPreviews();
         foreach (Upgrade u in player.upgrades)
         {
@@ -417,6 +418,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
             }
             else
             {
+                Debug.Log("Hit2");
                 AddNewPlayerUpgradeToPreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
                 updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
             }
@@ -426,7 +428,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     void ConstructAllWaveModPreviews()
     {
-        HideWaveMods();
+        HideWaveModsOnly();
         ConstructWaveModifierPreview(WaveModifier.NUMEROUS);
         ConstructWaveModifierPreview(WaveModifier.FASTER);
         ConstructWaveModifierPreview(WaveModifier.DIFFICULT);
@@ -594,6 +596,26 @@ public class UIManager : MonoBehaviour, IDataPersistence
             {
                 Destroy(currentUpgradeRows[i].GetChild(k).gameObject);
             }
+        }
+    }
+
+    public void HidePlayerModsOnly()
+    {
+        for (int i = 0; i < currentUpgradeRows.Count; i++)
+        {
+            for (int k = 0; k < currentUpgradeRows[i].childCount; k++)
+            {
+                currentUpgradeRows[i].GetChild(k).gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void HideWaveModsOnly()
+    {
+        Debug.Log("Destroying Wave Mods");
+        for (int i = 0; i < WaveModPanelRow.childCount; i++)
+        {
+            Destroy(WaveModPanelRow.GetChild(i).gameObject);
         }
     }
 

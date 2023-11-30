@@ -151,7 +151,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 10
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -260,5 +260,7 @@ MonoBehaviour:
   swayAngle: 10
   enableSway: 1
   stateTimer: 0
+  paintTimer: 0
   paintBehavior: 0
   playerPos: {x: 0, y: 0, z: 0}
+  nextAngle: 0

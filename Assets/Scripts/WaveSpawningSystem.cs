@@ -697,8 +697,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void SetupNextWave()
     {
-        IncreaseDifficulty();
-
         Debug.Log("Next Wave =================");
         if (Level == 0)
         {
@@ -709,20 +707,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
         else
         {
-            UIManager.instance.WipePreviewImages();
-            gameManager.currentOfferedUpgrades.Clear();
             clearWave();
             generateWave();
             RandomizeWave();
-            UIManager.instance.activatePostWaveUI();
-            if (Level % 2 == 0 && Level != 0)
-            {
-                gameManager.GenerateSpecialUpgrades();
-            }
-            else
-            {
-                gameManager.GenerateUpgrades();
-            }
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
         }

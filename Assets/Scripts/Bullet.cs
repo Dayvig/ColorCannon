@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEditor.Experimental;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -31,6 +32,7 @@ public class Bullet : MonoBehaviour
     private float seekingFactor = 0.05f;
     public GameObject seekingTarget = null;
     private float lifeTime = 0.0f;
+    EnemyBehavior targetBehavior;
 
     // Start is called before the first frame update
     void Start()
@@ -46,7 +48,10 @@ public class Bullet : MonoBehaviour
         {
             speed *= 0.8f;
         }
-        
+        Quaternion rot = gameObject.transform.rotation;
+        float angle = -rotation * Mathf.Rad2Deg;
+        gameObject.transform.rotation = Quaternion.Euler(new Vector3(rot.x, rot.y, angle));
+
         xSpeed = Mathf.Sin(rotation);
         ySpeed = Mathf.Cos(rotation);
 
@@ -63,15 +68,17 @@ public class Bullet : MonoBehaviour
         bulletScale = scale;
         this.transform.localScale = new Vector3 (scale, scale, 1);
         isSeeking = seeking;
-        if (isSeeking)
-        {
-            //flight *= 0.6f;
-        }
         lifeTime = 0.0f;
         if (isSeeking)
         {
             AcquireTarget();
+            ren.sprite = GameModel.instance.bulletImages[1];
         }
+        else
+        {
+            ren.sprite = GameModel.instance.bulletImages[0];
+        }
+
 
         immuneEnemies.Clear();
     }
@@ -100,7 +107,16 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log("Hit");
             positionTarget = Vector3.MoveTowards(positionTarget, seekingTarget.transform.position, overallSpeed);
-            //flight = positionTarget;
+            flight = -(positionCurrent - positionTarget).normalized * overallSpeed;
+            Quaternion rot = gameObject.transform.rotation;
+            Transform t = seekingTarget.transform;
+            float angle = ((180 / Mathf.PI) * Mathf.Atan2(t.position.y - positionCurrent.y,
+                t.position.x - positionCurrent.x)) - 90;
+            gameObject.transform.rotation = Quaternion.Euler(new Vector3(rot.x, rot.y, angle));
+            if (!targetBehavior.enemyColors.Contains(bulletColor))
+            {
+                seekingTarget = null;
+            }
         }
         else
         {
@@ -139,6 +155,10 @@ public class Bullet : MonoBehaviour
             }
         }
         lifeTime = 0.0f;
+        if (seekingTarget != null)
+        {
+            targetBehavior = seekingTarget.GetComponent<EnemyBehavior>();
+        }
     }
 
     void CheckCollisions()

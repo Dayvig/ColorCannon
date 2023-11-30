@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         COMBINER,
         DEATHBLAST,
         RAINBOWMULT,
+        BARRAGE,
         NONE
     }
 
@@ -93,46 +94,54 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public bool justLaunched = true;
 
-
-    public void SetState(GameState nextState)
+    void SetupForWave()
     {
-        if ((currentState == GameState.WAVE || currentState == GameState.MAINMENU) && nextState == GameState.POSTWAVE)
+        UIManager.instance.activatePostWaveUI();
+        justLaunched = false;
+        selectedUpgrade = noUpgrade;
+        if (WaveSpawningSystem.instance.Level != 0)
         {
-            if (!justLaunched)
+            if (WaveSpawningSystem.instance.Level % 2 == 0)
             {
-                Debug.Log("New Wave Generated");
-                WaveSpawningSystem.currentChunks.Clear();
-                spawningSystem.SetupNextWave();
+                GenerateSpecialUpgrades();
             }
             else
             {
-                UIManager.instance.activatePostWaveUI();
-                justLaunched = false;
-                player.rainbowMeter = 0.0f;
-                player.rainbowRush = false;
-                selectedUpgrade = noUpgrade;
-                if (WaveSpawningSystem.instance.Level % 2 == 0 && WaveSpawningSystem.instance.Level != 0)
-                {
-                    GenerateSpecialUpgrades();
-                }
-                else
-                {
-                    GenerateUpgrades();
-                }
+                GenerateUpgrades();
             }
-            DisposeAllBullets();
-            DisposeAllSplatters();
-            DisposeAllEnemies();
+            Debug.Log("Generating Upgrades Level " + WaveSpawningSystem.instance.Level);
+        }
+        DisposeAllBullets();
+        DisposeAllSplatters();
+        DisposeAllEnemies();
 
-            if (player.rainbowRush)
-            {
-                player.rainbowRush = false;
-            }
+        if (player.rainbowRush)
+        {
+            player.rainbowRush = false;
+        }
 
-            UIManager.instance.activatePostWaveAnimations(true);
+        UIManager.instance.activatePostWaveAnimations(true);
+
+        UIManager.instance.SetupWaveModUI();
+    }
+    public void SetState(GameState nextState)
+    {
+        if (currentState == GameState.MAINMENU && nextState == GameState.POSTWAVE)
+        {
+            Debug.Log("Transition from menu to postwave");
+            spawningSystem.SetupNextWave();
+            SetupForWave();
             nextState = GameState.UIANIMATIONS;
 
-            UIManager.instance.SetupWaveModUI();
+        }
+        if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
+        {
+            Debug.Log("Transition from wave to postwave");
+            spawningSystem.IncreaseDifficulty();
+            currentOfferedUpgrades.Clear();
+            spawningSystem.SetupNextWave();
+            SetupForWave();
+            nextState = GameState.UIANIMATIONS;
         }
 
         if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
@@ -368,8 +377,36 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
     }
 
+    void AddBarrage()
+    {
+        bool hasBarrage = false;
+        foreach (Upgrade u in possibleUpgrades)
+        {
+            if (u.type.Equals(UpgradeType.BARRAGE))
+            {
+                hasBarrage = true;
+            }
+        }
+        if (!hasBarrage)
+        {
+            possibleUpgrades.Add(new Upgrade("Barrage", UpgradeType.BARRAGE, GameModel.GameColor.NONE, 1));
+            possibleUpgrades.Add(new Upgrade("Barrage", UpgradeType.BARRAGE, GameModel.GameColor.NONE, 1));
+            possibleUpgrades.Add(new Upgrade("Barrage", UpgradeType.BARRAGE, GameModel.GameColor.NONE, 1));
+        }
+
+    }
+
     public void GenerateUpgrades()
     {
+        foreach (Upgrade p in player.upgrades)
+        {
+            if (p.type.Equals(UpgradeType.ROCKETS))
+            {
+                AddBarrage();
+                break;
+            }
+        }
+
         if (currentOfferedUpgrades.Count == 0)
         {
             for (int i = 0; i < 3; i++)

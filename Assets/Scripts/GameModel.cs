@@ -23,6 +23,7 @@ public class GameModel : MonoBehaviour
 
     public List<Sprite> UpgradeImages = new List<Sprite>();
     public List<Sprite> WaveModImages = new List<Sprite>();
+    public List<Sprite> bulletImages = new List<Sprite>();
     public List<string> WaveModTexts = new List<string>();
     public List<string> ChunkTexts = new List<string>();
     public List<string> UpgradeTexts = new List<string>();
@@ -50,6 +51,8 @@ public class GameModel : MonoBehaviour
     public float shieldPulseRadius;
     [Range(1f, 10f)]
     public float rocketInterval;
+    [Range(0.1f, 1f)]
+    public float rocketBarrageUpg;
     [Range(0.1f, 2f)]
     public float meterMultInc;
 
@@ -225,6 +228,8 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[17];
             case GameManager.UpgradeType.RAINBOWMULT:
                 return UpgradeImages[19];
+            case GameManager.UpgradeType.BARRAGE:
+                return UpgradeImages[20];
             default:
                 return UpgradeImages[3];
         }

@@ -66,6 +66,7 @@ public class Player : MonoBehaviour, IDataPersistence
         {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW};
 
     public List<GameModel.GameColor> rocketColors = new List<GameModel.GameColor>();
+    public float rocketRoF;
 
     private int colorPlace = 0;
 
@@ -149,7 +150,7 @@ public class Player : MonoBehaviour, IDataPersistence
         if (rocketColors.Count != 0)
         {
             rocketTimer += Time.deltaTime;
-            if (rocketTimer > GameModel.instance.rocketInterval)
+            if (rocketTimer > rocketRoF)
             {
                 RocketFire(rocketColors);
                 rocketTimer = 0.0f;
@@ -368,7 +369,7 @@ public class Player : MonoBehaviour, IDataPersistence
             //Play firing sound
             if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
             {
-                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
+                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[4]);
             }
         }
         else
@@ -410,6 +411,7 @@ public class Player : MonoBehaviour, IDataPersistence
 
                 bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, true);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+
                 if (!gameManager.activeBullets.Contains(bulletScript))
                 {
                     gameManager.activeBullets.Add(bulletScript);
@@ -421,10 +423,10 @@ public class Player : MonoBehaviour, IDataPersistence
             //Play firing sounds
             if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
             {
-                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
+                SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[4]);
                 for (int k = 1; k < numShots; k++)
                 {
-                    SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0], 0.03f * k);
+                    SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[4], 0.3f * k);
                 }
             }
         }
@@ -493,6 +495,7 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         shieldPulseRadius = FinalShieldPulseRadius();
         rocketColors = FinalRocketColors();
+        rocketRoF = FinalRocketRateOfFire();
     }
 
     public float FinalMeterMult()
@@ -507,8 +510,8 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         mult *= WaveSpawningSystem.instance.globalRainbowMult;
         return mult;
-
     }
+
     public float FinalShieldPulseRadius()
     {
         float shieldPulse = modelGame.shieldPulseRadius;
@@ -522,9 +525,25 @@ public class Player : MonoBehaviour, IDataPersistence
         return shieldPulse;
     }
 
+    public float FinalRocketRateOfFire()
+    {
+        rocketRoF = modelGame.rocketInterval;
+        float totalRofScalar = 1f;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.BARRAGE))
+            {
+                totalRofScalar += (u.factor * modelGame.rocketBarrageUpg);
+            }
+        }
+        return rocketRoF / totalRofScalar;
+
+    }
+
     public List<GameModel.GameColor> FinalRocketColors()
     {
         rocketColors.Clear();
+        rocketRoF = modelGame.rocketInterval;
         foreach (GameManager.Upgrade u in upgrades)
         {
             if (u.type.Equals(GameManager.UpgradeType.ROCKETS))
@@ -534,6 +553,10 @@ public class Player : MonoBehaviour, IDataPersistence
                     rocketColors.Add(u.color);
                     rocketColors.Add(u.color);
                 }
+            }
+            if (u.type.Equals(GameManager.UpgradeType.BARRAGE))
+            {
+                rocketRoF /= (1 / u.factor * modelGame.rocketBarrageUpg);
             }
         }
         return rocketColors;

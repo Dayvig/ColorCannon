@@ -125,7 +125,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 10
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -259,4 +259,9 @@ MonoBehaviour:
   swayInterval: 0.15
   swayAngle: 10
   enableSway: 1
+  swoopCount: 0
   currentAngle: 0
+  minSpeed: 0
+  maxSpeed: 0
+  maxDist: 0
+  dist: 0
