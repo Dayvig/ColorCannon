@@ -23,13 +23,15 @@ public class PlayGameButton : MonoBehaviour
     {
         if (WaveSpawningSystem.instance.Level == 0)
         {
+            this.gameObject.SetActive(false);
             playText.text = "New Game";
             waveText.gameObject.SetActive(false);
         }
         else
         {
+            this.gameObject.SetActive(true);
             playText.text = "Continue";
-            waveText.text = "( Wave "+WaveSpawningSystem.instance.Level+" )";
+            waveText.text = "( Wave "+WaveSpawningSystem.instance.Level+", Pro Level "+ GameManager.instance.promodeLevel+" )";
             waveText.gameObject.SetActive(true);
 
         }

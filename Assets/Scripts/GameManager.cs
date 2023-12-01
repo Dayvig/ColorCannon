@@ -96,6 +96,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public float splatterVal = 0.5f;
     public bool doubleTapCycle = false;
 
+    public int promodeLevel = 0;
+    public int maxProModeLevelUnlocked = 0;
+
     public static GameManager instance { get; private set; }
 
     public bool justLaunched = true;
@@ -468,6 +471,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
     }
 
+    public void GivePlayerRandomUpgrade()
+    {
+        addNewUpgrade(getRandomUpgrade(possibleUpgrades));
+    }
+
     private void FixedUpdate()
     {
         switch (currentState)
@@ -664,6 +672,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void Win()
     {
+        maxProModeLevelUnlocked++;
+        SaveLoadManager.instance.SaveGame();
+
         UIManager.instance.deactivatePostWaveUI();
         WipeAllEnemiesAndBullets();
         UIManager.instance.activateWinScreen();
@@ -673,11 +684,18 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void PlayAgain()
     {
+        SaveLoadManager.instance.SaveGame();
+
+        player.rainbowMeter = 0f;
+        player.rainbowRush = false;
+        player.rainbowTimer = 0f;
+
         PostProcessingManager.instance.SetBlur(false);
         UIManager.instance.deactivateWinLoseUI();
         SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.LoadGame();
         WaveSpawningSystem.instance.initialize();
+        WaveSpawningSystem.instance.AddProModeFeatures();
         WaveSpawningSystem.instance.Level = 0;
         currentState = GameState.WAVE;
         SetState(GameState.POSTWAVE);
@@ -690,6 +708,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         encounteredEnemies = data.encounteredEnemies;
         doubleTapCycle = data.doubletapcycle;
         splatterVal = data.splatters;
+        promodeLevel = data.promodeLevel;
+        maxProModeLevelUnlocked = data.maxProModeLevel;
     }
 
     public void SaveData(ref GameData data)
@@ -698,5 +718,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         data.encounteredEnemies = encounteredEnemies;
         data.doubletapcycle = doubleTapCycle;
         data.splatters = splatterVal;
+        data.promodeLevel = promodeLevel;
+        data.maxProModeLevel = maxProModeLevelUnlocked;
     }
 }

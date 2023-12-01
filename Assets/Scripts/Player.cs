@@ -739,6 +739,7 @@ public class Player : MonoBehaviour, IDataPersistence
                     meter.transform.localScale = meter.bigScale;
                     if (meter.selected)
                     {
+                        rainbowTimer = 0f;
                         rainbowRush = true;
                         meter.isActive = false;
                         meter.rotationSpeed = 0.1f;

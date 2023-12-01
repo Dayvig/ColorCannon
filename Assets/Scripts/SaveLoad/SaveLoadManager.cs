@@ -18,7 +18,7 @@ public class SaveLoadManager : MonoBehaviour
     public void initialize()
     {
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
-        this.saveLoadObjects = FindAllSaveLoadObjects();
+        this.saveLoadObjects = FindAllSaveLoadObjects();    
         SaveLoadManager.instance.LoadGame();
     }
 
@@ -55,10 +55,12 @@ public class SaveLoadManager : MonoBehaviour
         gameData.waveSpacing = GameModel.instance.baseGlobalWaveSpacing;
         gameData.waveNumber = GameModel.instance.baseGlobalWaveNumber;
         gameData.waveSpeed = GameModel.instance.baseGlobalWaveSpeed;
+        gameData.rainbowMult = GameModel.instance.baseGlobalRainbowMult;
         gameData.chunks.Clear();
         gameData.numChunks = GameModel.instance.baseNumChunks;
         gameData.uniqueChunks = GameModel.instance.baseNumUniqueChunks;
         gameData.playerLives = 3;
+        gameData.rainbowMeter = 0f;
         UIManager.instance.DestroyAll();
         dataHandler.Save(gameData);
     }

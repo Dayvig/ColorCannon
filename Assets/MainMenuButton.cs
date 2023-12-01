@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 public class MainMenuButton : MonoBehaviour
 {
-    public Button pause;
+    public Button menuButton;
     public GameManager manager;
     public UIManager uiManager;
+    public PauseButton pauseButton;
 
     void Start()
     {
-        pause.onClick.AddListener(TaskOnClick);
+        menuButton.onClick.AddListener(TaskOnClick);
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("GameManager").GetComponent<UIManager>();
     }
@@ -19,5 +20,6 @@ public class MainMenuButton : MonoBehaviour
     void TaskOnClick()
     {
         manager.SetState(GameManager.GameState.MAINMENU);
+        pauseButton.HideUI();
     }
 }

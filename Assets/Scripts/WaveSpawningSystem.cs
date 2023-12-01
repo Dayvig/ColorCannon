@@ -297,6 +297,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         populateDemoChunks();
         
         gameManager.addStartingUpgrades();
+
         clearWave();
 
         if (Level == 0 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
@@ -320,6 +321,24 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         SaveLoadManager.instance.SaveGame();
 
         //Level = 1;
+    }
+
+    public void AddProModeFeatures()
+    {
+        if (gameManager.promodeLevel != 0)
+        {
+            for (int p = 0; p < gameManager.promodeLevel; p++)
+            {
+                AddWaveMod();
+            }
+        }
+        if (gameManager.promodeLevel >= 3)
+        {
+            for (int u = 0; u < (int)gameManager.promodeLevel / 3; u++)
+            {
+                gameManager.GivePlayerRandomUpgrade();
+            }
+        }
     }
 
     public void AddExtraEnemies()
@@ -811,34 +830,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
         if (Level % 2 == 0)
         {
-            //Every other wave makes waves harder with a modifier.
-            int randomWaveMod = Random.Range(0, 4);
-            switch (randomWaveMod)
-            {
-                case 0:
-                    globalWaveNumber += modelGame.baseNumerousNumberUpgrade;
-                    globalWaveSpacing /= modelGame.baseNumerousSpacingUpgrade;
-                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.NUMEROUS);
-                    break;
-                case 1:
-                    globalWaveSpeed *= modelGame.baseWaveSpeedUpgrade;
-                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.FASTER);
-                    break;
-                case 2:
-                    for (int k = 0; k < chunkDifficulties.Count; k++)
-                    {
-                        //multiply all difficulties by 1.5
-                        chunkDifficulties[k] = (int)Math.Ceiling(chunkDifficulties[k] * modelGame.baseWaveDifficultyUpgrade);
-                    }
-                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
-                    break;
-                case 3:
-                    Debug.Log("Eh: " + (1 - modelGame.baseWaveMonochrome));
-                    globalRainbowMult *= (1 - modelGame.baseWaveMonochrome);
-                    UIManager.instance.AddWaveMod(UIManager.WaveModifier.MONOCHROME);
-                    break;
-
-            }
+            AddWaveMod();
         }
 
         /* Random chunk + 50%
@@ -857,6 +849,39 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
 
         repopulateChunks();
+    }
+
+
+    void AddWaveMod()
+    {
+        //Every other wave makes waves harder with a modifier.
+        int randomWaveMod = Random.Range(0, 4);
+        switch (randomWaveMod)
+        {
+            case 0:
+                globalWaveNumber += modelGame.baseNumerousNumberUpgrade;
+                globalWaveSpacing /= modelGame.baseNumerousSpacingUpgrade;
+                UIManager.instance.AddWaveMod(UIManager.WaveModifier.NUMEROUS);
+                break;
+            case 1:
+                globalWaveSpeed *= modelGame.baseWaveSpeedUpgrade;
+                UIManager.instance.AddWaveMod(UIManager.WaveModifier.FASTER);
+                break;
+            case 2:
+                for (int k = 0; k < chunkDifficulties.Count; k++)
+                {
+                    //multiply all difficulties by 1.5
+                    chunkDifficulties[k] = (int)Math.Ceiling(chunkDifficulties[k] * modelGame.baseWaveDifficultyUpgrade);
+                }
+                UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
+                break;
+            case 3:
+                Debug.Log("Eh: " + (1 - modelGame.baseWaveMonochrome));
+                globalRainbowMult *= (1 - modelGame.baseWaveMonochrome);
+                UIManager.instance.AddWaveMod(UIManager.WaveModifier.MONOCHROME);
+                break;
+
+        }
     }
 
     void addRandomMechanic(int level)

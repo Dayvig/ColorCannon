@@ -29,6 +29,8 @@ public class GameData
     public float sfxVolume;
     public bool doubletapcycle;
     public float splatters;
+    public int promodeLevel;
+    public int maxProModeLevel;
 
     public bool refreshActive;
     public GameData(){
@@ -50,5 +52,7 @@ public class GameData
         masterVolume = 0.5f;
         musicVolume = 0.5f;
         sfxVolume = 0.5f;
+        promodeLevel = 0;
+        maxProModeLevel = 0;
     }
 }

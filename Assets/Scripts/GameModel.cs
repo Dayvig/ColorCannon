@@ -41,6 +41,7 @@ public class GameModel : MonoBehaviour
     public float baseGlobalWaveSpacing;
     public float baseTutorialSpacing;
     public float baseGlobalWaveSpeed;
+    public float baseGlobalRainbowMult;
     public int baseNumChunks;
     public int baseNumUniqueChunks;
     public int shieldUpgradeFreq = 9;

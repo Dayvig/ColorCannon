@@ -40,4 +40,10 @@ public class PauseButton : MonoBehaviour
             ren.sprite = GameModel.instance.UpgradeImages[13];
         }
     }
+
+    public void HideUI()
+    {
+        Menu.SetActive(false);
+        Settings.SetActive(false);
+    }
 }

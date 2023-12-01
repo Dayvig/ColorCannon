@@ -119,6 +119,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public GameObject mainMenuButton;
     public PauseButton pause;
 
+    public PromodeScript promode;
+
     public enum WaveModifier
     {
         NUMEROUS,
@@ -345,9 +347,10 @@ public class UIManager : MonoBehaviour, IDataPersistence
         deactivateWinLoseUI();
         WaveUIPanel.SetActive(false);
         MainMenuPanel.SetActive(true);
-        newGameButton.SetActive(!(WaveSpawningSystem.instance.Level == 0));
+        newGameButton.SetActive(true);
         playButton.initialize();
         player.SelectorRing.StartAnimation(true);
+        promode.initialize();
     }
 
     public void activateLoseScreen()
