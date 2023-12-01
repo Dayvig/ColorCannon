@@ -22,6 +22,7 @@ public class refreshWave : MonoBehaviour
     {
         uiManager.HideWave();
         WaveSpawningSystem.currentChunks.Clear();
+        spawningSystem.IncreaseDifficulty();
         spawningSystem.SetupNextWave();
     }
 }
