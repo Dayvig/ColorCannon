@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIANIMATIONS,
         WIN,
         LOSE,
-        MAINMENU
+        MAINMENU,
+        SETTINGS
     }
 
     public enum UpgradeType
@@ -83,6 +84,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
 
     public GameState currentState = GameState.POSTWAVE;
+    public GameState returnState = GameState.POSTWAVE;
     private Upgrade noUpgrade = new Upgrade("None", UpgradeType.NONE);
     public Upgrade selectedUpgrade = new Upgrade("None", UpgradeType.NONE);
     public UpgradeType selectedUpgradeType;
@@ -90,6 +92,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public int shotsHit;
 
     public AudioSource gameAudio;
+
+    public float splatterVal = 0.5f;
+    public bool doubleTapCycle = false;
+
     public static GameManager instance { get; private set; }
 
     public bool justLaunched = true;
@@ -126,6 +132,23 @@ public class GameManager : MonoBehaviour, IDataPersistence
     }
     public void SetState(GameState nextState)
     {
+
+        if (currentState != GameState.SETTINGS && currentState != GameState.UIANIMATIONS && nextState == GameState.SETTINGS)
+        {
+            Debug.Log("transition to settings");
+            UIManager.instance.SettingsPanel.SetActive(true);
+            UIManager.instance.initSettings();
+            UIManager.instance.activateSettingsAnimations(true);
+            returnState = currentState;
+            nextState = GameState.UIANIMATIONS;
+        }
+
+        if (currentState == GameState.SETTINGS && nextState != GameState.SETTINGS)
+        {
+            UIManager.instance.activateSettingsAnimations(false);
+            nextState = GameState.UIANIMATIONS;
+        }
+
         if (currentState == GameState.MAINMENU && nextState == GameState.POSTWAVE)
         {
             Debug.Log("Transition from menu to postwave");
@@ -194,7 +217,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             SoundManager.instance.mainMusic.Pause();
         }
-        if (currentState == GameState.PAUSED && nextState != GameState.PAUSED)
+        if (currentState == GameState.PAUSED && nextState == GameState.WAVE)
         {
             SoundManager.instance.mainMusic.UnPause();
         }
@@ -483,6 +506,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
             case GameState.MAINMENU:
                 DemoUpdate();
                 break;
+            case GameState.SETTINGS:
+                SettingsUpdate();
+                break;
             default:
                 WaveUpdate();
                 break;
@@ -577,6 +603,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         spawningSystem.EnemyDemoUpdate();
     }
 
+    void SettingsUpdate()
+    {
+        UIManager.instance.SettingsUpdate();
+    }
+
     void WaveUpdate()
     {
         player.PlayerUpdate();
@@ -657,11 +688,15 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         currentOfferedUpgrades = data.currentUpgradesOffered;
         encounteredEnemies = data.encounteredEnemies;
+        doubleTapCycle = data.doubletapcycle;
+        splatterVal = data.splatters;
     }
 
     public void SaveData(ref GameData data)
     {
         data.currentUpgradesOffered = currentOfferedUpgrades;
         data.encounteredEnemies = encounteredEnemies;
+        data.doubletapcycle = doubleTapCycle;
+        data.splatters = splatterVal;
     }
 }

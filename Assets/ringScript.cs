@@ -72,17 +72,22 @@ public class ringScript : MonoBehaviour
         this.transform.localScale = newScale;
     }
 
+    public bool inRing()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
+        float yDiff = newMousePos.y - transform.position.y;
+        float xDiff = newMousePos.x - transform.position.x;
+
+        return (Mathf.Abs(xDiff) < ringCloseRadius && Mathf.Abs(yDiff) < ringCloseRadius);
+    }
+
     private void inputUpdate()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
         float yDiff = newMousePos.y - transform.position.y;
         float xDiff = newMousePos.x - transform.position.x;
-        if (Mathf.Abs(xDiff) > ringCloseRadius || Mathf.Abs(yDiff) > ringCloseRadius)
-        {
-            //StartAnimation(true);
-            //player.clicks = 0;
-        }
         if (yDiff > 0 && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
         {
             player.setColor(0);

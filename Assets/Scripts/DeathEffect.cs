@@ -15,13 +15,14 @@ public class DeathEffect : MonoBehaviour
     public void initialize()
     {
         this.gameObject.SetActive(true);
+        fadeInterval = 30f * GameManager.instance.splatterVal;
         fadeTimer = 0.0f;
     }
     public void Update()
     {
         fadeTimer += Time.deltaTime;
         Color col = ren.color;
-        ren.color = new Color(ren.color.r, ren.color.g, ren.color.b, (fadeInterval - fadeTimer) * 0.6f / fadeInterval);
+        ren.color = new Color(ren.color.r, ren.color.g, ren.color.b, ((fadeInterval - fadeTimer) * 0.6f * GameManager.instance.splatterVal) / fadeInterval);
         if (fadeTimer > fadeInterval)
         {
             GameManager.instance.markedForDeathSplatters.Add(this);

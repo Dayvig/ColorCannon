@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static GameManager;
 using Image = UnityEngine.UI.Image;
+using Slider = UnityEngine.UI.Slider;
+using Toggle = UnityEngine.UI.Toggle;
 
 public class UIManager : MonoBehaviour, IDataPersistence
 {
@@ -18,6 +20,12 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public List<WaveModifier> WaveMods = new List<WaveModifier>();
     public GameObject previousUpgrades;
     public GameObject PostWaveUIPanel;
+    public GameObject SettingsPanel;
+    public Slider masterVSlider;
+    public Slider musicVSlider;
+    public Slider sfxVSlider;
+    public Slider splatterSliderSlider;
+    public Toggle cycleToggle;
     public GameObject WaveUIPanel;
     public GameObject WaveModPanel;
     public GameObject currentUpgradePanel;
@@ -67,23 +75,31 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public float winLoseUISwingInterval2;
 
     private RectTransform PostUIRect;
+    private RectTransform SettingsRect;
     private RectTransform WinRect;
     private RectTransform LoseRect;
     public RectTransform currentAnimationTarget;
 
-    public Vector3 swingStart = new Vector3(-1076.0f, -7.2f, 0f);
-    public Vector3 swingMid = new Vector3(-130f, 60f, 0f);
-    public Vector3 swingEnd = new Vector3(-36f, -7.2f, 0f);
-    public Vector3 swingRotStart = new Vector3(0f, 0f, 14f);
-    public Vector3 swingRotMid = new Vector3(0f, 0f, -1.4f);
-    public Vector3 swingRotEnd = new Vector3(0f, 0f, -3.6f);
+    public Vector3 swingStart;
+    public Vector3 swingMid;
+    public Vector3 swingEnd;
+    public Vector3 swingRotStart;
+    public Vector3 swingRotMid;
+    public Vector3 swingRotEnd;
 
-    public Vector3 winLoseStartPos = new Vector3(37, 1604, 0f);
-    public Vector3 winLosMidPos = new Vector3(37, -57, 0f);
-    public Vector3 winLoseEndPos = new Vector3(-14, 18, 0f);
-    public Vector3 winLoseStartRot = new Vector3(0f, 0f, 0f);
-    public Vector3 winLoseMidRot = new Vector3(0f, 0f, -1.1f);
-    public Vector3 winLoseEndRot = new Vector3(0f, 0f, 0.85f);
+    public Vector3 winLoseStartPos;
+    public Vector3 winLosMidPos;
+    public Vector3 winLoseEndPos;
+    public Vector3 winLoseStartRot;
+    public Vector3 winLoseMidRot;
+    public Vector3 winLoseEndRot;
+
+    public Vector3 settingsStartPos;
+    public Vector3 settingsMidPos;
+    public Vector3 settingsEndPos;
+    public Vector3 settingsStartRot;
+    public Vector3 settingsMidRot;
+    public Vector3 settingsEndRot;
 
 
     private bool swingIn = true;
@@ -127,6 +143,16 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     }
 
+    public void initSettings()
+    {
+        SettingsPanel.SetActive(true);
+        masterVSlider.value = SoundManager.instance.masterVolume;
+        musicVSlider.value = SoundManager.instance.musicVolume;
+        sfxVSlider.value = SoundManager.instance.sfxVolume;
+        splatterSliderSlider.value = GameManager.instance.splatterVal;
+        cycleToggle.isOn = GameManager.instance.doubleTapCycle;
+    }
+
     public void initialize()
     {
         toolTipRect = toolTip.GetComponent<RectTransform>();
@@ -135,15 +161,30 @@ public class UIManager : MonoBehaviour, IDataPersistence
         PostUIRect = PostWaveUIPanel.GetComponent<RectTransform>();
         WinRect = WinPanel.GetComponent<RectTransform>();
         LoseRect = LosePanel.GetComponent<RectTransform>();
+        SettingsRect = SettingsPanel.GetComponent<RectTransform>();
+        sfxVSlider.onValueChanged.AddListener(delegate {
+            ToggleValueChanged(sfxVSlider);
+        });
         playButton.initialize();
 
         activateMainMenuUI();
 
     }
 
-    public void WaveUIUpdate()
+    public void SettingsUpdate()
     {
+        SoundManager.instance.masterVolume = masterVSlider.value;
+        SoundManager.instance.musicVolume = musicVSlider.value;
+        SoundManager.instance.CalculateMusicVolume();
+        SoundManager.instance.sfxVolume = sfxVSlider.value;
+        GameManager.instance.splatterVal = splatterSliderSlider.value;
+        GameManager.instance.doubleTapCycle = cycleToggle.isOn;
         
+    }
+
+    void ToggleValueChanged(Slider change)
+    {
+        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[0]);
     }
 
     public void activatePostWaveAnimations(bool swingingIn)
@@ -154,6 +195,23 @@ public class UIManager : MonoBehaviour, IDataPersistence
         end = swingIn ? swingEnd : swingStart;
         rotStart = swingIn ? swingRotStart : swingRotEnd;
         rotEnd = swingIn ? swingRotEnd : swingRotStart;
+        interval1 = swingIn ? postWaveUISwingInterval1 : postWaveUISwingInterval2;
+        interval2 = swingIn ? postWaveUISwingInterval2 : postWaveUISwingInterval1;
+        postWaveUITimer = 0.0f;
+        currentAnimationTarget.anchoredPosition = start;
+
+        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[2], -0.5f, 0.5f);
+
+    }
+
+    public void activateSettingsAnimations(bool swingingIn)
+    {
+        currentAnimationTarget = SettingsRect;
+        swingIn = swingingIn;
+        start = swingIn ? settingsStartPos : settingsEndPos;
+        end = swingIn ? settingsEndPos : settingsStartPos;
+        rotStart = swingIn ? settingsStartRot : settingsEndRot;
+        rotEnd = swingIn ? settingsEndRot : settingsStartRot;
         interval1 = swingIn ? postWaveUISwingInterval1 : postWaveUISwingInterval2;
         interval2 = swingIn ? postWaveUISwingInterval2 : postWaveUISwingInterval1;
         postWaveUITimer = 0.0f;
@@ -210,9 +268,14 @@ public class UIManager : MonoBehaviour, IDataPersistence
                 Debug.Log("Destination State: " + (swingIn ? GameState.POSTWAVE : GameState.WAVE));
                 animationUpdate(start, swingMid, end, rotStart, swingRotMid, rotEnd, swingIn ? GameState.POSTWAVE : GameState.WAVE);
             }
-            else
+            else if (currentAnimationTarget == WinRect)
             {
                 animationUpdate(winLoseStartPos, winLosMidPos, winLoseEndPos, winLoseStartRot, winLoseMidRot, winLoseEndRot, currentAnimationTarget == WinRect ? GameState.WIN : GameState.LOSE);
+            }
+            else
+            {
+                Debug.Log("Destination State: " + (swingIn ? GameState.SETTINGS : GameManager.instance.returnState));
+                animationUpdate(start, settingsMidPos, end, rotStart, settingsMidRot, rotEnd, swingIn ? GameState.SETTINGS : GameManager.instance.returnState);
             }
         }
     }
@@ -234,14 +297,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         else
         {
             postWaveUITimer = -1f;
-            if (currentAnimationTarget == PostUIRect)
-            {
-                GameManager.instance.SetState(endState);
-            }
-            else if (currentAnimationTarget == WinRect || currentAnimationTarget == LoseRect)
-            {
-                GameManager.instance.SetState(endState);
-            }
+            GameManager.instance.SetState(endState);
         }
     }
 

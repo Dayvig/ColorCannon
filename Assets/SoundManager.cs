@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour
+public class SoundManager : MonoBehaviour, IDataPersistence
 {
 
     [Range(0f, 1f)]
     public float masterVolume;
     [Range(0f, 1f)]
     public float musicVolume;
+    [Range(0f, 1f)]
+    public float sfxVolume;
 
     public AudioSource mainMusic;
     public bool mainMusicPlaying = false;
@@ -24,7 +26,7 @@ public class SoundManager : MonoBehaviour
     public void PlaySFX(AudioSource source, AudioClip clip)
     {
         source.clip = clip;
-        source.PlayOneShot(clip, masterVolume);
+        source.PlayOneShot(clip, masterVolume*sfxVolume);
     }
 
     public void PlaySFX(AudioSource source, AudioClip clip, float minPitchOffset, float maxPitchOffset)
@@ -32,7 +34,7 @@ public class SoundManager : MonoBehaviour
         float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
         source.clip = clip;
         source.pitch *= pitchShift;
-        source.PlayOneShot(clip, masterVolume);
+        source.PlayOneShot(clip, masterVolume*sfxVolume);
         source.pitch /= pitchShift;
     }
 
@@ -45,7 +47,7 @@ public class SoundManager : MonoBehaviour
     {
         source.clip = clip;
         source.priority = priority;
-        source.PlayOneShot(clip, masterVolume);
+        source.PlayOneShot(clip, masterVolume * sfxVolume);
     }
 
     public void PlayMusicAndLoop(AudioSource source, AudioClip clip)
@@ -60,6 +62,24 @@ public class SoundManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delaySeconds);
         PlaySFX(source, clip);
+    }
+
+    public void CalculateMusicVolume()
+    {
+        mainMusic.volume = masterVolume * musicVolume;
+    }
+    public void LoadData(GameData data)
+    {
+        masterVolume = data.masterVolume;
+        musicVolume = data.musicVolume;
+        sfxVolume = data.sfxVolume;
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.masterVolume = masterVolume;
+        data.musicVolume = musicVolume;
+        data.sfxVolume = sfxVolume;
     }
 
 }

@@ -426,7 +426,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[4]);
                 for (int k = 1; k < numShots; k++)
                 {
-                    SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[4], 0.3f * k);
+                    SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[4], 0.06f * k);
                 }
             }
         }
@@ -446,7 +446,7 @@ public class Player : MonoBehaviour, IDataPersistence
         configureWeapon();
     }
 
-    private void nextColor()
+    public void nextColor()
     {
         colorPlace++;
         if (colorPlace >= colorOrder.Length)
@@ -791,9 +791,9 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 firstTapPos = mousePos;
             }
-            if (clicks > 0)
+            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing())
             {
-                //nextColor();
+                nextColor();
             }
         }
         //End click
