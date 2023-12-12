@@ -121,6 +121,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public PromodeScript promode;
 
+    public Toggle tutorialToggle;
+
     public enum WaveModifier
     {
         NUMEROUS,

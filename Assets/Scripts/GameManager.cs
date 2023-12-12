@@ -108,17 +108,21 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.activatePostWaveUI();
         justLaunched = false;
         selectedUpgrade = noUpgrade;
-        if (WaveSpawningSystem.instance.Level != 0)
+        if (WaveSpawningSystem.instance.Level > 1)
         {
             if (WaveSpawningSystem.instance.Level % 2 == 0)
             {
-                GenerateSpecialUpgrades();
+                GenerateUpgrades();
             }
             else
             {
-                GenerateUpgrades();
+                GenerateSpecialUpgrades();
             }
             Debug.Log("Generating Upgrades Level " + WaveSpawningSystem.instance.Level);
+        }
+        else
+        {
+            UIManager.instance.SetUpgradesVisible(false);
         }
         DisposeAllBullets();
         DisposeAllSplatters();
@@ -711,8 +715,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WaveSpawningSystem.instance.Level = 0;
         WaveSpawningSystem.instance.initialize();
         WaveSpawningSystem.instance.AddProModeFeatures();
-        currentState = GameState.POSTWAVE;
-        SetState(GameState.WAVE);
+        if (GameManager.instance.encounteredEnemies.Count == 0)
+        {
+            currentState = GameState.POSTWAVE;
+            SetState(GameState.WAVE);
+        }
+        else
+        {
+            currentState = GameState.MAINMENU;
+            SetState(GameState.POSTWAVE);
+        }
         SaveLoadManager.instance.SaveGame();
     }
 
