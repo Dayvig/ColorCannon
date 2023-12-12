@@ -172,6 +172,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
         {
+            DisposeAllBullets();
+            DisposeAllSplatters();
+            DisposeAllEnemies();
+
+            UIManager.instance.deactivateMainMenuUI();
             if (selectedUpgrade != null && selectedUpgrade.type != UpgradeType.NONE)
             {
                 if (selectedUpgrade.type == UpgradeType.SHIELDS)
@@ -224,13 +229,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             SoundManager.instance.mainMusic.UnPause();
         }
-        if (currentState == GameState.PAUSED && nextState == GameState.MAINMENU)
+        if ((currentState == GameState.PAUSED || currentState == GameState.WIN || currentState == GameState.LOSE) && nextState == GameState.MAINMENU)
         {
             DisposeAllBullets();
             DisposeAllSplatters();
             DisposeAllEnemies();
             PostProcessingManager.instance.SetBlur(true);
             UIManager.instance.deactivateWaveUI();
+            UIManager.instance.deactivateWinLoseUI();
             UIManager.instance.activateMainMenuUI();
             UIManager.instance.titleTextScript.Reset();
             SoundManager.instance.mainMusic.Stop();
@@ -622,6 +628,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         spawningSystem.EnemyUpdate();
         if ((spawningSystem.currentWaveIndex >= WaveSpawningSystem.currentWave.Count - 1) && (activeEnemies.Count <= 0))
         {
+            if (WaveSpawningSystem.instance.Level == 0)
+            {
+                player.lives = 3;
+            }
+
             if (WaveSpawningSystem.instance.Level >= 15)
             {
                 UIManager.instance.activateWinScreen();
@@ -667,7 +678,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WipeAllEnemiesAndBullets();
         UIManager.instance.activateLoseScreen();
         UIManager.instance.activateWinLoseAnimations(true, false);
-        SetState(GameState.UIANIMATIONS);
+        WaveSpawningSystem.instance.Level = 0;
+
+        SaveLoadManager.instance.WipeMidRunDataOnly();
+        SaveLoadManager.instance.SaveGame();
     }
 
     public void Win()
@@ -684,8 +698,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void PlayAgain()
     {
-        SaveLoadManager.instance.SaveGame();
-
+        int prevProMode = GameManager.instance.promodeLevel;
         player.rainbowMeter = 0f;
         player.rainbowRush = false;
         player.rainbowTimer = 0f;
@@ -694,11 +707,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.deactivateWinLoseUI();
         SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.LoadGame();
+        GameManager.instance.promodeLevel = prevProMode;
+        WaveSpawningSystem.instance.Level = 0;
         WaveSpawningSystem.instance.initialize();
         WaveSpawningSystem.instance.AddProModeFeatures();
-        WaveSpawningSystem.instance.Level = 0;
-        currentState = GameState.WAVE;
-        SetState(GameState.POSTWAVE);
+        currentState = GameState.POSTWAVE;
+        SetState(GameState.WAVE);
         SaveLoadManager.instance.SaveGame();
     }
 

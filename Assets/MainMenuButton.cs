@@ -21,5 +21,7 @@ public class MainMenuButton : MonoBehaviour
     {
         manager.SetState(GameManager.GameState.MAINMENU);
         pauseButton.HideUI();
+        uiManager.titleTextScript.Reset();
+        uiManager.playButton.initialize();
     }
 }

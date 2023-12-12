@@ -41,7 +41,7 @@ public class SaveLoadManager : MonoBehaviour
     public void WipeMidRunDataOnly()
     {
         Debug.Log("Starting new Run");
-        gameData.currentLevel = 1;
+        gameData.currentLevel = 0;
         Debug.Log("Level" + gameData.currentLevel);
         gameData.refreshActive = true;
         gameData.undiscoveredEasyMechanics.Clear();

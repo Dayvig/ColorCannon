@@ -15,7 +15,7 @@ public class GameData
     public List<WaveSpawningSystem.Mechanic> undiscoveredEasyMechanics = new List<WaveSpawningSystem.Mechanic>();
     public List<WaveSpawningSystem.Mechanic> undiscoveredMedMechanics = new List<WaveSpawningSystem.Mechanic>();
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
-    public List<Chunk> chunks;
+    public List<Chunk> chunks = new List<Chunk>();
     public int[] chunkDifficulties;
     public int uniqueChunks;
     public int waveNumber;
@@ -53,6 +53,13 @@ public class GameData
         musicVolume = 0.5f;
         sfxVolume = 0.5f;
         promodeLevel = 0;
-        maxProModeLevel = 0;
+        if (SaveLoadManager.instance.isWebGL)
+        {
+            maxProModeLevel = 20;
+        }
+        else
+        {
+            maxProModeLevel = 0;
+        }
     }
 }

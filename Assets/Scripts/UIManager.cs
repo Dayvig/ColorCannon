@@ -270,7 +270,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
                 Debug.Log("Destination State: " + (swingIn ? GameState.POSTWAVE : GameState.WAVE));
                 animationUpdate(start, swingMid, end, rotStart, swingRotMid, rotEnd, swingIn ? GameState.POSTWAVE : GameState.WAVE);
             }
-            else if (currentAnimationTarget == WinRect)
+            else if (currentAnimationTarget == WinRect || currentAnimationTarget == LoseRect)
             {
                 animationUpdate(winLoseStartPos, winLosMidPos, winLoseEndPos, winLoseStartRot, winLoseMidRot, winLoseEndRot, currentAnimationTarget == WinRect ? GameState.WIN : GameState.LOSE);
             }
@@ -351,6 +351,11 @@ public class UIManager : MonoBehaviour, IDataPersistence
         playButton.initialize();
         player.SelectorRing.StartAnimation(true);
         promode.initialize();
+    }
+
+    public void deactivateMainMenuUI()
+    {
+        MainMenuPanel.SetActive(false);
     }
 
     public void activateLoseScreen()

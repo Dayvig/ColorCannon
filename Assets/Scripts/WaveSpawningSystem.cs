@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using TMPro;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.U2D.IK;
 using UnityEngine.UIElements;
@@ -50,6 +51,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     private int recusionProtection = 0;
     public int enemiesToSpawn;
 
+    public int tutorialStage = -1;
+    public List<Vector3> tutorialLocations = new List<Vector3>();
+
     public static WaveSpawningSystem instance { get; private set; }
 
     public enum SpawnLocations
@@ -78,7 +82,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         PAINTER,
         EXPLOSIVE,
         SPLITTER,
-        SWOOPER
+        SWOOPER,
+        TARGET
     }
 
     public List<Mechanic> basicMechanics;
@@ -95,16 +100,65 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void EnemyUpdate()
     {
-        enemyTimer -= Time.deltaTime;
-        if (enemyTimer <= 0.0f && currentWaveIndex < currentWave.Count-1)
+        if (tutorialStage == -1)
         {
-            CreateEnemy(currentWave[currentWaveIndex]);
-            enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
-            
-            if (currentWaveIndex < currentWave.Count-1){
-                currentWaveIndex++;
+            enemyTimer -= Time.deltaTime;
+            if (enemyTimer <= 0.0f && currentWaveIndex < currentWave.Count - 1)
+            {
+                CreateEnemy(currentWave[currentWaveIndex]);
+                enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
+
+                if (currentWaveIndex < currentWave.Count - 1)
+                {
+                    currentWaveIndex++;
+                }
             }
         }
+        
+        else
+        {
+            if (enemyTimer != -1f)
+            {
+                enemyTimer -= Time.deltaTime;
+            }
+            if (enemyTimer <= 0.0f && enemyTimer != -1f)
+            {
+                CreateEnemyAtLocation(tutorialLocations[tutorialStage], currentWave[tutorialStage]);
+                if (tutorialStage == 4 || tutorialStage == 5 || tutorialStage == 6)
+                {
+                    tutorialStage++;
+                    enemyTimer = currentWave[tutorialStage].delayUntilNext;
+                }
+                else
+                {
+                    enemyTimer = -1f;
+                }
+            }
+
+            if (tutorialStage > tutorialLocations.Count - 1)
+            {
+                EndTutorial();
+            }
+        }
+
+    }
+
+    public void NextTutorialStage()
+    {
+        tutorialStage++;
+        if (tutorialStage > tutorialLocations.Count - 1)
+        {
+            EndTutorial();
+            return;        
+        }
+        enemyTimer = currentWave[tutorialStage].delayUntilNext;
+
+    }
+
+    public void EndTutorial()
+    {
+        currentWaveIndex = currentWave.Count;
+        tutorialStage = -1;
     }
 
     public GameObject CreateEnemy(WaveObject nextWaveObject)
@@ -276,7 +330,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                         addAllChunkColors(new SwarmChunk(new[] { GameModel.GameColor.NONE }, false), true);
                         break;
                     case 4:
-                        addAllChunkColors(new PainterChunk(new[] { GameModel.GameColor.NONE }, false), true);
+                        addAllChunkColors(new SwooperChunk(new[] { GameModel.GameColor.NONE }, false), true);
                         break;
                 }
             }
@@ -300,15 +354,17 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
         clearWave();
 
-        if (Level == 0 && (!gameManager.encounteredEnemies.Contains(Mechanic.BASIC) || gameManager.encounteredEnemies.Count == 0))
+        if (Level == 0 && gameManager.encounteredEnemies.Count == 0)
         {
             Debug.Log("Spawning First Wave");
             generateFirstWave();
             UIManager.instance.WipeUpgrades();
             UIManager.instance.SetUpgradesVisible(false);
+            gameManager.SetState(GameState.WAVE);
         }
         else
         {
+            Level = 1;
             Debug.Log("Spawning Normal Wave");
             generateWave();
             RandomizeWave();
@@ -318,13 +374,14 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         currentWaveIndex = 0;
 
         enemyTimer = currentWave[currentWaveIndex].delayUntilNext;
-        SaveLoadManager.instance.SaveGame();
+        //SaveLoadManager.instance.SaveGame();
 
         //Level = 1;
     }
 
     public void AddProModeFeatures()
     {
+        Debug.Log("call");
         if (gameManager.promodeLevel != 0)
         {
             for (int p = 0; p < gameManager.promodeLevel; p++)
@@ -687,29 +744,41 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void generateFirstWave()
     {
-        UIManager.instance.WipePreviewImages();
-        UIManager.instance.RefreshUpgradesButton.SetActive(false);
-        Chunk nextChunk = new BasicChunk(new[] {GameModel.GameColor.RED, GameModel.GameColor.BLUE, GameModel.GameColor.YELLOW});
-        currentChunks.Add(nextChunk);
-
-        UIManager.instance.SetupChunkPreview(nextChunk, 1);
-
-        currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.RED,  
+        currentWave.Add(new WaveObject(Enemies[13], EnemyScripts[13], GameModel.GameColor.RED,  
             tutorialSpacing,
-            TOPBOTTOM, false, WaveObject.Type.BASIC));
+            TOPBOTTOM, false, WaveObject.Type.TARGET));
 
-        currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.BLUE,  
+        currentWave.Add(new WaveObject(Enemies[13], EnemyScripts[13], GameModel.GameColor.BLUE,  
             tutorialSpacing,
-            TOPBOTTOM, false, WaveObject.Type.BASIC));
+            TOPBOTTOM, false, WaveObject.Type.TARGET));
 
-        currentWave.Add(new WaveObject(Enemies[0], EnemyScripts[0], GameModel.GameColor.YELLOW,  
+        currentWave.Add(new WaveObject(Enemies[13], EnemyScripts[13], GameModel.GameColor.YELLOW,  
             tutorialSpacing,
-            TOPBOTTOM, false, WaveObject.Type.BASIC));
+            TOPBOTTOM, false, WaveObject.Type.TARGET));
 
-        nextChunk.Generate(false);
-        enemiesToSpawn = currentWave.Count-1;
+        currentWave.Add(new WaveObject(Enemies[13], EnemyScripts[13], GameModel.GameColor.PURPLE,
+        tutorialSpacing,
+        TOPBOTTOM, false, WaveObject.Type.TARGET));
 
-        gameManager.encounteredEnemies.Add(Mechanic.BASIC);
+        currentWave.Add(new WaveObject(Enemies[1], EnemyScripts[1], GameModel.GameColor.YELLOW,
+        0f,
+        TOPBOTTOM, false, WaveObject.Type.FAST));
+
+        currentWave.Add(new WaveObject(Enemies[1], EnemyScripts[1], GameModel.GameColor.RED,
+        0.2f,
+        TOPBOTTOM, false, WaveObject.Type.FAST));
+
+        currentWave.Add(new WaveObject(Enemies[13], EnemyScripts[13], GameModel.GameColor.BLUE,
+        0f,
+        TOPBOTTOM, false, WaveObject.Type.TARGET));
+
+        currentWave.Add(new WaveObject(Enemies[13], EnemyScripts[13], GameModel.GameColor.YELLOW,
+        0f,
+        TOPBOTTOM, false, WaveObject.Type.TARGET));
+
+
+        gameManager.encounteredEnemies.Add(Mechanic.TARGET);
+        tutorialStage = 0;
     }
 
 
@@ -720,9 +789,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         if (Level == 0)
         {
             generateFirstWave();
-            RandomizeWave();
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
+            tutorialStage = 0;
         }
         else
         {
@@ -731,6 +800,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             RandomizeWave();
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
+            tutorialStage = -1;
         }
 
         SaveLoadManager.instance.SaveGame();
@@ -1881,7 +1951,8 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             EXPLOSIVE,
             SPLITTER,
             SPLITTERBLOB,
-            SWOOPER
+            SWOOPER,
+            TARGET
         }
         
         public WaveObject(GameObject enemyObject, EnemyBehavior enemyScript, GameModel.GameColor col, float delay, int[] loc, bool dark, WaveObject.Type type)

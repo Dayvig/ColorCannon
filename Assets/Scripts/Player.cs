@@ -496,6 +496,8 @@ public class Player : MonoBehaviour, IDataPersistence
         shieldPulseRadius = FinalShieldPulseRadius();
         rocketColors = FinalRocketColors();
         rocketRoF = FinalRocketRateOfFire();
+
+        SetMeter();
     }
 
     public float FinalMeterMult()
@@ -885,7 +887,7 @@ public class Player : MonoBehaviour, IDataPersistence
         }
         if (lives < 0)
         {
-            GameManager.instance.Lose();
+            GameManager.instance.SetState(GameManager.GameState.LOSE);
         }
         else
         {
@@ -913,11 +915,8 @@ public class Player : MonoBehaviour, IDataPersistence
         }
     }
 
-    public void LoadData(GameData data)
+    public void SetMeter()
     {
-        upgrades = data.playerUpgrades;
-        lives = data.playerLives;
-        rainbowMeter = data.rainbowMeter;
         if (rainbowMeter > meterMax)
         {
             rainbowMeter = meterMax;
@@ -931,6 +930,14 @@ public class Player : MonoBehaviour, IDataPersistence
         {
             meter.SetToInactive();
         }
+    }
+
+    public void LoadData(GameData data)
+    {
+        upgrades = data.playerUpgrades;
+        lives = data.playerLives;
+        rainbowMeter = data.rainbowMeter;
+        SetMeter();
     }
 
     public void SaveData(ref GameData data)
