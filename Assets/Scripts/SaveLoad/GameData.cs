@@ -24,15 +24,13 @@ public class GameData
     public int playerLives;
     public int numChunks;
     public float rainbowMult;
-    public float masterVolume;
-    public float musicVolume;
-    public float sfxVolume;
-    public bool doubletapcycle;
-    public float splatters;
+
+
+
     public int promodeLevel;
     public int maxProModeLevel;
-
     public bool refreshActive;
+
     public GameData(){
         currentLevel = 0;
         refreshActive = true;
@@ -47,11 +45,6 @@ public class GameData
         playerLives = 3;
         rainbowMeter = 0.0f;
         rainbowMult = 1f;
-        splatters = 1f;
-        doubletapcycle = true;
-        masterVolume = 0.5f;
-        musicVolume = 0.5f;
-        sfxVolume = 0.5f;
         promodeLevel = 0;
         if (SaveLoadManager.instance.isWebGL)
         {

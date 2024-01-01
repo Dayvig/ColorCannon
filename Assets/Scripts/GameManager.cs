@@ -154,6 +154,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             UIManager.instance.activateSettingsAnimations(false);
             nextState = GameState.UIANIMATIONS;
+            SaveLoadManager.instance.SaveSettings();
         }
 
         if (currentState == GameState.MAINMENU && nextState == GameState.POSTWAVE)
@@ -448,6 +449,24 @@ public class GameManager : MonoBehaviour, IDataPersistence
             for (int i = 0; i < 3; i++)
             {
                 Upgrade nextUpgrade = getRandomUpgrade(possibleUpgrades);
+
+                bool regenerate = false;
+                do
+                {
+                    regenerate = false;
+                    foreach (Upgrade u in currentOfferedUpgrades)
+                    {
+                        Debug.Log(u.type + " " + u.color + " " + nextUpgrade.type + " " + nextUpgrade.color);
+                        if (u.type.Equals(nextUpgrade.type) && u.color.Equals(nextUpgrade.color))
+                        {
+                            regenerate = true;
+                            nextUpgrade = getRandomUpgrade(possibleUpgrades);
+                            Debug.Log("Regen");
+                        }
+                    }
+                }
+                while (regenerate);
+
                 currentOfferedUpgrades.Add(nextUpgrade);
                 UIManager.instance.SetupNextUpgradePreview(nextUpgrade);
             }
@@ -468,6 +487,21 @@ public class GameManager : MonoBehaviour, IDataPersistence
             for (int i = 0; i < 3; i++)
             {
                 Upgrade nextUpgrade = getRandomUpgrade(specialUpgrades);
+                bool regenerate = false;
+                do
+                {
+                    regenerate = false;
+                    foreach (Upgrade u in currentOfferedUpgrades)
+                    {
+                        if (u.type == nextUpgrade.type && u.color == nextUpgrade.color)
+                        {
+                            regenerate = true;
+                            nextUpgrade = getRandomUpgrade(specialUpgrades);
+                        }
+                    }
+                }
+                while (regenerate);
+
                 currentOfferedUpgrades.Add(nextUpgrade);
                 UIManager.instance.SetupNextUpgradePreview(nextUpgrade);
             }
@@ -703,9 +737,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public void PlayAgain()
     {
         int prevProMode = GameManager.instance.promodeLevel;
-        player.rainbowMeter = 0f;
-        player.rainbowRush = false;
-        player.rainbowTimer = 0f;
 
         PostProcessingManager.instance.SetBlur(false);
         UIManager.instance.deactivateWinLoseUI();
@@ -713,9 +744,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SaveLoadManager.instance.LoadGame();
         GameManager.instance.promodeLevel = prevProMode;
         WaveSpawningSystem.instance.Level = 0;
+        player.rainbowMeter = 0f;
+        player.rainbowRush = false;
+        player.rainbowTimer = 0f;
         WaveSpawningSystem.instance.initialize();
         WaveSpawningSystem.instance.AddProModeFeatures();
-        if (GameManager.instance.encounteredEnemies.Count == 0)
+        /*if (WaveSpawningSystem.instance.tutorialStage == -1)
         {
             currentState = GameState.POSTWAVE;
             SetState(GameState.WAVE);
@@ -724,7 +758,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             currentState = GameState.MAINMENU;
             SetState(GameState.POSTWAVE);
-        }
+        }*/
+        currentState = GameState.POSTWAVE;
+        SetState(GameState.WAVE);
+
         SaveLoadManager.instance.SaveGame();
     }
 
@@ -732,8 +769,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         currentOfferedUpgrades = data.currentUpgradesOffered;
         encounteredEnemies = data.encounteredEnemies;
-        doubleTapCycle = data.doubletapcycle;
-        splatterVal = data.splatters;
         promodeLevel = data.promodeLevel;
         maxProModeLevelUnlocked = data.maxProModeLevel;
     }
@@ -742,8 +777,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         data.currentUpgradesOffered = currentOfferedUpgrades;
         data.encounteredEnemies = encounteredEnemies;
-        data.doubletapcycle = doubleTapCycle;
-        data.splatters = splatterVal;
         data.promodeLevel = promodeLevel;
         data.maxProModeLevel = maxProModeLevelUnlocked;
     }

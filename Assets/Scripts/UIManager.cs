@@ -121,7 +121,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public PromodeScript promode;
 
-    public Toggle tutorialToggle;
+    public enableTutorial tutorialToggle;
 
     public enum WaveModifier
     {
@@ -172,7 +172,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         playButton.initialize();
 
         activateMainMenuUI();
-
+        tutorialToggle.init();
     }
 
     public void SettingsUpdate()

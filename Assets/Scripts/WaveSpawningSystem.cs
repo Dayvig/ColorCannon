@@ -1,15 +1,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Runtime.Serialization;
-using TMPro;
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.U2D.IK;
-using UnityEngine.UIElements;
-using UnityEngine.XR;
 using static GameManager;
 using Random = UnityEngine.Random;
 
@@ -51,7 +44,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     private int recusionProtection = 0;
     public int enemiesToSpawn;
 
-    public int tutorialStage = -1;
+    public int tutorialStage;
     public List<Vector3> tutorialLocations = new List<Vector3>();
 
     public static WaveSpawningSystem instance { get; private set; }
@@ -100,7 +93,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void EnemyUpdate()
     {
-        if (tutorialStage == -1)
+        if (tutorialStage == -2)
         {
             enemyTimer -= Time.deltaTime;
             if (enemyTimer <= 0.0f && currentWaveIndex < currentWave.Count - 1)
@@ -145,20 +138,23 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void NextTutorialStage()
     {
-        tutorialStage++;
-        if (tutorialStage > tutorialLocations.Count - 1)
+        if (tutorialStage != -2)
         {
-            EndTutorial();
-            return;        
+            tutorialStage++;
+            if (tutorialStage > tutorialLocations.Count - 1)
+            {
+                EndTutorial();
+                return;
+            }
+            enemyTimer = currentWave[tutorialStage].delayUntilNext;
         }
-        enemyTimer = currentWave[tutorialStage].delayUntilNext;
-
     }
 
     public void EndTutorial()
     {
         currentWaveIndex = currentWave.Count;
-        tutorialStage = -1;
+        tutorialStage = -2;
+        UIManager.instance.tutorialToggle.init();
     }
 
     public GameObject CreateEnemy(WaveObject nextWaveObject)
@@ -354,7 +350,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
         clearWave();
 
-        if (Level == 0 && gameManager.encounteredEnemies.Count == 0)
+        if (Level == 0 && WaveSpawningSystem.instance.tutorialStage == 0)
         {
             Debug.Log("Spawning First Wave");
             generateFirstWave();
@@ -778,7 +774,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
 
         gameManager.encounteredEnemies.Add(Mechanic.TARGET);
-        tutorialStage = 0;
     }
 
 
@@ -786,12 +781,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public void SetupNextWave()
     {
         Debug.Log("Next Wave =================");
-        if (Level == 0)
+        if (Level == 0 && WaveSpawningSystem.instance.tutorialStage == 0)
         {
             generateFirstWave();
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
-            tutorialStage = 0;
         }
         else
         {
@@ -800,7 +794,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             RandomizeWave();
             enemyTimer = currentWave[0].delayUntilNext;
             currentWaveIndex = 0;
-            tutorialStage = -1;
         }
 
         SaveLoadManager.instance.SaveGame();
@@ -845,18 +838,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         //Every wave spawns 3% faster.
         globalWaveSpacing /= modelGame.baseWaveSpacingUpgrade;
 
-        //On waves 5, 9, 13 and 15, adds +1 enemy per chunk.
-        if (Level-1 % 4 == 0)
-        {
-            globalWaveNumber += modelGame.baseWaveNumberUpgrade;
-        }
-        if (Level == 15)
-        {
-            globalWaveNumber += modelGame.baseWaveNumberUpgrade;
-        }
 
-        //every 12th wave, adds an extra chunk and +1 enemy per chunk.
-        if (Level % 12 == 0)
+        //Adds extra chunk on Wave 10 and 14
+        if (Level == 9 || Level == 13)
         {
             double sum = 0;
             for (int k = 0; k < chunkDifficulties.Count; k++)

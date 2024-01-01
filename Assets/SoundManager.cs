@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour, IDataPersistence
+public class SoundManager : MonoBehaviour
 {
 
     [Range(0f, 1f)]
@@ -67,19 +67,6 @@ public class SoundManager : MonoBehaviour, IDataPersistence
     public void CalculateMusicVolume()
     {
         mainMusic.volume = masterVolume * musicVolume;
-    }
-    public void LoadData(GameData data)
-    {
-        masterVolume = data.masterVolume;
-        musicVolume = data.musicVolume;
-        sfxVolume = data.sfxVolume;
-    }
-
-    public void SaveData(ref GameData data)
-    {
-        data.masterVolume = masterVolume;
-        data.musicVolume = musicVolume;
-        data.sfxVolume = sfxVolume;
     }
 
 }

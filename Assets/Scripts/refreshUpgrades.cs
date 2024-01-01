@@ -23,11 +23,11 @@ public class refreshUpgrades : MonoBehaviour
         manager.currentOfferedUpgrades.Clear();
         if (WaveSpawningSystem.instance.Level % 2 == 0)
         {
-            manager.GenerateSpecialUpgrades();
+            manager.GenerateUpgrades();
         }
         else
         {
-            manager.GenerateUpgrades();
+            manager.GenerateSpecialUpgrades();
         }
         UIManager.instance.SetUpgradesVisible(true);
         if (!infinite)

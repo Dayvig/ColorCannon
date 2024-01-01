@@ -9,17 +9,20 @@ public class SaveLoadManager : MonoBehaviour
 
     [Header("File Storage Config")]
     [SerializeField] private string fileName;
-    
+    [SerializeField] private string settingsFileName;
+
     public static SaveLoadManager instance { get; private set; }
     private GameData gameData;
+    private SettingsData settingsData;
     public List<IDataPersistence> saveLoadObjects = new List<IDataPersistence>();
     private FileDataHandler dataHandler;
     public bool isWebGL;
     public void initialize()
     {
-        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, Application.persistentDataPath, settingsFileName);
         this.saveLoadObjects = FindAllSaveLoadObjects();    
-        SaveLoadManager.instance.LoadGame();
+        LoadGame();
+        LoadSettings();
     }
 
     public void Awake()
@@ -94,6 +97,28 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log("Current Undiscovered med Mechanics" + WaveSpawningSystem.instance.medMechanics.Count);
     }
 
+    public void LoadSettings()
+    {
+        this.settingsData = dataHandler.LoadSettings();
+        if (settingsData == null)
+        {
+            settingsData = new SettingsData();
+        }
+        SoundManager.instance.masterVolume = settingsData.masterVolume;
+        SoundManager.instance.musicVolume= settingsData.musicVolume;
+        SoundManager.instance.sfxVolume = settingsData.sfxVolume;
+        GameManager.instance.splatterVal = settingsData.splatters;
+        GameManager.instance.doubleTapCycle = settingsData.doubletapcycle;
+        if (settingsData.tutorialOn)
+        {
+            WaveSpawningSystem.instance.tutorialStage = 0;
+        }
+        else
+        {
+            WaveSpawningSystem.instance.tutorialStage = -2;
+        }
+    }
+
     public void SaveGame()
     {
         foreach (IDataPersistence saveLoadObj in saveLoadObjects)
@@ -108,5 +133,16 @@ public class SaveLoadManager : MonoBehaviour
         IEnumerable<IDataPersistence> saveLoadObjects = Object.FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>();
 
         return new List<IDataPersistence>(saveLoadObjects);
+    }
+
+    public void SaveSettings()
+    {
+        settingsData.masterVolume = SoundManager.instance.masterVolume;
+        settingsData.musicVolume = SoundManager.instance.musicVolume;
+        settingsData.sfxVolume = SoundManager.instance.sfxVolume;
+        settingsData.splatters = GameManager.instance.splatterVal;
+        settingsData.doubletapcycle = GameManager.instance.doubleTapCycle;
+        settingsData.tutorialOn = (WaveSpawningSystem.instance.tutorialStage == 0);
+        dataHandler.SaveSettings(settingsData);
     }
 }

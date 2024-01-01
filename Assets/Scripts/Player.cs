@@ -39,7 +39,7 @@ public class Player : MonoBehaviour, IDataPersistence
     public float shieldPulseRadius;
     public float meterMult;
     
-    private float shotTimer;
+    public float shotTimer;
     public float rocketTimer;
     public GameObject bullet;
 
@@ -921,7 +921,7 @@ public class Player : MonoBehaviour, IDataPersistence
         {
             rainbowMeter = meterMax;
         }
-        meter.rainbows.fillAmount = rainbowMeter / meterMax;
+        meter.targetFill = rainbowMeter / meterMax;
         if (rainbowMeter >= meterMax)
         {
             meter.SetToActive();

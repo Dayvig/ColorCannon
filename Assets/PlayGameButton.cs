@@ -39,6 +39,8 @@ public class PlayGameButton : MonoBehaviour
 
     void TaskOnClick()
     {
+        SaveLoadManager.instance.LoadGame();
+        WaveSpawningSystem.instance.tutorialStage = -2;
         GameManager.instance.SetState(GameManager.GameState.POSTWAVE);
         PostProcessingManager.instance.SetBlur(false);
     }
