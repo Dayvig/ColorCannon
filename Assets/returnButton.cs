@@ -19,6 +19,6 @@ public class returnButton : MonoBehaviour
     void TaskOnClick()
     {
         GameManager.instance.SetState(GameManager.instance.returnState);
-        SaveLoadManager.instance.SaveGame();
+        SaveLoadManager.instance.SaveSettings();
     }
 }

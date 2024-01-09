@@ -725,13 +725,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public void Win()
     {
         maxProModeLevelUnlocked++;
-        SaveLoadManager.instance.SaveGame();
 
         UIManager.instance.deactivatePostWaveUI();
         WipeAllEnemiesAndBullets();
         UIManager.instance.activateWinScreen();
         UIManager.instance.activateWinLoseAnimations(true, true);
         SaveLoadManager.instance.WipeMidRunDataOnly();
+        SaveLoadManager.instance.SaveGame();
     }
 
     public void PlayAgain()
@@ -747,6 +747,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         player.rainbowMeter = 0f;
         player.rainbowRush = false;
         player.rainbowTimer = 0f;
+        player.lives = 3;
         WaveSpawningSystem.instance.initialize();
         WaveSpawningSystem.instance.AddProModeFeatures();
         /*if (WaveSpawningSystem.instance.tutorialStage == -1)
@@ -761,8 +762,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }*/
         currentState = GameState.POSTWAVE;
         SetState(GameState.WAVE);
-
-        SaveLoadManager.instance.SaveGame();
     }
 
     public void LoadData(GameData data)
