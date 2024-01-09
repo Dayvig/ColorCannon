@@ -58,6 +58,12 @@ public class SoundManager : MonoBehaviour
         source.Play();
     }
 
+    public void PlayRandomMainTheme()
+    {
+        SoundManager.instance.mainMusic.Stop();
+        PlayMusicAndLoop(mainMusic, GameModel.instance.music[Random.Range(0, 4) + 1]);
+    }
+
     IEnumerator PlaySFXWithDelay(AudioSource source, AudioClip clip, float delaySeconds)
     {
         yield return new WaitForSeconds(delaySeconds);

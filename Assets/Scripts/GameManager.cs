@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.activatePostWaveUI();
         justLaunched = false;
         selectedUpgrade = noUpgrade;
+        Debug.Log("Current upgrades: " + GameManager.instance.currentOfferedUpgrades.Count);
         if (WaveSpawningSystem.instance.Level > 1)
         {
             if (WaveSpawningSystem.instance.Level % 2 == 0)
@@ -169,10 +170,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             Debug.Log("Transition from wave to postwave");
             spawningSystem.IncreaseDifficulty();
+            Debug.Log("Clearing Upgrades");
             currentOfferedUpgrades.Clear();
             spawningSystem.SetupNextWave();
             SetupForWave();
             nextState = GameState.UIANIMATIONS;
+            SaveLoadManager.instance.SaveGame();
         }
 
         if (currentState == GameState.POSTWAVE && nextState == GameState.WAVE)
@@ -214,15 +217,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         if (currentState == GameState.UIANIMATIONS && nextState == GameState.WAVE)
         {
             UIManager.instance.deactivatePostWaveUI();
-            if (!SoundManager.instance.mainMusicPlaying)
+            if (!SoundManager.instance.mainMusicPlaying || SoundManager.instance.mainMusic.clip == GameModel.instance.music[0])
             {
-                SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
+                SoundManager.instance.PlayRandomMainTheme();
             }
-            else if (SoundManager.instance.mainMusic.clip == GameModel.instance.music[1])
-            {
-                SoundManager.instance.mainMusic.Stop();
-                SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
-            }
+                
             SoundManager.instance.mainMusicPlaying = true;
         }
 
@@ -245,7 +244,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             UIManager.instance.activateMainMenuUI();
             UIManager.instance.titleTextScript.Reset();
             SoundManager.instance.mainMusic.Stop();
-            SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[1]);
+            SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
             
         }
         currentState = nextState;
@@ -316,7 +315,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.initialize();
         spawningSystem.initialize();
         currentState = GameState.MAINMENU;
-        SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[1]);
+        SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
 
         selectedUpgrade = noUpgrade;
     }

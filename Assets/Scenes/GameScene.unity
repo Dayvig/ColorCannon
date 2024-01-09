@@ -2760,6 +2760,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5576837625876120073, guid: 162c0d84e33566d408c7984779cb8cfc, type: 3}
+      propertyPath: m_SortingOrder
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5576837625876120073, guid: 162c0d84e33566d408c7984779cb8cfc, type: 3}
       propertyPath: m_SortingLayerID
       value: 242186139
       objectReference: {fileID: 0}
@@ -10783,6 +10787,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1100839044}
     - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
+      propertyPath: noDTapCycle
+      value: 
+      objectReference: {fileID: 21300000, guid: a4a3530d50d94934e89f2a28b25ce398, type: 3}
+    - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
       propertyPath: animInterval
       value: 0.05
       objectReference: {fileID: 0}
@@ -10790,6 +10798,10 @@ PrefabInstance:
       propertyPath: hoverInterval
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
+      propertyPath: withDTapCycle
+      value: 
+      objectReference: {fileID: 21300000, guid: b8c877419c6a1ee4f815c97205f8bf3b, type: 3}
     - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
       propertyPath: slices.Array.data[1]
       value: 
@@ -13611,8 +13623,8 @@ MonoBehaviour:
   - ' bullets only.'
   - 'When you fire a bullet, '
   - '% chance to fire a combined color bullet instead.'
-  - Increases radius of shield pulse when hit.
-  - When hit, splat enemies with your shield pulse.
+  - When hit, knock nearby enemies back further.
+  - When hit, splat nearby enemies.
   - 'Fire '
   - ' homing rockets every '
   - 'Increases rainbow meter gained from enemies by '
@@ -13674,8 +13686,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5a9a7902dd820b448bc1ca4b327ee0d3, type: 3}
   - {fileID: 8300000, guid: 15033cf66231914409d963977ac84adb, type: 3}
   music:
-  - {fileID: 8300000, guid: 230efd66964f8cf499534dbd5946e679, type: 3}
   - {fileID: 8300000, guid: 3a7d64df0029b8a46b1a17b1db591962, type: 3}
+  - {fileID: 8300000, guid: 230efd66964f8cf499534dbd5946e679, type: 3}
+  - {fileID: 8300000, guid: 438e9455623b63342b70bf97eb4b36cf, type: 3}
+  - {fileID: 8300000, guid: a281f88ac238fe542a0af8b6200f825c, type: 3}
+  - {fileID: 8300000, guid: 599cb02e9733833419c9d4be419fab2a, type: 3}
   DeathSplatter: {fileID: 777420956331959931, guid: 0de7c757535febf498f6fd97d56946f1, type: 3}
   xBounds: 3
   yBounds: 5
@@ -15093,19 +15108,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 28388232559678942, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Color.b
-      value: 0.8666667
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 28388232559678942, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Color.g
-      value: 0.6745098
+      value: 0.4281756
       objectReference: {fileID: 0}
     - target: {fileID: 28388232559678942, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Color.r
-      value: 0.35686275
+      value: 0.3726415
       objectReference: {fileID: 0}
     - target: {fileID: 28388232559678942, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_SortingOrder
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 28388232559678942, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -15132,8 +15147,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 2037130195045230306, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8301887
+      objectReference: {fileID: 0}
+    - target: {fileID: 2037130195045230306, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
+      propertyPath: m_Color.g
+      value: 0.37119016
+      objectReference: {fileID: 0}
+    - target: {fileID: 2037130195045230306, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2037130195045230306, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_SortingOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2037130195045230306, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -15185,15 +15212,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6068260756307618114, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Color.b
-      value: 0.74509805
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6068260756307618114, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Color.g
-      value: 0.5176471
+      value: 0.8153478
       objectReference: {fileID: 0}
     - target: {fileID: 6068260756307618114, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_Color.r
-      value: 0.14509805
+      value: 0.6650944
       objectReference: {fileID: 0}
     - target: {fileID: 6068260756307618114, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: m_SortingOrder
