@@ -24,6 +24,7 @@ public class GameModel : MonoBehaviour
     public List<Sprite> UpgradeImages = new List<Sprite>();
     public List<Sprite> WaveModImages = new List<Sprite>();
     public List<Sprite> bulletImages = new List<Sprite>();
+    public List<Sprite> giblets = new List<Sprite>();
     public List<string> WaveModTexts = new List<string>();
     public List<string> ChunkTexts = new List<string>();
     public List<string> UpgradeTexts = new List<string>();
@@ -223,7 +224,7 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[14];
             case GameManager.UpgradeType.ROCKETS:
                 return UpgradeImages[15];
-            case GameManager.UpgradeType.SHIELDPULSE:
+            case GameManager.UpgradeType.PULSERADIUS:
                 return UpgradeImages[16];
             case GameManager.UpgradeType.DEATHBLAST:
                 return UpgradeImages[17];
@@ -231,6 +232,8 @@ public class GameModel : MonoBehaviour
                 return UpgradeImages[19];
             case GameManager.UpgradeType.BARRAGE:
                 return UpgradeImages[20];
+            case GameManager.UpgradeType.PULSE:
+                return UpgradeImages[21];
             default:
                 return UpgradeImages[3];
         }
@@ -388,7 +391,7 @@ public class GameModel : MonoBehaviour
             case GameManager.UpgradeType.COMBINER:
                 returnText = UpgradeTexts[10] + combinerBaseChance * upgrade.factor + UpgradeTexts[11];
                 break;
-            case GameManager.UpgradeType.SHIELDPULSE:
+            case GameManager.UpgradeType.PULSERADIUS:
                 returnText = UpgradeTexts[12];
                 break;
             case GameManager.UpgradeType.DEATHBLAST:
@@ -398,7 +401,10 @@ public class GameModel : MonoBehaviour
                 returnText = UpgradeTexts[14] + upgrade.factor * 2 +" "+ upgrade.color.ToString().ToLower() + UpgradeTexts[15] + rocketInterval + "s";
                 break;
             case GameManager.UpgradeType.RAINBOWMULT:
-                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17];
+                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17] + 1 + UpgradeTexts[18];
+                break;
+            case GameManager.UpgradeType.PULSE:
+                returnText = UpgradeTexts[17] + (5 - upgrade.factor) + UpgradeTexts[18];
                 break;
             default:
                 return "Something went wrong";

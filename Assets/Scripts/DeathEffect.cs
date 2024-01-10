@@ -17,7 +17,12 @@ public class DeathEffect : MonoBehaviour
         this.gameObject.SetActive(true);
         fadeInterval = 30f * GameManager.instance.splatterVal;
         fadeTimer = 0.0f;
+        ren.sprite = GameModel.instance.giblets[Random.Range(0, 4) + 4];
+        this.transform.rotation = Random.rotation;
+        Vector3 eulerRotation = transform.rotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(0, 0, eulerRotation.z);
     }
+
     public void Update()
     {
         fadeTimer += Time.deltaTime;

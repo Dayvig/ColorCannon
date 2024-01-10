@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -27,12 +28,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
         PIERCING,
         SHIELDS,
         MAXSHIELDS,
-        SHIELDPULSE,
+        PULSERADIUS,
         ROCKETS,
         COMBINER,
         DEATHBLAST,
         RAINBOWMULT,
         BARRAGE,
+        PULSE,
         NONE
     }
 
@@ -364,13 +366,20 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
 
         //Add special upgrades
-        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.RED, 1));
-        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.BLUE, 1));
-        specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.YELLOW, 1));
+        for (int k = 0; k < 2; k++)
+        {
+            specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.RED, 1));
+            specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.BLUE, 1));
+            specialUpgrades.Add(new Upgrade("Rockets", UpgradeType.ROCKETS, GameModel.GameColor.YELLOW, 1));
+        }
 
-        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
-        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
-        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.SHIELDPULSE, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.PULSERADIUS, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.PULSERADIUS, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Shield Pulse Radius", UpgradeType.PULSERADIUS, GameModel.GameColor.NONE, 1));
+
+        specialUpgrades.Add(new Upgrade("Pulse Generator", UpgradeType.PULSE, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Pulse Generator", UpgradeType.PULSE, GameModel.GameColor.NONE, 1));
+        specialUpgrades.Add(new Upgrade("Pulse Generator", UpgradeType.PULSE, GameModel.GameColor.NONE, 1));
 
         specialUpgrades.Add(new Upgrade("Splat Pulse", UpgradeType.DEATHBLAST, GameModel.GameColor.NONE, 1));
         specialUpgrades.Add(new Upgrade("Splat Pulse", UpgradeType.DEATHBLAST, GameModel.GameColor.NONE, 1));
@@ -432,6 +441,56 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     }
 
+    public void RemoveUpgradeFromPool(UpgradeType typeToRemove, GameModel.GameColor colorToRemove)
+    {
+        List<Upgrade> toRemoveList = new List<Upgrade>();
+        foreach (Upgrade u in possibleUpgrades)
+        {
+            if (u.type.Equals(typeToRemove) && u.color.Equals(colorToRemove))
+            {
+                toRemoveList.Add(u);
+            }
+        }
+        foreach (Upgrade u in specialUpgrades)
+        {
+            if (u.type.Equals(typeToRemove) && u.color.Equals(colorToRemove))
+            {
+                toRemoveList.Add(u);
+            }
+        }
+        foreach (Upgrade u2 in toRemoveList)
+        {
+            possibleUpgrades.Remove(u2);
+            specialUpgrades.Remove(u2);
+        }
+
+    }
+
+    public void RemoveUpgradeFromPool(UpgradeType typeToRemove)
+    {
+        List<Upgrade> toRemoveList = new List<Upgrade>();
+        foreach (Upgrade u in possibleUpgrades)
+        {
+            if (u.type.Equals(typeToRemove))
+            {
+                toRemoveList.Add(u);
+            }
+        }
+        foreach (Upgrade u in specialUpgrades)
+        {
+            if (u.type.Equals(typeToRemove))
+            {
+                toRemoveList.Add(u);
+            }
+        }
+        foreach (Upgrade u2 in toRemoveList)
+        {
+            possibleUpgrades.Remove(u2);
+            specialUpgrades.Remove(u2);
+        }
+
+    }
+
     public void GenerateUpgrades()
     {
         foreach (Upgrade p in player.upgrades)
@@ -439,7 +498,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
             if (p.type.Equals(UpgradeType.ROCKETS))
             {
                 AddBarrage();
-                break;
+            }
+            if (p.type.Equals(UpgradeType.PULSE) && p.factor > 3)
+            {
+                RemoveUpgradeFromPool(p.type, p.color);
+            }
+            if (p.type.Equals(UpgradeType.DEATHBLAST)){ 
+                RemoveUpgradeFromPool(p.type, p.color);
             }
         }
 

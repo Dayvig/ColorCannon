@@ -539,7 +539,18 @@ public class UIManager : MonoBehaviour, IDataPersistence
         upgradeImage.sprite = modelGame.UpgradeImageFromType(u.type);
         upgradeImage.color = modelGame.ColorToColor(u.color);
         button.initialize(u);
-        newUpgradePreview.GetComponent<genericPreviewScript>().modText = modelGame.GetUpgradeTextFromType(u);
+        String toolText = modelGame.GetUpgradeTextFromType(u);
+        if (u.type.Equals(UpgradeType.PULSE))
+        {
+            foreach (Upgrade u2 in player.upgrades)
+            {
+                if (u2.type.Equals(UpgradeType.PULSE))
+                {
+                    toolText = GameModel.instance.UpgradeTexts[18];
+                }
+            }
+        }
+        newUpgradePreview.GetComponent<genericPreviewScript>().modText = toolText;
         newUpgradePreview.SetActive(true);
     }
 

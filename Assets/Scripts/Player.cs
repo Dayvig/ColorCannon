@@ -86,6 +86,11 @@ public class Player : MonoBehaviour, IDataPersistence
 
     public ringScript SelectorRing;
     public bool movementLocked = false;
+
+    public float pulseTimer = 0.0f;
+    public float pulseInterval = -1f;
+    public bool pulseShield = false;
+    
     private enum controlMode
     {
         TOUCH,
@@ -154,6 +159,15 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 RocketFire(rocketColors);
                 rocketTimer = 0.0f;
+            }
+        }
+        if (pulseShield)
+        {
+            pulseTimer += Time.deltaTime;
+            if (pulseTimer > pulseInterval)
+            {
+                PulseShield();
+                pulseTimer = 0.0f;
             }
         }
     }
@@ -486,13 +500,19 @@ public class Player : MonoBehaviour, IDataPersistence
         combineChance = FinalCombineChance();
         meterMult = FinalMeterMult();
         deathPulse = false;
+        pulseShield = false;
         foreach (GameManager.Upgrade u in upgrades)
         {
             if (u.type.Equals(GameManager.UpgradeType.DEATHBLAST))
             {
                 deathPulse = true;
             }
+            if (u.type.Equals(GameManager.UpgradeType.PULSE))
+            {
+                pulseShield = true;
+            }
         }
+        pulseInterval = FinalPulseInterval();
         shieldPulseRadius = FinalShieldPulseRadius();
         rocketColors = FinalRocketColors();
         rocketRoF = FinalRocketRateOfFire();
@@ -514,12 +534,32 @@ public class Player : MonoBehaviour, IDataPersistence
         return mult;
     }
 
+    public float FinalPulseInterval()
+    {
+        float pulse = -1f;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.PULSE))
+            {
+                if (pulse == -1f)
+                {
+                    pulse = 10f;
+                }
+                else
+                {
+                    pulse -= 2f;
+                }
+            }
+        }
+        return pulse;
+    }
+
     public float FinalShieldPulseRadius()
     {
         float shieldPulse = modelGame.shieldPulseRadius;
         foreach (GameManager.Upgrade u in upgrades)
         {
-            if (u.type.Equals(GameManager.UpgradeType.SHIELDPULSE))
+            if (u.type.Equals(GameManager.UpgradeType.PULSERADIUS))
             {
                 shieldPulse += (u.factor * modelGame.shieldPulseInc);
             }

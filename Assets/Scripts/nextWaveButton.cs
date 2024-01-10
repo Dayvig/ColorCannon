@@ -8,6 +8,8 @@ public class nextWaveButton : MonoBehaviour
 {
     public Button nextWave;
     public GameManager manager;
+    public UpgradeReminderScript reminder;
+    private int pressed = 0;
     
     void Start()
     {
@@ -24,7 +26,16 @@ public class nextWaveButton : MonoBehaviour
         }
         else
         {
-            GameManager.instance.SetState(GameManager.GameState.WAVE);
+            if (manager.selectedUpgrade.type.Equals(GameManager.UpgradeType.NONE) && pressed == 0)
+            {
+                reminder.Flash();
+                pressed++;
+            }
+            else
+            {
+                GameManager.instance.SetState(GameManager.GameState.WAVE);
+                pressed = 0;
+            }
         }
     }   
 }
