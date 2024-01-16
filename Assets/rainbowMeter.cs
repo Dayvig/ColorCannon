@@ -18,8 +18,17 @@ public class rainbowMeter : MonoBehaviour
     public bool isActive = false;
     public bool prevActive = false;
     Transform trans;
+    public AudioSource source;
 
     public bool selected = false;
+    public float ringAnimTimer = 0.0f;
+    public float ringAnimInterval = 0.06f;
+    public int state = 0;
+    //0- grow
+    //1- shrink
+    //2- nothing
+
+    private Vector3 targetScale;
 
     // Start is called before the first frame update
     void Start()
@@ -28,12 +37,14 @@ public class rainbowMeter : MonoBehaviour
         rainbows.color = new Color(1f, 1f, 1f, 0.5f);
         rainbows.fillAmount = 0;
         trans = rainbows.gameObject.transform;
+        targetScale = baseScale;
     }
 
     // Update is called once per frame
     void Update()
     {
         trans.Rotate(new Vector3(0, 0, rotationSpeed));
+        RingAnimationUpdate();
 
         if (!prevActive && isActive)
         {
@@ -66,6 +77,29 @@ public class rainbowMeter : MonoBehaviour
         }
     }
 
+    public void RingAnimationUpdate()
+    {
+        if (state == 0)
+        {
+            ringAnimTimer += Time.deltaTime;
+            this.transform.localScale = Vector3.Lerp(baseScale, bigScale, ringAnimTimer / ringAnimInterval);
+            if (ringAnimTimer >= ringAnimInterval)
+            {
+                state = 2;
+            }
+        }
+        else if (state == 1)
+        {
+            ringAnimTimer -= Time.deltaTime;
+            this.transform.localScale = Vector3.Lerp(baseScale, bigScale, ringAnimTimer / ringAnimInterval);
+            if (ringAnimTimer <= 0.0f)
+            {
+                state = 2;
+            }
+        }
+
+    }
+
     public void SetToActive()
     {
         rainbows.color = new Color(1f, 1f, 1f, 1f);
@@ -73,11 +107,22 @@ public class rainbowMeter : MonoBehaviour
         rotationSpeed = fastRotationSpeed;
     }
 
+    public void SetToBig()
+    {
+        targetScale = bigScale;
+        state = 0;
+    }
+
+    public void SetToSmall()
+    {
+        targetScale = baseScale;
+        state = 1;
+    }
+
     public void SetToInactive()
     {
         rainbows.color = new Color(1f, 1f, 1f, 0.5f);
         meter.color = new Color(1f, 1f, 1f, 0.2f);
-        transform.localScale = baseScale;
         rotationSpeed = 0.1f;
     }
 }

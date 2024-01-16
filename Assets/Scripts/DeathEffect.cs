@@ -12,7 +12,7 @@ public class DeathEffect : MonoBehaviour
     // Start is called before the first frame update
 
     // Update is called once per frame
-    public void initialize()
+    public virtual void initialize()
     {
         this.gameObject.SetActive(true);
         fadeInterval = 30f * GameManager.instance.splatterVal;
@@ -23,7 +23,7 @@ public class DeathEffect : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, eulerRotation.z);
     }
 
-    public void Update()
+    public virtual void Update()
     {
         fadeTimer += Time.deltaTime;
         Color col = ren.color;

@@ -26,6 +26,7 @@ public class SoundManager : MonoBehaviour
     public void PlaySFX(AudioSource source, AudioClip clip)
     {
         source.clip = clip;
+        source.volume = masterVolume * sfxVolume;
         source.PlayOneShot(clip, masterVolume*sfxVolume);
     }
 
@@ -40,6 +41,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySFX(AudioSource source, AudioClip clip, float delaySeconds)
     {
+        source.volume = masterVolume * sfxVolume;
         StartCoroutine(PlaySFXWithDelay(source, clip, delaySeconds));
     }
 
@@ -47,6 +49,7 @@ public class SoundManager : MonoBehaviour
     {
         source.clip = clip;
         source.priority = priority;
+        source.volume = masterVolume * sfxVolume;
         source.PlayOneShot(clip, masterVolume * sfxVolume);
     }
 
@@ -66,6 +69,7 @@ public class SoundManager : MonoBehaviour
 
     IEnumerator PlaySFXWithDelay(AudioSource source, AudioClip clip, float delaySeconds)
     {
+        source.volume = masterVolume * sfxVolume;
         yield return new WaitForSeconds(delaySeconds);
         PlaySFX(source, clip);
     }

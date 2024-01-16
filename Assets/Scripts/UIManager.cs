@@ -384,7 +384,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         SetCurrentPlayerUpgradePreviews(true);
         SetWaveModPreviews(true);
         SetUpgradesVisible(true);
-        RefreshUpgradesButton.SetActive(refreshActive);
+        //RefreshUpgradesButton.SetActive(refreshActive);
         WaveText.text = WaveUIText[0] + WaveSpawningSystem.instance.Level + WaveUIText[1];
         refreshActive = true;
     }
@@ -399,7 +399,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         UpgradePanel.SetActive(false);
         WaveModPreview.SetActive(false);
         currentUpgradePanel.SetActive(false);
-        RefreshUpgradesButton.SetActive(false);
+        //RefreshUpgradesButton.SetActive(false);
     }
 
     public void deactivateWaveUI()
@@ -490,6 +490,25 @@ public class UIManager : MonoBehaviour, IDataPersistence
             }
         }
         SetCurrentPlayerUpgradePreviews(true);
+    }
+
+    public void ClearSpecialUpgrades()
+    {
+        Transform found;
+        List<Transform> toMove = new List<Transform>();
+        for (int i = 0; i < currentUpgradeRows[3].childCount; i++)
+        {
+            toMove.Add(currentUpgradeRows[3].GetChild(i));
+        }
+        for (int i = 0; i < currentUpgradeRows[4].childCount; i++)
+        {
+            toMove.Add(currentUpgradeRows[4].GetChild(i));
+        }
+        foreach (Transform t in toMove)
+        {
+            t.SetParent(previousUpgrades.transform);
+            t.gameObject.SetActive(false);
+        }
     }
 
     void ConstructAllWaveModPreviews()
@@ -736,7 +755,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         WaveMods = data.waveUpgrades;
         refreshActive = data.refreshActive;
-        RefreshUpgradesButton.gameObject.SetActive(refreshActive);
+        //RefreshUpgradesButton.gameObject.SetActive(refreshActive);
     }
 
     public void SaveData(ref GameData data)

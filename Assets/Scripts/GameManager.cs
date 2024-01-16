@@ -75,8 +75,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<Bullet> markedForDeathBullets = new List<Bullet>();
     public List<Bullet> inactiveBullets = new List<Bullet>();
     public List<DeathEffect> inactiveSplatters = new List<DeathEffect>();
+    public List<DeathEffect> inactiveGiblets = new List<DeathEffect>();
     public List<DeathEffect> splatters = new List<DeathEffect>();
+    public List<DeathEffect> giblets = new List<DeathEffect>();
     public List<DeathEffect> markedForDeathSplatters = new List<DeathEffect>();
+    public List<DeathEffect> markedForDeathGiblets = new List<DeathEffect>();
     public Player player;
     public WaveSpawningSystem spawningSystem;
     public static GameModel gameModel;
@@ -138,6 +141,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         UIManager.instance.activatePostWaveAnimations(true);
 
+        UIManager.instance.ClearSpecialUpgrades();
         UIManager.instance.SetupWaveModUI();
     }
     public void SetState(GameState nextState)
@@ -207,7 +211,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         if (nextState == GameState.WIN && currentState != GameState.UIANIMATIONS)
         {
-            Win();
             nextState = GameState.UIANIMATIONS;
         }
 
@@ -659,10 +662,17 @@ public class GameManager : MonoBehaviour, IDataPersistence
             inactiveSplatters.Add(ded);
             ded.gameObject.SetActive(false);
         }
+        foreach (DeathEffect ded in markedForDeathGiblets)
+        {
+            giblets.Remove(ded);
+            inactiveGiblets.Add(ded);
+            ded.gameObject.SetActive(false);
+        }
 
         markedForDeathEnemies.Clear();
         markedForDeathBullets.Clear();
         markedForDeathSplatters.Clear();
+        markedForDeathGiblets.Clear();
 
     }
 
@@ -707,10 +717,32 @@ public class GameManager : MonoBehaviour, IDataPersistence
         newDeathEffect.initialize();
         newDeathEffect.ren.color = color;
         newSplatter.transform.localScale = Vector3.one * scale;
-        Random.Range(0.6f, 1.4f);
 
         splatters.Add(newSplatter.GetComponent<DeathEffect>());
         inactiveSplatters.Remove(newDeathEffect);
+    }
+
+    public void createGiblet(Vector3 location, Color color)
+    {
+        GameObject newGiblet;
+        location += (Vector3)(Random.insideUnitCircle * 0.3f);
+        if (inactiveSplatters.Count == 0)
+        {
+            newGiblet = Instantiate(GameModel.instance.DeathGiblet, location, Quaternion.identity);
+        }
+        else
+        {
+            newGiblet = inactiveGiblets[0].gameObject;
+        }
+        newGiblet.transform.position = location;
+        DeathEffect newDeathEffect = newGiblet.GetComponent<DeathEffect>();
+        newDeathEffect.initialize();
+        newDeathEffect.ren.color = color;
+        newGiblet.transform.localScale = newDeathEffect.baseScale;
+        newGiblet.transform.localScale *= Random.Range(0.5f, 2f);
+
+        giblets.Add(newGiblet.GetComponent<DeathEffect>());
+        inactiveGiblets.Remove(newDeathEffect);
     }
 
     void DemoUpdate()
@@ -737,9 +769,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
             if (WaveSpawningSystem.instance.Level >= 15)
             {
-                UIManager.instance.activateWinScreen();
-                WaveSpawningSystem.currentChunks.Clear();
-                SaveLoadManager.instance.WipeMidRunDataOnly();
+                Win();
                 GameManager.instance.SetState(GameState.WIN);
             }
             else

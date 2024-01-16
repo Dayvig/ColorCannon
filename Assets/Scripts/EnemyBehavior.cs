@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 public class EnemyBehavior : MonoBehaviour
 {
@@ -93,6 +94,7 @@ public class EnemyBehavior : MonoBehaviour
         gameObject.SetActive(true);
         knockBack = false;
         knockBackTimer = 0f;
+        specialKnockBack = false;
 
         lifeTime = 0.0f;
     }
@@ -302,8 +304,11 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
+    private Color storedColor;
+
     public virtual void TakeHit(GameModel.GameColor bulletColor)
     {
+        storedColor = GameModel.instance.ColorToColor(enemyColor);
         GameManager.instance.createSplatter(this.transform.position, GameModel.instance.ColorToColor(enemyColor));
         if (isDarkened)
         {
@@ -411,6 +416,12 @@ public class EnemyBehavior : MonoBehaviour
         if (withSound && GameManager.instance.currentState != GameManager.GameState.MAINMENU)
         {
             SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
+            for (int i = 0; i < 3; i++)
+            {
+                UnityEngine.Color newColor = storedColor;
+                newColor = new UnityEngine.Color(newColor.r, newColor.g, newColor.b, 0.4f);
+                GameManager.instance.createGiblet(this.transform.position, newColor);
+            }
         }
         GameManager.instance.markedForDeathEnemies.Add(this);
         if (HasDied != null)

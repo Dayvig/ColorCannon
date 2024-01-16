@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using static GameManager;
 
 public class GameModel : MonoBehaviour
@@ -101,6 +100,7 @@ public class GameModel : MonoBehaviour
     public List<AudioClip> music = new List<AudioClip>();
 
     public GameObject DeathSplatter;
+    public GameObject DeathGiblet;
 
     public int xBounds = 3;
     public int yBounds = 5;
@@ -279,7 +279,8 @@ public class GameModel : MonoBehaviour
             case UIManager.WaveModifier.BIGGER_WAVE:
                 return WaveModTexts[3];
             case UIManager.WaveModifier.MONOCHROME:
-                return WaveModTexts[7] + baseWaveMonochrome * count * 100 + WaveModTexts[8];
+                String returnText = WaveModTexts[7] + baseWaveMonochrome * count * 100 + WaveModTexts[8];
+                return returnText;
             default:
                 return "Huh";
         }
@@ -401,10 +402,14 @@ public class GameModel : MonoBehaviour
                 returnText = UpgradeTexts[14] + upgrade.factor * 2 +" "+ upgrade.color.ToString().ToLower() + UpgradeTexts[15] + rocketInterval + "s";
                 break;
             case GameManager.UpgradeType.RAINBOWMULT:
-                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17] + 1 + UpgradeTexts[18];
+                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17] + upgrade.factor;
+                returnText += (upgrade.factor == 1 ? UpgradeTexts[21] : UpgradeTexts[22]);
                 break;
             case GameManager.UpgradeType.PULSE:
-                returnText = UpgradeTexts[17] + (5 - upgrade.factor) + UpgradeTexts[18];
+                returnText = UpgradeTexts[19] + (5 - upgrade.factor) + UpgradeTexts[20];
+                break;
+            case GameManager.UpgradeType.BARRAGE:
+                returnText = UpgradeTexts[18];
                 break;
             default:
                 return "Something went wrong";

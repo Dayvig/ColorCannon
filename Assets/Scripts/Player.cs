@@ -90,14 +90,17 @@ public class Player : MonoBehaviour, IDataPersistence
     public float pulseTimer = 0.0f;
     public float pulseInterval = -1f;
     public bool pulseShield = false;
-    
+
+    public float rainbowRushReminderTimer = 0.0f;
+    public float rainbowRushReminderInterval = 10.0f;
+    public pulseReminder rainbowReminder;
     private enum controlMode
     {
         TOUCH,
         MOUSE
     }
 
-    private controlMode playerControlMode = controlMode.MOUSE;
+    private controlMode playerControlMode = controlMode.TOUCH;
     
     void Start()
     {
@@ -134,15 +137,7 @@ public class Player : MonoBehaviour, IDataPersistence
                     touchPos.x - currentPos.x)) - 90;
                 rotationTarget = angle;
             }
-        }
-        /*
-        actualRotation = Vector3.Lerp(
-            new Vector3(0, 0, rotationCurrent),
-            new Vector3(0, 0, rotationTarget),
-            Time.deltaTime * 30.0f);
-        */
-        //gameObject.transform.rotation = Quaternion.Euler(actualRotation);
-        
+        }        
         gameObject.transform.rotation = Quaternion.Euler(new Vector3(rot.x, rot.y, rotationTarget));
         
         shotTimer += Time.deltaTime;
@@ -168,6 +163,15 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 PulseShield();
                 pulseTimer = 0.0f;
+            }
+        }
+
+        if (rainbowMeter >= meterMax && !rainbowRush && !rainbowReminder.active)
+        {
+            rainbowRushReminderTimer += Time.deltaTime;
+            if (rainbowRushReminderTimer >= rainbowRushReminderInterval)
+            {
+                rainbowReminder.Initialize();
             }
         }
     }
@@ -230,7 +234,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 rainbowTimer = 0.0f;
                 PulseShield();
                 configureWeapon();
-
+                SoundManager.instance.PlaySFX(meter.source, GameModel.instance.uiSounds[4], 0.4f, 0.6f);
             }
         }
     }
@@ -499,6 +503,7 @@ public class Player : MonoBehaviour, IDataPersistence
         piercing = FinalPiercing(playerColor);
         combineChance = FinalCombineChance();
         meterMult = FinalMeterMult();
+        rainbowRushTime = FinalRainbowRushTime();
         deathPulse = false;
         pulseShield = false;
         foreach (GameManager.Upgrade u in upgrades)
@@ -519,6 +524,20 @@ public class Player : MonoBehaviour, IDataPersistence
 
         SetMeter();
     }
+
+    public float FinalRainbowRushTime()
+    {
+        float rushTime = 10.0f;
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.RAINBOWMULT))
+            {
+                rushTime += u.factor;
+            }
+        }
+        return rushTime;
+    }
+
 
     public float FinalMeterMult()
     {
@@ -593,6 +612,15 @@ public class Player : MonoBehaviour, IDataPersistence
                 for (int i = 0; i < u.factor; i++)
                 {
                     rocketColors.Add(u.color);
+                }
+            }
+        }
+        foreach (GameManager.Upgrade u in upgrades)
+        {
+            if (u.type.Equals(GameManager.UpgradeType.ROCKETS))
+            {
+                for (int i = 0; i < u.factor; i++)
+                {
                     rocketColors.Add(u.color);
                 }
             }
@@ -601,6 +629,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 rocketRoF /= (1 / u.factor * modelGame.rocketBarrageUpg);
             }
         }
+
         return rocketColors;
     }
 
@@ -778,7 +807,7 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 if (Vector3.Distance(transform.position, touchPos) < 1f && rainbowMeter >= meterMax)
                 {
-                    meter.transform.localScale = meter.bigScale;
+                    meter.SetToBig();
                     if (meter.selected)
                     {
                         rainbowTimer = 0f;
@@ -787,6 +816,8 @@ public class Player : MonoBehaviour, IDataPersistence
                         meter.rotationSpeed = 0.1f;
                         WaveSpawningSystem.instance.AddExtraEnemies();
                         configureWeapon();
+                        rainbowReminder.Hide();
+                        rainbowRushReminderTimer = 0.0f;
                     }
                     else
                     {
@@ -797,7 +828,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 else
                 {
                     meter.selected = false;
-                    meter.transform.localScale = meter.baseScale;
+                    meter.SetToSmall();
                 }
 
 
@@ -830,6 +861,7 @@ public class Player : MonoBehaviour, IDataPersistence
         //if one click has already been executed, switch color
         if (Input.GetMouseButtonDown(0))
         {
+
             if (clicks == 0)
             {
                 firstTapPos = mousePos;
@@ -845,7 +877,6 @@ public class Player : MonoBehaviour, IDataPersistence
         {
             if (Vector3.Distance(transform.position, mousePos) < 1f && rainbowMeter >= meterMax )
             {
-                meter.transform.localScale = meter.bigScale;
                 if (meter.selected)
                 {
                     rainbowRush = true;
@@ -853,17 +884,20 @@ public class Player : MonoBehaviour, IDataPersistence
                     meter.rotationSpeed = 0.1f;
                     WaveSpawningSystem.instance.AddExtraEnemies();
                     configureWeapon();
+                    meter.SetToSmall();
+                    SoundManager.instance.PlaySFX(meter.source, GameModel.instance.bulletSounds[5]);
                 }
                 else
                 {
                     meter.selected = true;
+                    meter.SetToBig();
                 }
                 return;
             }
             else
             {
                 meter.selected = false;
-                meter.transform.localScale = meter.baseScale;
+                meter.SetToSmall();
             }
 
 

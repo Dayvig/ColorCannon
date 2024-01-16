@@ -21,12 +21,13 @@ public class nextWaveButton : MonoBehaviour
     {
         if (WaveSpawningSystem.instance.Level > 15)
         {
+            GameManager.instance.Win();
             GameManager.instance.SetState(GameManager.GameState.WIN);
             Debug.Log("Win");
         }
         else
         {
-            if (manager.selectedUpgrade.type.Equals(GameManager.UpgradeType.NONE) && pressed == 0)
+            if (manager.selectedUpgrade.type.Equals(GameManager.UpgradeType.NONE) && pressed == 0 && WaveSpawningSystem.instance.Level != 1)
             {
                 reminder.Flash();
                 pressed++;

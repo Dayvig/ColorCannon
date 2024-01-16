@@ -105,7 +105,6 @@ public class Bullet : MonoBehaviour
         }
         if (isSeeking && seekingTarget != null)
         {
-            Debug.Log("Hit");
             positionTarget = Vector3.MoveTowards(positionTarget, seekingTarget.transform.position, overallSpeed);
             flight = -(positionCurrent - positionTarget).normalized * overallSpeed;
             Quaternion rot = gameObject.transform.rotation;
@@ -164,7 +163,6 @@ public class Bullet : MonoBehaviour
     void CheckCollisions()
     {
         RaycastHit2D[] hits = Physics2D.LinecastAll(transform.position, positionCurrent, 7);
-        Debug.DrawLine(transform.position, positionCurrent, Color.blue, 1f);
         if (hits.Length != 0)
         {
             foreach (RaycastHit2D h in hits)
