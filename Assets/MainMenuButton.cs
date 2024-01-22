@@ -9,6 +9,7 @@ public class MainMenuButton : MonoBehaviour
     public GameManager manager;
     public UIManager uiManager;
     public PauseButton pauseButton;
+    public bool playMusic;
 
     void Start()
     {
@@ -20,8 +21,17 @@ public class MainMenuButton : MonoBehaviour
     void TaskOnClick()
     {
         manager.SetState(GameManager.GameState.MAINMENU);
+        UIManager.instance.activateMainMenuAnimations(true);
+        GameManager.instance.arena = GameManager.instance.lastValidArena;
+        UIManager.instance.setArenaImage();
         pauseButton.HideUI();
+        UIManager.instance.activateNotebookUI(false);
         uiManager.titleTextScript.Reset();
         uiManager.playButton.initialize();
+        if (playMusic)
+        {
+            SoundManager.instance.mainMusic.Stop();
+            SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
+        }
     }
 }

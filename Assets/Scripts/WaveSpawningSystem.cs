@@ -656,18 +656,13 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             {
                 nextChunk = returnRandomChunk(availableChunks, chunkDifficulties[i]);
             }
-            if (i < 4)
+            if (i < 3)
             {
                 UIManager.instance.SetupChunkPreview(nextChunk, 1);
             }
-            else if (i < 8)
-            {
-                UIManager.instance.SetupChunkPreview(nextChunk, 2);
-            }
             else
             {
-                Debug.Log("Eg");
-                UIManager.instance.SetupChunkPreview(nextChunk, 3);
+                UIManager.instance.SetupChunkPreview(nextChunk, 2);
             }
             bool isTutorial = false;
             foreach (Mechanic m in newMechanics)

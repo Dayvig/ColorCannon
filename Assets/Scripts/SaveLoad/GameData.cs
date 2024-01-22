@@ -26,7 +26,6 @@ public class GameData
     public float rainbowMult;
 
 
-
     public int promodeLevel;
     public int maxProModeLevel;
     public bool refreshActive;

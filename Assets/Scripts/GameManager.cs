@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WIN,
         LOSE,
         MAINMENU,
-        SETTINGS
+        SETTINGS,
+        NOTEBOOK
     }
 
     public enum UpgradeType
@@ -103,10 +104,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public int promodeLevel = 0;
     public int maxProModeLevelUnlocked = 0;
+    public int rainbowInk = 0;
 
     public static GameManager instance { get; private set; }
 
     public bool justLaunched = true;
+    public int arena = 0;
+    public int lastValidArena = 0;
+    public List<int> unlockedArenas = new List<int>();
 
     void SetupForWave()
     {
@@ -170,6 +175,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
             spawningSystem.SetupNextWave();
             SetupForWave();
             nextState = GameState.UIANIMATIONS;
+        }
+        if (currentState == GameState.MAINMENU && nextState == GameState.NOTEBOOK)
+        {
+            Debug.Log("Transition from menu to notebook");
+            nextState = GameState.UIANIMATIONS;
+            UIManager.instance.activateMainMenuAnimations(false);
+
+            DisposeAllBullets();
+            DisposeAllSplatters();
+            DisposeAllEnemies();
 
         }
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
@@ -238,7 +253,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             SoundManager.instance.mainMusic.UnPause();
         }
-        if ((currentState == GameState.PAUSED || currentState == GameState.WIN || currentState == GameState.LOSE) && nextState == GameState.MAINMENU)
+        if ((currentState == GameState.PAUSED || currentState == GameState.WIN || currentState == GameState.LOSE || currentState == GameState.NOTEBOOK) && nextState == GameState.MAINMENU)
         {
             DisposeAllBullets();
             DisposeAllSplatters();
@@ -247,10 +262,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
             UIManager.instance.deactivateWaveUI();
             UIManager.instance.deactivateWinLoseUI();
             UIManager.instance.activateMainMenuUI();
-            UIManager.instance.titleTextScript.Reset();
-            SoundManager.instance.mainMusic.Stop();
-            SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
-            
+            UIManager.instance.activateMainMenuAnimations(true);
+            nextState = GameState.UIANIMATIONS;
         }
         currentState = nextState;
 
@@ -628,6 +641,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
             case GameState.SETTINGS:
                 SettingsUpdate();
                 break;
+            case GameState.NOTEBOOK:
+                NotebookUpdate();
+                break;
             default:
                 WaveUpdate();
                 break;
@@ -754,6 +770,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
     void SettingsUpdate()
     {
         UIManager.instance.SettingsUpdate();
+    }
+
+    void NotebookUpdate()
+    {
+
     }
 
     void WaveUpdate()

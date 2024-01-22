@@ -83,6 +83,8 @@ public class Player : MonoBehaviour, IDataPersistence
     public rainbowMeter meter;
     public bool rainbowRush = false;
     public float rainbowTimer = 0.0f;
+    public int rainbowInkCollected = 0;
+    public RainbowInkScript rainbowInkScript;
 
     public ringScript SelectorRing;
     public bool movementLocked = false;
@@ -94,13 +96,13 @@ public class Player : MonoBehaviour, IDataPersistence
     public float rainbowRushReminderTimer = 0.0f;
     public float rainbowRushReminderInterval = 10.0f;
     public pulseReminder rainbowReminder;
-    private enum controlMode
+    public enum controlMode
     {
         TOUCH,
         MOUSE
     }
 
-    private controlMode playerControlMode = controlMode.TOUCH;
+    public controlMode playerControlMode = controlMode.TOUCH;
     
     void Start()
     {
@@ -800,6 +802,10 @@ public class Player : MonoBehaviour, IDataPersistence
                 {
                     firstTapPos = touchPos;
                 }
+                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing())
+                {
+                    nextColor();
+                }
             }
             //End click
             //If the position is close to where it began, increment clicks
@@ -978,6 +984,7 @@ public class Player : MonoBehaviour, IDataPersistence
         if (!rainbowRush)
         {
             float fillAmnt = UnityEngine.Random.Range(meterMax / (60 / (meterMult)), meterMax / (45 / (meterMult)));
+            GameManager.instance.rainbowInk += (int)(fillAmnt * 50);
             rainbowMeter += fillAmnt;
             meter.targetFill = rainbowMeter / meterMax;
             meter.fillTimer = 0.0f;
@@ -986,6 +993,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 rainbowMeter = meterMax;
                 meter.targetFill = 1;
             }
+            rainbowInkScript.Appear();
         }
     }
 

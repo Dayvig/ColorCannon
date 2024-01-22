@@ -10,19 +10,23 @@ public class SaveLoadManager : MonoBehaviour
     [Header("File Storage Config")]
     [SerializeField] private string fileName;
     [SerializeField] private string settingsFileName;
+    [SerializeField] private string unlocksFileName;
 
     public static SaveLoadManager instance { get; private set; }
     private GameData gameData;
     private SettingsData settingsData;
+    private UnlockData unlockData;
+
     public List<IDataPersistence> saveLoadObjects = new List<IDataPersistence>();
     private FileDataHandler dataHandler;
     public bool isWebGL;
     public void initialize()
     {
-        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, Application.persistentDataPath, settingsFileName);
-        this.saveLoadObjects = FindAllSaveLoadObjects();    
+        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, Application.persistentDataPath, settingsFileName, Application.persistentDataPath, unlocksFileName);
+        this.saveLoadObjects = FindAllSaveLoadObjects();
         LoadGame();
         LoadSettings();
+        LoadUnlocks();
     }
 
     public void Awake()
@@ -107,6 +111,8 @@ public class SaveLoadManager : MonoBehaviour
         SoundManager.instance.masterVolume = settingsData.masterVolume;
         SoundManager.instance.musicVolume= settingsData.musicVolume;
         SoundManager.instance.sfxVolume = settingsData.sfxVolume;
+        SoundManager.instance.isMuted = settingsData.muted;
+        UIManager.instance.mute.SetState();
         GameManager.instance.splatterVal = settingsData.splatters;
         GameManager.instance.doubleTapCycle = settingsData.doubletapcycle;
         if (settingsData.tutorialOn)
@@ -119,8 +125,41 @@ public class SaveLoadManager : MonoBehaviour
         }
     }
 
+    public void LoadUnlocks()
+    {
+        this.unlockData = dataHandler.LoadUnlocks();
+        if (unlockData == null)
+        {
+            unlockData = new UnlockData();
+        }
+        GameManager.instance.rainbowInk = unlockData.rainbowInk;
+        GameManager.instance.unlockedArenas = unlockData.arenas;
+        GameManager.instance.arena = unlockData.currentArena;
+        GameManager.instance.lastValidArena = unlockData.currentArena;
+    }
+
+    public int getRainbowInk()
+    {
+        return unlockData.rainbowInk;
+    }
+    public void spendRainbowInk(int spent)
+    {
+        unlockData.rainbowInk -= spent;
+    }
+    
+    public void unlockArena(int unlocked)
+    {
+        unlockData.arenas.Add(unlocked);
+    }
+
+    public List<int> getUnlockedArenas()
+    {
+        return unlockData.arenas;
+    }
+
     public void SaveGame()
     {
+        SaveUnlocks();
         foreach (IDataPersistence saveLoadObj in saveLoadObjects)
         {
             saveLoadObj.SaveData(ref gameData);
@@ -143,6 +182,15 @@ public class SaveLoadManager : MonoBehaviour
         settingsData.splatters = GameManager.instance.splatterVal;
         settingsData.doubletapcycle = GameManager.instance.doubleTapCycle;
         settingsData.tutorialOn = (WaveSpawningSystem.instance.tutorialStage == 0);
+        settingsData.muted = SoundManager.instance.isMuted;
         dataHandler.SaveSettings(settingsData);
+    }
+
+    public void SaveUnlocks()
+    {
+        unlockData.rainbowInk = GameManager.instance.rainbowInk;
+        unlockData.arenas = GameManager.instance.unlockedArenas;
+        unlockData.currentArena = GameManager.instance.arena;
+        dataHandler.SaveUnlocks(unlockData);
     }
 }

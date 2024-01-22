@@ -15,6 +15,7 @@ public class SoundManager : MonoBehaviour
 
     public AudioSource mainMusic;
     public bool mainMusicPlaying = false;
+    public bool isMuted;
 
     public static SoundManager instance { get; private set; }
 
@@ -25,53 +26,82 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySFX(AudioSource source, AudioClip clip)
     {
-        source.clip = clip;
-        source.volume = masterVolume * sfxVolume;
-        source.PlayOneShot(clip, masterVolume*sfxVolume);
+        if (!isMuted)
+        {
+            source.clip = clip;
+            source.volume = masterVolume * sfxVolume;
+            source.PlayOneShot(clip, masterVolume * sfxVolume);
+        }
+    }
+
+    public void MuteAudio()
+    {
+        isMuted = true;
+        SoundManager.instance.mainMusic.mute = isMuted;
+    }
+
+    public void UnMuteAudio()
+    {
+        isMuted = false;
+        SoundManager.instance.mainMusic.mute = isMuted;
     }
 
     public void PlaySFX(AudioSource source, AudioClip clip, float minPitchOffset, float maxPitchOffset)
     {
-        float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
-        source.clip = clip;
-        source.pitch *= pitchShift;
-        source.PlayOneShot(clip, masterVolume*sfxVolume);
-        source.pitch /= pitchShift;
+        if (!isMuted)
+        {
+            float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
+            source.clip = clip;
+            source.pitch += pitchShift;
+            source.PlayOneShot(clip, masterVolume * sfxVolume);
+            source.pitch -= pitchShift;
+        }
     }
 
     public void PlaySFX(AudioSource source, AudioClip clip, float delaySeconds)
     {
-        source.volume = masterVolume * sfxVolume;
-        StartCoroutine(PlaySFXWithDelay(source, clip, delaySeconds));
+        if (!isMuted)
+        {
+            source.volume = masterVolume * sfxVolume;
+            StartCoroutine(PlaySFXWithDelay(source, clip, delaySeconds));
+        }
     }
 
     public void PlaySFX(AudioSource source, AudioClip clip, int priority)
     {
-        source.clip = clip;
-        source.priority = priority;
-        source.volume = masterVolume * sfxVolume;
-        source.PlayOneShot(clip, masterVolume * sfxVolume);
+        if (!isMuted)
+        {
+            source.clip = clip;
+            source.priority = priority;
+            source.volume = masterVolume * sfxVolume;
+            source.PlayOneShot(clip, masterVolume * sfxVolume);
+        }
     }
 
     public void PlayMusicAndLoop(AudioSource source, AudioClip clip)
     {
-        source.clip = clip;
-        source.loop = true;
-        source.volume = masterVolume * musicVolume;
-        source.Play();
+            source.clip = clip;
+            source.loop = true;
+            source.volume = masterVolume * musicVolume;
+            source.Play();
+            SoundManager.instance.mainMusic.mute = isMuted;
     }
 
     public void PlayRandomMainTheme()
     {
         SoundManager.instance.mainMusic.Stop();
         PlayMusicAndLoop(mainMusic, GameModel.instance.music[Random.Range(0, 4) + 1]);
+        SoundManager.instance.mainMusic.mute = isMuted;
     }
 
     IEnumerator PlaySFXWithDelay(AudioSource source, AudioClip clip, float delaySeconds)
     {
-        source.volume = masterVolume * sfxVolume;
-        yield return new WaitForSeconds(delaySeconds);
-        PlaySFX(source, clip);
+        if (!isMuted)
+        {
+            source.volume = masterVolume * sfxVolume;
+            yield return new WaitForSeconds(delaySeconds);
+            PlaySFX(source, clip);
+        }
     }
 
     public void CalculateMusicVolume()

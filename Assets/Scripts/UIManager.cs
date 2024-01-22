@@ -31,7 +31,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public GameObject currentUpgradePanel;
     public Transform PreviewPanelRow1;
     public Transform PreviewPanelRow2;
-    public Transform PreviewPanelRow3;
+    //public Transform PreviewPanelRow3;
     public List<Transform> currentUpgradeRows = new List<Transform>();
     public Transform WaveModPanelRow;
     public GameObject ChunkPreview;
@@ -45,6 +45,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public GameObject RefreshUpgradesButton;
     public TextMeshProUGUI WaveText;
     public GameObject MainMenuPanel;
+    public GameObject NotebookPanel;
     
     public GameModel modelGame;
     public GameManager gameManager;
@@ -101,6 +102,14 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public Vector3 settingsMidRot;
     public Vector3 settingsEndRot;
 
+    public Vector3 mainMenuTitlePos;
+    public Vector3 mainMenuTitleAway;
+    public Vector3 mainMenuButtonsPos;
+    public Vector3 mainMenuButtonsAway;
+    public bool mainMenuAnimations = false;
+    public float mainMenuAnimationInterval;
+    public RectTransform mainMenuTitleRect;
+    public RectTransform mainMenuButtonsRect;
 
     private bool swingIn = true;
     private Vector3 start;
@@ -118,11 +127,15 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public TitleTextScript titleTextScript;
     public GameObject mainMenuButton;
     public PauseButton pause;
+    public MuteButton mute;
 
     public PromodeScript promode;
 
     public enableTutorial tutorialToggle;
 
+    //public Sprite Arena;
+    public SpriteRenderer arenaBackground;
+    public UnlockButton unlockButton;
     public enum WaveModifier
     {
         NUMEROUS,
@@ -173,6 +186,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
         activateMainMenuUI();
         tutorialToggle.init();
+        setArenaImage();
     }
 
     public void SettingsUpdate()
@@ -225,6 +239,14 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     }
 
+    public void activateMainMenuAnimations(bool reverse)
+    {
+        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[2], -0.5f, 0.5f);
+        postWaveUITimer = 0.0f;
+        mainMenuAnimations = true;
+        swingIn = reverse;
+    }
+
     public void activateWinLoseAnimations(bool swingingIn, bool win)
     {
         currentAnimationTarget = win ? WinRect : LoseRect;
@@ -250,6 +272,11 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void PostWaveUIAndAnimationUpdate()
     {
+        if (mainMenuAnimations)
+        {
+            MainMenuAnimationUpdate(swingIn);
+            return;
+        }
         if (postWaveUITimer == -1f)
         {
             if (toolTipTimer < toolTipDissappearInterval)
@@ -278,7 +305,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
             }
             else
             {
-                Debug.Log("Destination State: " + (swingIn ? GameState.SETTINGS : GameManager.instance.returnState));
                 animationUpdate(start, settingsMidPos, end, rotStart, settingsMidRot, rotEnd, swingIn ? GameState.SETTINGS : GameManager.instance.returnState);
             }
         }
@@ -303,6 +329,54 @@ public class UIManager : MonoBehaviour, IDataPersistence
             postWaveUITimer = -1f;
             GameManager.instance.SetState(endState);
         }
+    }
+
+    void MainMenuAnimationUpdate(bool reverse)
+    {
+        if (!reverse)
+        {
+            postWaveUITimer += Time.deltaTime;
+            mainMenuTitleRect.anchoredPosition = Vector3.Lerp(mainMenuTitlePos, mainMenuTitleAway, postWaveUITimer / mainMenuAnimationInterval);
+            mainMenuButtonsRect.anchoredPosition = Vector3.Lerp(mainMenuButtonsPos, mainMenuButtonsAway, postWaveUITimer / mainMenuAnimationInterval);
+
+            if (postWaveUITimer >= mainMenuAnimationInterval)
+            {
+                mainMenuAnimations = false;
+                PostProcessingManager.instance.SetBlur(false);
+                GameManager.instance.SetState(GameState.NOTEBOOK);
+                UIManager.instance.activateNotebookUI(true);
+                unlockButton.setupUnlockButton();
+            }
+        }
+        else
+        {
+            postWaveUITimer += Time.deltaTime;
+            mainMenuTitleRect.anchoredPosition = Vector3.Lerp(mainMenuTitleAway, mainMenuTitlePos, postWaveUITimer / mainMenuAnimationInterval);
+            mainMenuButtonsRect.anchoredPosition = Vector3.Lerp(mainMenuButtonsAway, mainMenuButtonsPos, postWaveUITimer / mainMenuAnimationInterval);
+
+            if (postWaveUITimer >= mainMenuAnimationInterval)
+            {
+                mainMenuAnimations = false;
+                PostProcessingManager.instance.SetBlur(true);
+                UIManager.instance.titleTextScript.Reset();
+                GameManager.instance.SetState(GameState.MAINMENU);
+                UIManager.instance.activateNotebookUI(false);
+                SaveLoadManager.instance.SaveUnlocks();
+            }
+
+        }
+    }
+
+    public void ResetMainMenuPositions()
+    {
+        mainMenuTitleRect.anchoredPosition = mainMenuTitlePos;
+        mainMenuButtonsRect.anchoredPosition = mainMenuButtonsPos;
+    }
+
+    public void activateNotebookUI(bool visible)
+    {
+        NotebookPanel.SetActive(visible);
+        unlockButton.setupUnlockButton();
     }
 
     public void renderToolTip(String inputText)
@@ -440,13 +514,9 @@ public class UIManager : MonoBehaviour, IDataPersistence
         {
             newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow1);
         }
-        else if (row == 2)
-        {
-            newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow2);
-        }
         else
         {
-            newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow3);
+            newChunkPreview = Instantiate(ChunkPreview, PreviewPanelRow2);
         }
         for (int k = 0; k < c.colors.Length; k++)
         {
@@ -666,10 +736,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
         {
             PreviewPanelRow2.GetChild(i).gameObject.SetActive(false);
         }
-        for (int i = 0; i < PreviewPanelRow3.childCount; i++)
-        {
-            PreviewPanelRow3.GetChild(i).gameObject.SetActive(false);
-        }
         for (int i = 0; i < currentUpgradeRows.Count; i++)
         {
             for (int k = 0; k < currentUpgradeRows[i].childCount; k++)
@@ -730,10 +796,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
         {
             Destroy(PreviewPanelRow2.GetChild(i).gameObject);
         }
-        for (int i = 0; i < PreviewPanelRow3.childCount; i++)
-        {
-            Destroy(PreviewPanelRow3.GetChild(i).gameObject);
-        }
         for (int i = 0; i < WaveModPanelRow.childCount; i++)
         {
             Destroy(WaveModPanelRow.GetChild(i).gameObject);
@@ -749,6 +811,11 @@ public class UIManager : MonoBehaviour, IDataPersistence
                 Destroy(currentUpgradeRows[i].GetChild(k).gameObject);
             }
         }
+    }
+
+    public void setArenaImage()
+    {
+        arenaBackground.sprite = GameModel.instance.arenaImages[GameManager.instance.arena];
     }
 
     public void LoadData(GameData data)

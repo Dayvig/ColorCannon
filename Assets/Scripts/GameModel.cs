@@ -23,6 +23,8 @@ public class GameModel : MonoBehaviour
     public List<Sprite> UpgradeImages = new List<Sprite>();
     public List<Sprite> WaveModImages = new List<Sprite>();
     public List<Sprite> bulletImages = new List<Sprite>();
+    public List<Sprite> arenaImages = new List<Sprite>();
+    public List<int> arenaCosts = new List<int>();
     public List<Sprite> giblets = new List<Sprite>();
     public List<string> WaveModTexts = new List<string>();
     public List<string> ChunkTexts = new List<string>();

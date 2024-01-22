@@ -11,6 +11,7 @@ public class ArrowScript : MonoBehaviour
     public UIManager uiManager;
     public bool active = false;
     public PromodeScript promode;
+    public AudioSource thisSource;
 
     void Start()
     {
@@ -35,7 +36,7 @@ public class ArrowScript : MonoBehaviour
         }
         else
         {
-            //play bad noise
+            SoundManager.instance.PlaySFX(thisSource, GameModel.instance.uiSounds[5], -0.5f, 0.5f);
         }
     }
 }

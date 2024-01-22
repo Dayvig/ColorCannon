@@ -10,6 +10,7 @@ public class SettingsData
     public bool doubletapcycle;
     public float splatters;
     public bool tutorialOn;
+    public bool muted;
 
     public SettingsData()
     {
@@ -19,6 +20,7 @@ public class SettingsData
         musicVolume = 0.5f;
         sfxVolume = 0.5f;
         tutorialOn = true;
+        muted = false;
     }
 
 }

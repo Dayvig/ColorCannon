@@ -12,12 +12,17 @@ public class FileDataHandler
     private string dataFileName = "";
     private string settingDirPath = "";
     private string settingsFileName = "";
-    public FileDataHandler(string dataDirPath, string dataFileName, string settingDirPath, string settingsFileName)
+    private string unlockDirPath = "";
+    private string unlockFileName = "";
+
+    public FileDataHandler(string dataDirPath, string dataFileName, string settingDirPath, string settingsFileName, string unlockDirPath, string unlockFileName)
     {
         this.dataDirPath = dataDirPath;
         this.dataFileName = dataFileName;
         this.settingDirPath = settingDirPath;
         this.settingsFileName = settingsFileName;
+        this.unlockDirPath = unlockDirPath;
+        this.unlockFileName = unlockFileName;
     }
 
     public GameData Load()
@@ -87,6 +92,35 @@ public class FileDataHandler
 
     }
 
+    public UnlockData LoadUnlocks()
+    {
+        string fullPath = Path.Combine(unlockDirPath, unlockFileName);
+        UnlockData loadedData = null;
+        if (File.Exists(fullPath))
+        {
+            try
+            {
+                string dataToLoad = "";
+                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                {
+                    using (StreamReader sr = new StreamReader(stream))
+                    {
+                        dataToLoad = sr.ReadToEnd();
+                    }
+                }
+                loadedData = JsonConvert.DeserializeObject<UnlockData>(dataToLoad);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error occurred while trying to load data :" + fullPath + "\n" + e);
+            }
+
+        }
+
+        return loadedData;
+
+    }
+
     public void Save(GameData data)
     {
         Debug.Log("Saving Game " + data.currentLevel);
@@ -112,6 +146,27 @@ public class FileDataHandler
     public void SaveSettings(SettingsData data)
     {
         string fullPath = Path.Combine(settingDirPath, settingsFileName);
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+            string DataToStore = JsonConvert.SerializeObject(data);
+            using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+            {
+                using (StreamWriter writer = new StreamWriter(stream))
+                {
+                    writer.Write(DataToStore);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Error occurred while trying to save data to file :" + fullPath + "\n" + e);
+        }
+    }
+
+    public void SaveUnlocks(UnlockData data)
+    {
+        string fullPath = Path.Combine(unlockDirPath, unlockFileName);
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
