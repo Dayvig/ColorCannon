@@ -845,6 +845,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WipeAllEnemiesAndBullets();
         UIManager.instance.activateWinScreen();
         UIManager.instance.activateWinLoseAnimations(true, true);
+        SoundManager.instance.mainMusic.Stop();
         SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.SaveGame();
     }

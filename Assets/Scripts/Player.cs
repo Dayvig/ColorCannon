@@ -129,17 +129,17 @@ public class Player : MonoBehaviour, IDataPersistence
         if (!SelectorRing.activated)
         {
             LookAtMouse(currentPos);
+            if (Input.touchCount == 1)
+            {
+                Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+                {
+                    float angle = ((180 / Mathf.PI) * Mathf.Atan2(touchPos.y - currentPos.y,
+                        touchPos.x - currentPos.x)) - 90;
+                    rotationTarget = angle;
+                }
+            }
         }
 
-        if (Input.touchCount == 1)
-        {
-            Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-            {
-                float angle = ((180 / Mathf.PI) * Mathf.Atan2(touchPos.y -currentPos.y,
-                    touchPos.x - currentPos.x)) - 90;
-                rotationTarget = angle;
-            }
-        }        
         gameObject.transform.rotation = Quaternion.Euler(new Vector3(rot.x, rot.y, rotationTarget));
         
         shotTimer += Time.deltaTime;
@@ -234,6 +234,7 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 rainbowRush = false;
                 rainbowTimer = 0.0f;
+                rainbowRushReminderTimer = 0.0f;
                 PulseShield();
                 configureWeapon();
                 SoundManager.instance.PlaySFX(meter.source, GameModel.instance.uiSounds[4], 0.4f, 0.6f);
@@ -802,9 +803,10 @@ public class Player : MonoBehaviour, IDataPersistence
                 {
                     firstTapPos = touchPos;
                 }
-                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing())
+                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing(touchPos))
                 {
                     nextColor();
+                    SelectorRing.Close();
                 }
             }
             //End click
@@ -813,11 +815,12 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 if (Vector3.Distance(transform.position, touchPos) < 1f && rainbowMeter >= meterMax)
                 {
-                    meter.SetToBig();
                     if (meter.selected)
                     {
+                        meter.SetToSmall();
                         rainbowTimer = 0f;
                         rainbowRush = true;
+                        rainbowMeter = meterMax;
                         meter.isActive = false;
                         meter.rotationSpeed = 0.1f;
                         WaveSpawningSystem.instance.AddExtraEnemies();
@@ -828,6 +831,7 @@ public class Player : MonoBehaviour, IDataPersistence
                     else
                     {
                         meter.selected = true;
+                        meter.SetToBig();
                     }
                     return;
                 }
@@ -840,13 +844,13 @@ public class Player : MonoBehaviour, IDataPersistence
 
                 clicks++;
                 mouseTimer = 0f;
-                if (clicks == 1 && Vector3.Distance(firstTapPos, touchPos) <= 0.1f && !SelectorRing.activated)
+                if (clicks == 1 && Vector3.Distance(firstTapPos, touchPos) <= 0.4f && !SelectorRing.activated)
                 {
                     SelectorRing.Open();
                 }
                 else
                 {
-                    SelectorRing.StartAnimation(true);
+                    SelectorRing.Close();
                     mouseTimer = -1.0f;
                     clicks = 0;
                 }
@@ -872,7 +876,7 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 firstTapPos = mousePos;
             }
-            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing())
+            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing(mousePos))
             {
                 nextColor();
             }
@@ -940,7 +944,6 @@ public class Player : MonoBehaviour, IDataPersistence
         GameObject newPulse = Instantiate(shieldPulse, this.transform.position, Quaternion.identity);
         newPulse.GetComponent<pulseEffect>().initialize(shieldPulseRadius);
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.transform.position, shieldPulseRadius);
-        Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x + shieldPulseRadius, this.transform.position.y, 0), Color.blue, 4f);
         foreach (Collider2D c in hitColliders)
         {
             if (c.gameObject.tag == "Enemy")

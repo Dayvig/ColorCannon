@@ -46,7 +46,7 @@ public class NotebookArrowScript : MonoBehaviour
         setupArrows();
     }
 
-    void setupArrows()
+    public void setupArrows()
     {
         if (GameManager.instance.arena <= 0)
         {

@@ -8,7 +8,7 @@ public class ringScript : MonoBehaviour
 {
     public float animTimer = 0.0f;
     public float animInterval = 0.4f;
-    public float ringCloseRadius = 0.1f;
+    public float ringCloseRadius = 0.3f;
     public bool reverse = false;
     public bool playAnimation = false;
     public bool activated = false;
@@ -65,6 +65,13 @@ public class ringScript : MonoBehaviour
         SetPosition();
     }
 
+    public void Close()
+    {
+        StartAnimation(true);
+        activated = false;
+        SetPosition();
+    }
+
     private void animationUpdate()
     {
         if (reverse)
@@ -86,7 +93,7 @@ public class ringScript : MonoBehaviour
             }
         }
 
-        Vector3 newScale = Vector3.Lerp(0.05f * Vector3.one, 0.2f * Vector3.one, animTimer / animInterval);
+        Vector3 newScale = Vector3.Lerp(0.05f * Vector3.one, 0.25f * Vector3.one, animTimer / animInterval);
         this.transform.localScale = newScale;
     }
 
@@ -112,12 +119,11 @@ public class ringScript : MonoBehaviour
         }
     }
 
-    public bool inRing()
+    public bool inRing(Vector3 pos)
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
-        float yDiff = newMousePos.y - transform.position.y;
-        float xDiff = newMousePos.x - transform.position.x;
+        Vector3 newPos = new Vector3(pos.x, pos.y, 0);
+        float yDiff = newPos.y - transform.position.y;
+        float xDiff = newPos.x - transform.position.x;
 
         return (Mathf.Abs(xDiff) < ringCloseRadius && Mathf.Abs(yDiff) < ringCloseRadius);
     }
@@ -128,7 +134,7 @@ public class ringScript : MonoBehaviour
         Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
         float yDiff = newMousePos.y - transform.position.y;
         float xDiff = newMousePos.x - transform.position.x;
-        if (yDiff > 0 && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
+        if (yDiff > 0.2f && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
         {
             player.setColor(0);
             if (activeSlice != 0)
@@ -138,7 +144,7 @@ public class ringScript : MonoBehaviour
                 prevSlice = 0;
             }
         }
-        else if (xDiff > 0)
+        else if (xDiff > 0.2f)
         {
             player.setColor(1);
             if (activeSlice != 1)
@@ -148,7 +154,7 @@ public class ringScript : MonoBehaviour
                 prevSlice = 1;
             }
         }
-        else if (xDiff < 0)
+        else if (xDiff < -0.2f)
         {
             player.setColor(2);
             if (activeSlice != 2)
@@ -157,6 +163,10 @@ public class ringScript : MonoBehaviour
                 activeSlice = 2;
                 prevSlice = 2;
             }
+        }
+        else
+        {
+            activeSlice = -1;
         }
     }
 

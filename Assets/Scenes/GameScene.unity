@@ -3604,8 +3604,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 509.019, y: 919.2102}
-  m_SizeDelta: {x: 354.95, y: 640.76}
+  m_AnchoredPosition: {x: 450, y: 900}
+  m_SizeDelta: {x: 341.44, y: 682.88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &409963301
 CanvasRenderer:
@@ -3879,7 +3879,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 900, y: 1800}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -8674,7 +8674,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -19.1}
+  m_AnchoredPosition: {x: 150, y: -31}
   m_SizeDelta: {x: 119.3048, y: 119.3048}
   m_Pivot: {x: 0.5, y: 0.7295337}
 --- !u!114 &939830599
@@ -9981,7 +9981,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 151.5, y: -6}
+  m_AnchoredPosition: {x: 142, y: -6}
   m_SizeDelta: {x: 70.612, y: 102.661}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1047886543
@@ -10988,7 +10988,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -179.823}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -163.3, y: -2}
+  m_AnchoredPosition: {x: -145, y: -2}
   m_SizeDelta: {x: 70.612, y: 102.661}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1156131232
@@ -11370,7 +11370,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -396.5, y: 788.99}
+  m_AnchoredPosition: {x: -349, y: 788.99}
   m_SizeDelta: {x: 142.214, y: 133.226}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1186125616
@@ -12420,7 +12420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 170.45, y: -470.7}
+  m_AnchoredPosition: {x: 170.45, y: -491}
   m_SizeDelta: {x: 387.6547, y: 237.6595}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!82 &1308897448
@@ -13110,6 +13110,10 @@ PrefabInstance:
       value: -123864301
       objectReference: {fileID: 0}
     - target: {fileID: 3153823466877353294, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
+      propertyPath: m_Color.a
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3153823466877353294, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
       propertyPath: m_SortingOrder
       value: 10
       objectReference: {fileID: 0}
@@ -13123,7 +13127,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: a4a3530d50d94934e89f2a28b25ce398, type: 3}
     - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
       propertyPath: animInterval
-      value: 0.05
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
       propertyPath: hoverInterval
@@ -15413,7 +15417,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 878.33, y: -118.2}
+  m_AnchoredPosition: {x: 750, y: -118.2}
   m_SizeDelta: {x: 197.56, y: 118.849}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1697791472
@@ -15690,9 +15694,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 838accccc62bba847b7bfd948cfa929b, type: 2}
   m_sharedMaterial: {fileID: 4759976931229359760, guid: 838accccc62bba847b7bfd948cfa929b, type: 2}
@@ -15719,7 +15721,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -16739,7 +16741,7 @@ MonoBehaviour:
   mainMenuTitlePos: {x: 0, y: 545, z: 0}
   mainMenuTitleAway: {x: 0, y: 1200, z: 0}
   mainMenuButtonsPos: {x: 0, y: -430, z: 0}
-  mainMenuButtonsAway: {x: 0, y: -1300, z: 0}
+  mainMenuButtonsAway: {x: 0, y: -1450, z: 0}
   mainMenuAnimations: 0
   mainMenuAnimationInterval: 0.4
   mainMenuTitleRect: {fileID: 833841199}
@@ -16758,6 +16760,7 @@ MonoBehaviour:
   tutorialToggle: {fileID: 2087563282}
   arenaBackground: {fileID: 1560701883}
   unlockButton: {fileID: 1308897453}
+  incArrow: {fileID: 1047886543}
 --- !u!114 &1793738078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18652,7 +18655,7 @@ PrefabInstance:
       objectReference: {fileID: 1431926387}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: playerControlMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: shieldPulseRadius
@@ -19403,7 +19406,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6355493466701754177, guid: 29c135124d25e384487b552281852bbe, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -129.65
+      value: -109
       objectReference: {fileID: 0}
     - target: {fileID: 6355493466701754177, guid: 29c135124d25e384487b552281852bbe, type: 3}
       propertyPath: m_AnchoredPosition.y

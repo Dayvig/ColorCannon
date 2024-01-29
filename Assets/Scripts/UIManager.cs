@@ -136,6 +136,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     //public Sprite Arena;
     public SpriteRenderer arenaBackground;
     public UnlockButton unlockButton;
+    public NotebookArrowScript incArrow;
     public enum WaveModifier
     {
         NUMEROUS,
@@ -377,6 +378,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         NotebookPanel.SetActive(visible);
         unlockButton.setupUnlockButton();
+        incArrow.setupArrows();
     }
 
     public void renderToolTip(String inputText)
