@@ -25,6 +25,7 @@ public class GameModel : MonoBehaviour
     public List<Sprite> bulletImages = new List<Sprite>();
     public List<Sprite> arenaImages = new List<Sprite>();
     public List<int> arenaCosts = new List<int>();
+    public List<string> arenaNames = new List<string>();
     public List<Sprite> giblets = new List<Sprite>();
     public List<string> WaveModTexts = new List<string>();
     public List<string> ChunkTexts = new List<string>();
@@ -32,6 +33,7 @@ public class GameModel : MonoBehaviour
 
     [Range(1.05f, 10f)] public float shotSpeedMultiplier;
     [Range(1.05f, 10f)] public float rapidFireMultiplier;
+    [Range(1.05f, 10f)] public float spreadFireRateReductionMultiplier;
     [Range(1.05f, 10f)] public float shotSizeMultiplier;
     [Range(1, 10)] public int numShotsUpgrade;
     [Range(1, 10)] public int piercingUpgrade;

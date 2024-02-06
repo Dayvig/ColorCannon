@@ -41,7 +41,11 @@ public class SaveLoadManager : MonoBehaviour
     public void NewGame()
     {
         gameData = new GameData();
+        settingsData = new SettingsData();
+        unlockData = new UnlockData();
         dataHandler.Save(gameData);
+        dataHandler.SaveSettings(settingsData);
+        dataHandler.SaveUnlocks(unlockData);
     }
 
 

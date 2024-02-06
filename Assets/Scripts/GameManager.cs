@@ -840,6 +840,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public void Win()
     {
         maxProModeLevelUnlocked++;
+        GameManager.instance.rainbowInk += 2000;
 
         UIManager.instance.deactivatePostWaveUI();
         WipeAllEnemiesAndBullets();

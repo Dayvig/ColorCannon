@@ -171,9 +171,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f520c03b5e74c0542b384ebb8d23d839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSpeed: 0
-  ySpeed: 0
+  overallSpeed: 0
   flight: {x: 0, y: 0, z: 0}
+  positionTarget: {x: 0, y: 0, z: 0}
   ren: {fileID: 6466563719531180968}
   lightRen: {fileID: 9170112764063370801}
   baseScale: 0.2
@@ -181,6 +181,8 @@ MonoBehaviour:
   modelGame: {fileID: 0}
   thisCollider: {fileID: 2301872461731747862}
   immuneEnemies: []
+  isSeeking: 0
+  seekingTarget: {fileID: 0}
 --- !u!50 &5659267133269794804
 Rigidbody2D:
   serializedVersion: 4

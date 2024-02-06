@@ -130,11 +130,13 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public MuteButton mute;
 
     public PromodeScript promode;
+    public TextMeshProUGUI ProModeDisplay;
 
     public enableTutorial tutorialToggle;
 
     //public Sprite Arena;
     public SpriteRenderer arenaBackground;
+    public TextMeshProUGUI arenaText;
     public UnlockButton unlockButton;
     public NotebookArrowScript incArrow;
     public enum WaveModifier
@@ -416,6 +418,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
         MainMenuPanel.SetActive(false);
         WinPanel.SetActive(true);
         WaveUIPanel.SetActive(false);
+        ProModeDisplay.text = "Pro Mode Level " + GameManager.instance.maxProModeLevelUnlocked + " Unlocked!";
     }
 
     public void activateMainMenuUI()
@@ -818,6 +821,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public void setArenaImage()
     {
         arenaBackground.sprite = GameModel.instance.arenaImages[GameManager.instance.arena];
+        arenaText.text = GameModel.instance.arenaNames[GameManager.instance.arena];
     }
 
     public void LoadData(GameData data)

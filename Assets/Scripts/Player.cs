@@ -691,38 +691,25 @@ public class Player : MonoBehaviour, IDataPersistence
     public float FinalRateOfFire(GameModel.GameColor currentColor)
     {
         shotSpeed = baseShotSpeed;
-        if (rainbowRush)
+        foreach (GameManager.Upgrade u in upgrades)
         {
-            for (int i = 0; i < 3; i++)
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
             {
-                foreach (GameManager.Upgrade u in upgrades)
+                for (int k = 0; k < u.factor; k++)
                 {
-                    if ((u.color.Equals(colorOrder[i]) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
-                    {
-                        for (int k = 0; k < u.factor; k++)
-                        {
-                            shotSpeed /= modelGame.rapidFireMultiplier;
-                        }
-                    }
+                    shotSpeed /= modelGame.rapidFireMultiplier;
                 }
-
             }
-            shotSpeed /= 8;
-        }
-        else
-        {
-            foreach (GameManager.Upgrade u in upgrades)
+            if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.SHOTS))
             {
-                if ((u.color.Equals(currentColor) || u.color.Equals(GameModel.GameColor.WHITE)) && u.type.Equals(GameManager.UpgradeType.ATTACKSPEED))
+                for (int k = 0; k < u.factor; k++)
                 {
-                    for (int k = 0; k < u.factor; k++)
-                    {
-                        shotSpeed /= modelGame.rapidFireMultiplier;
-                    }
+                    shotSpeed *= modelGame.spreadFireRateReductionMultiplier;
                 }
             }
         }
-        return shotSpeed;
+        if (rainbowRush){ shotSpeed /= 12; }
+            return shotSpeed;
     }
     
     public int FinalNumShots(GameModel.GameColor currentColor)
