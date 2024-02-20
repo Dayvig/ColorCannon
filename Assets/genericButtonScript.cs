@@ -18,12 +18,11 @@ public class genericButtonScript : MonoBehaviour, IPointerEnterHandler
 
     public void TaskOnClick()
     {
-        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[1]);
+        SoundManager.instance.PlaySFX(audioSource, GameModel.instance.uiSounds[1], -0.02f, 0.02f);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[0]);
-        Debug.Log("Sound");
+        SoundManager.instance.PlaySFX(audioSource, GameModel.instance.uiSounds[0], -0.02f, 0.02f);
     }
 }

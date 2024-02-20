@@ -415,11 +415,11 @@ public class EnemyBehavior : MonoBehaviour
     {
         if (withSound && GameManager.instance.currentState != GameManager.GameState.MAINMENU)
         {
-            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0]);
+            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[0], 0.5f, -0.5f);
             for (int i = 0; i < 3; i++)
             {
-                UnityEngine.Color newColor = storedColor;
-                newColor = new UnityEngine.Color(newColor.r, newColor.g, newColor.b, 0.4f);
+                Color newColor = storedColor;
+                newColor = new Color(newColor.r, newColor.g, newColor.b, 0.4f);
                 GameManager.instance.createGiblet(this.transform.position, newColor);
             }
         }

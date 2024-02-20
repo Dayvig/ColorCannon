@@ -23,7 +23,7 @@ public class rainbowMeter : MonoBehaviour
     public bool selected = false;
     public float ringAnimTimer = 0.0f;
     public float ringAnimInterval = 0.06f;
-    public int state = 0;
+    public int state = 2;
     //0- grow
     //1- shrink
     //2- nothing

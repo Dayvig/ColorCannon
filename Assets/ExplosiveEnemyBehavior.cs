@@ -5,7 +5,8 @@ using UnityEngine;
 public class ExplosiveEnemyBehavior : EnemyBehavior
 {
     private float paintRange = 0f;
-    private float paintArea = 0.6f;
+    private float paintArea = 1f;
+    public AudioSource source2;
     public override void TakeHit(GameModel.GameColor bulletColor)
     {
         if (enemyColors.Count <= 1 && !isDarkened)
@@ -32,7 +33,6 @@ public class ExplosiveEnemyBehavior : EnemyBehavior
             }
         }
         GameManager.instance.createSplatter(currentPos, GameModel.instance.ColorToColor(enemyColor), paintArea);
-
+        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[4], -0.1f, 0.1f);
     }
-
 }

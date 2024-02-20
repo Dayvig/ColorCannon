@@ -265,7 +265,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
         if (win)
         {
-            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[3], -0.5f, 0.5f);
+            GameManager.instance.gameAudio.pitch = 1;
+            SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.uiSounds[3]);
         }
         else
         {

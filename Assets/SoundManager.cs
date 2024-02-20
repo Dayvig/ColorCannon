@@ -28,6 +28,17 @@ public class SoundManager : MonoBehaviour
     {
         if (!isMuted)
         {
+            //source.pitch = 1;
+            source.clip = clip;
+            source.volume = masterVolume * sfxVolume;
+            source.PlayOneShot(clip, masterVolume * sfxVolume);
+        }
+    }
+
+    public void PlaySFX(AudioSource source, AudioClip clip, bool noChangeBasePitch)
+    {
+        if (!isMuted)
+        {
             source.clip = clip;
             source.volume = masterVolume * sfxVolume;
             source.PlayOneShot(clip, masterVolume * sfxVolume);
@@ -50,11 +61,20 @@ public class SoundManager : MonoBehaviour
     {
         if (!isMuted)
         {
-            float pitchShift = Random.Range(minPitchOffset, maxPitchOffset);
+            float pitchShift = Random.Range(1+minPitchOffset, 1+maxPitchOffset);
             source.clip = clip;
-            source.pitch += pitchShift;
+            source.pitch = pitchShift;
             source.PlayOneShot(clip, masterVolume * sfxVolume);
-            source.pitch -= pitchShift;
+        }
+    }
+
+    public void PlayBulletSFX(AudioSource source, AudioClip clip)
+    {
+        if (!isMuted)
+        {
+            source.clip = clip;
+            source.pitch = 0.65f;
+            source.PlayOneShot(clip, masterVolume * sfxVolume);
         }
     }
 
@@ -100,7 +120,7 @@ public class SoundManager : MonoBehaviour
         {
             source.volume = masterVolume * sfxVolume;
             yield return new WaitForSeconds(delaySeconds);
-            PlaySFX(source, clip);
+            PlaySFX(source, clip, true);
         }
     }
 

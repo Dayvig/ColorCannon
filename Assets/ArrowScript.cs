@@ -36,7 +36,7 @@ public class ArrowScript : MonoBehaviour
         }
         else
         {
-            SoundManager.instance.PlaySFX(thisSource, GameModel.instance.uiSounds[5], -0.5f, 0.5f);
+            SoundManager.instance.PlaySFX(thisSource, GameModel.instance.uiSounds[5], -0.2f, 0.2f);
         }
     }
 }

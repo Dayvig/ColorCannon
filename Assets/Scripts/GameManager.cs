@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour, IDataPersistence
@@ -138,10 +139,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
         DisposeAllBullets();
         DisposeAllSplatters();
         DisposeAllEnemies();
-
+        
         if (player.rainbowRush)
         {
             player.rainbowRush = false;
+            PostProcessingManager.instance.SetRainbowRush(false);
         }
 
         UIManager.instance.activatePostWaveAnimations(true);
@@ -741,24 +743,29 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public void createGiblet(Vector3 location, Color color)
     {
         GameObject newGiblet;
+        DeathEffect newDeathEffect;
+
         location += (Vector3)(Random.insideUnitCircle * 0.3f);
         if (inactiveSplatters.Count == 0)
         {
             newGiblet = Instantiate(GameModel.instance.DeathGiblet, location, Quaternion.identity);
+            newDeathEffect = newGiblet.GetComponent<DeathEffect>();
+
         }
         else
         {
             newGiblet = inactiveGiblets[0].gameObject;
+            newDeathEffect = newGiblet.GetComponent<DeathEffect>();
+            inactiveGiblets.Remove(newGiblet.GetComponent<DeathEffect>());
         }
+
         newGiblet.transform.position = location;
-        DeathEffect newDeathEffect = newGiblet.GetComponent<DeathEffect>();
         newDeathEffect.initialize();
         newDeathEffect.ren.color = color;
         newGiblet.transform.localScale = newDeathEffect.baseScale;
         newGiblet.transform.localScale *= Random.Range(0.5f, 2f);
 
-        giblets.Add(newGiblet.GetComponent<DeathEffect>());
-        inactiveGiblets.Remove(newDeathEffect);
+        giblets.Add(newDeathEffect);
     }
 
     void DemoUpdate()
@@ -835,6 +842,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.SaveGame();
+        SoundManager.instance.mainMusic.Stop();
+        SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[5]);
     }
 
     public void Win()
@@ -863,6 +872,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WaveSpawningSystem.instance.Level = 0;
         player.rainbowMeter = 0f;
         player.rainbowRush = false;
+        PostProcessingManager.instance.SetRainbowRush(false);
         player.rainbowTimer = 0f;
         player.lives = 3;
         WaveSpawningSystem.instance.initialize();
@@ -877,6 +887,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
             currentState = GameState.MAINMENU;
             SetState(GameState.POSTWAVE);
         }*/
+        SoundManager.instance.mainMusic.Stop();
+        SoundManager.instance.PlayRandomMainTheme();
+
         currentState = GameState.POSTWAVE;
         SetState(GameState.WAVE);
     }

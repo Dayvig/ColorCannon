@@ -232,12 +232,7 @@ public class Player : MonoBehaviour, IDataPersistence
             meter.targetFill = rainbowMeter / meterMax;
             if (rainbowTimer > rainbowRushTime)
             {
-                rainbowRush = false;
-                rainbowTimer = 0.0f;
-                rainbowRushReminderTimer = 0.0f;
-                PulseShield();
-                configureWeapon();
-                SoundManager.instance.PlaySFX(meter.source, GameModel.instance.uiSounds[4], 0.4f, 0.6f);
+                SetRainbowRush(false);
             }
         }
     }
@@ -378,8 +373,9 @@ public class Player : MonoBehaviour, IDataPersistence
                 rotation += UnityEngine.Random.Range(-15f, 15f);
                 gameColor = (GameModel.GameColor)UnityEngine.Random.Range(0, 6);
             }
-            bulletScript.initialize(transform.position, rotation, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, true);
-            bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
+            GameModel.GameColor rocketColor = ApplyCombiners(gameColor);
+            bulletScript.initialize(transform.position, rotation, FinalShotSpeed(rocketColor), rocketColor, FinalPiercing(rocketColor), FinalShotSize(rocketColor), true);
+            bulletScript.SetColor(modelGame.ColorToColor(rocketColor));
             if (!gameManager.activeBullets.Contains(bulletScript))
             {
                 gameManager.activeBullets.Add(bulletScript);
@@ -429,8 +425,9 @@ public class Player : MonoBehaviour, IDataPersistence
                     newBulletObject = Instantiate(bullet, transform.position, Quaternion.identity);
                 }
                 Bullet bulletScript = newBulletObject.GetComponent<Bullet>();
+                GameModel.GameColor rocketColor = ApplyCombiners(gameColor);
 
-                bulletScript.initialize(transform.position, rotationTarget + angleOffSet, bulletSpeed, ApplyCombiners(gameColor), piercing, bulletSize, true);
+                bulletScript.initialize(transform.position, rotationTarget+angleOffSet, FinalShotSpeed(rocketColor), rocketColor, FinalPiercing(rocketColor), FinalShotSize(rocketColor), true);
                 bulletScript.SetColor(modelGame.ColorToColor(bulletScript.bulletColor));
 
                 if (!gameManager.activeBullets.Contains(bulletScript))
@@ -804,16 +801,7 @@ public class Player : MonoBehaviour, IDataPersistence
                 {
                     if (meter.selected)
                     {
-                        meter.SetToSmall();
-                        rainbowTimer = 0f;
-                        rainbowRush = true;
-                        rainbowMeter = meterMax;
-                        meter.isActive = false;
-                        meter.rotationSpeed = 0.1f;
-                        WaveSpawningSystem.instance.AddExtraEnemies();
-                        configureWeapon();
-                        rainbowReminder.Hide();
-                        rainbowRushReminderTimer = 0.0f;
+                        SetRainbowRush(true);
                     }
                     else
                     {
@@ -843,6 +831,33 @@ public class Player : MonoBehaviour, IDataPersistence
                 }
             }
         }
+    }
+
+    public void SetRainbowRush(bool on)
+    {
+        if (on)
+        {
+            meter.SetToSmall();
+            rainbowTimer = 0f;
+            rainbowRush = true;
+            rainbowMeter = meterMax;
+            meter.isActive = false;
+            meter.rotationSpeed = 0.1f;
+            WaveSpawningSystem.instance.AddExtraEnemies();
+            configureWeapon();
+            rainbowReminder.Hide();
+            rainbowRushReminderTimer = 0.0f;
+        }
+        else
+        {
+            rainbowRush = false;
+            rainbowTimer = 0.0f;
+            rainbowRushReminderTimer = 0.0f;
+            PulseShield();
+            configureWeapon();
+            SoundManager.instance.PlaySFX(meter.source, GameModel.instance.uiSounds[4], 0.4f, 0.6f);
+        }
+        PostProcessingManager.instance.SetRainbowRush(on);
     }
 
     public float selectorTimer = 0.0f;
@@ -876,13 +891,7 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 if (meter.selected)
                 {
-                    rainbowRush = true;
-                    meter.isActive = false;
-                    meter.rotationSpeed = 0.1f;
-                    WaveSpawningSystem.instance.AddExtraEnemies();
-                    configureWeapon();
-                    meter.SetToSmall();
-                    SoundManager.instance.PlaySFX(meter.source, GameModel.instance.bulletSounds[5]);
+                    SetRainbowRush(true);
                 }
                 else
                 {
