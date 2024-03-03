@@ -14998,6 +14998,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1100839044}
     - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
+      propertyPath: ringScale
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6450570783699751171, guid: 5b167d51a87190140956e382fca3dc9b, type: 3}
       propertyPath: noDTapCycle
       value: 
       objectReference: {fileID: 21300000, guid: a4a3530d50d94934e89f2a28b25ce398, type: 3}
@@ -18795,7 +18799,7 @@ MonoBehaviour:
   fileName: CCannonSavedData.json
   settingsFileName: CCannonSettings.json
   unlocksFileName: CCannonUnlocks.json
-  isWebGL: 1
+  isWebGL: 0
 --- !u!82 &1793738079
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21105,7 +21109,7 @@ PrefabInstance:
       objectReference: {fileID: 1431926387}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: playerControlMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: shieldPulseRadius

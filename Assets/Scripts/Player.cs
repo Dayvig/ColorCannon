@@ -126,7 +126,7 @@ public class Player : MonoBehaviour, IDataPersistence
         RainbowRushUpdate();
         Vector3 currentPos = gameObject.transform.position;
         Quaternion rot = gameObject.transform.rotation;
-        if (!SelectorRing.activated)
+        if (!movementLocked)
         {
             LookAtMouse(currentPos);
             if (Input.touchCount == 1)
@@ -783,11 +783,13 @@ public class Player : MonoBehaviour, IDataPersistence
             //if one click has already been executed, switch color
             if (Input.touches[0].phase == TouchPhase.Began)
             {
+                movementLocked = SelectorRing.activated;
+
                 if (clicks == 0)
                 {
                     firstTapPos = touchPos;
                 }
-                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing(touchPos))
+                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRingCenter(touchPos))
                 {
                     nextColor();
                     SelectorRing.Close();
@@ -797,6 +799,7 @@ public class Player : MonoBehaviour, IDataPersistence
             //If the position is close to where it began, increment clicks
             if (Input.touches[0].phase == TouchPhase.Ended)
             {
+
                 if (Vector3.Distance(transform.position, touchPos) < 1f && rainbowMeter >= meterMax)
                 {
                     if (meter.selected)
@@ -878,7 +881,7 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 firstTapPos = mousePos;
             }
-            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRing(mousePos))
+            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRingCenter(mousePos))
             {
                 nextColor();
             }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,7 +7,7 @@ public class ringScript : MonoBehaviour
 {
     public float animTimer = 0.0f;
     public float animInterval = 0.4f;
-    public float ringCloseRadius = 0.3f;
+    public float ringScale = 1f;
     public bool reverse = false;
     public bool playAnimation = false;
     public bool activated = false;
@@ -44,6 +43,9 @@ public class ringScript : MonoBehaviour
             r.enabled = activated;
         }
         ren.enabled = activated;
+
+        Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x, this.transform.position.y + (ringScale / 2), 0f), Color.green, 1f);
+        Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x+0.1f, this.transform.position.y + ringScale, 0f), Color.red, 1f);
 
     }
 
@@ -93,7 +95,7 @@ public class ringScript : MonoBehaviour
             }
         }
 
-        Vector3 newScale = Vector3.Lerp(0.05f * Vector3.one, 0.25f * Vector3.one, animTimer / animInterval);
+        Vector3 newScale = Vector3.Lerp(0.05f * Vector3.one, ((ringScale+0.05f)/2) * Vector3.one, animTimer / animInterval);
         this.transform.localScale = newScale;
     }
 
@@ -119,13 +121,13 @@ public class ringScript : MonoBehaviour
         }
     }
 
-    public bool inRing(Vector3 pos)
+    public bool inRingCenter(Vector3 pos)
     {
         Vector3 newPos = new Vector3(pos.x, pos.y, 0);
         float yDiff = newPos.y - transform.position.y;
         float xDiff = newPos.x - transform.position.x;
 
-        return (Mathf.Abs(xDiff) < ringCloseRadius && Mathf.Abs(yDiff) < ringCloseRadius);
+        return (Mathf.Abs(xDiff) < ringScale/2 && Mathf.Abs(yDiff) < ringScale / 2);
     }
 
     private void inputUpdate()
@@ -134,7 +136,7 @@ public class ringScript : MonoBehaviour
         Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
         float yDiff = newMousePos.y - transform.position.y;
         float xDiff = newMousePos.x - transform.position.x;
-        if (yDiff > 0.2f && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
+        if (yDiff > ringScale/2 && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
         {
             player.setColor(0);
             if (activeSlice != 0)
@@ -144,7 +146,7 @@ public class ringScript : MonoBehaviour
                 prevSlice = 0;
             }
         }
-        else if (xDiff > 0.2f)
+        else if (xDiff > ringScale / 2)
         {
             player.setColor(1);
             if (activeSlice != 1)
@@ -154,7 +156,7 @@ public class ringScript : MonoBehaviour
                 prevSlice = 1;
             }
         }
-        else if (xDiff < -0.2f)
+        else if (xDiff < -ringScale/2)
         {
             player.setColor(2);
             if (activeSlice != 2)
