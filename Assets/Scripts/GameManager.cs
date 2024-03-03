@@ -119,7 +119,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.activatePostWaveUI();
         justLaunched = false;
         selectedUpgrade = noUpgrade;
-        Debug.Log("Current upgrades: " + GameManager.instance.currentOfferedUpgrades.Count);
         if (WaveSpawningSystem.instance.Level > 1)
         {
             if (WaveSpawningSystem.instance.Level % 2 == 0)
@@ -130,7 +129,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
             {
                 GenerateSpecialUpgrades();
             }
-            Debug.Log("Generating Upgrades Level " + WaveSpawningSystem.instance.Level);
         }
         else
         {
@@ -156,7 +154,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         if (currentState != GameState.SETTINGS && currentState != GameState.UIANIMATIONS && nextState == GameState.SETTINGS)
         {
-            Debug.Log("transition to settings");
             UIManager.instance.SettingsPanel.SetActive(true);
             UIManager.instance.initSettings();
             UIManager.instance.activateSettingsAnimations(true);
@@ -173,14 +170,12 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         if (currentState == GameState.MAINMENU && nextState == GameState.POSTWAVE)
         {
-            Debug.Log("Transition from menu to postwave");
             spawningSystem.SetupNextWave();
             SetupForWave();
             nextState = GameState.UIANIMATIONS;
         }
         if (currentState == GameState.MAINMENU && nextState == GameState.NOTEBOOK)
         {
-            Debug.Log("Transition from menu to notebook");
             nextState = GameState.UIANIMATIONS;
             UIManager.instance.activateMainMenuAnimations(false);
 
@@ -191,9 +186,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
-            Debug.Log("Transition from wave to postwave");
             spawningSystem.IncreaseDifficulty();
-            Debug.Log("Clearing Upgrades");
             currentOfferedUpgrades.Clear();
             spawningSystem.SetupNextWave();
             SetupForWave();
@@ -273,7 +266,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     void addNewUpgrade(Upgrade selected)
     {
-        Debug.Log("Adding new Upgrade: Type " + selected.type + " Color " + selected.color);
         if (selected.color == GameModel.GameColor.WHITE)
         {
             Upgrade red = selected.MakeCopy();
@@ -295,7 +287,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
             {
                 if (u.type == selected.type && u.color == selected.color)
                 {
-                    Debug.Log("Incrementing existing");
                     addNew = false;
                     u.factor += selected.factor;
                 }
@@ -538,12 +529,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
                     regenerate = false;
                     foreach (Upgrade u in currentOfferedUpgrades)
                     {
-                        Debug.Log(u.type + " " + u.color + " " + nextUpgrade.type + " " + nextUpgrade.color);
                         if (u.type.Equals(nextUpgrade.type) && u.color.Equals(nextUpgrade.color))
                         {
                             regenerate = true;
                             nextUpgrade = getRandomUpgrade(possibleUpgrades);
-                            Debug.Log("Regen");
                         }
                     }
                 }
@@ -833,7 +822,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void Lose()
     {
-        UnityEngine.Debug.Log("Lose");
         UIManager.instance.deactivatePostWaveUI();
         WipeAllEnemiesAndBullets();
         UIManager.instance.activateLoseScreen();

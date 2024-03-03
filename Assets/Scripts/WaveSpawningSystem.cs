@@ -352,7 +352,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
         if (Level == 0 && WaveSpawningSystem.instance.tutorialStage == 0)
         {
-            Debug.Log("Spawning First Wave");
             generateFirstWave();
             UIManager.instance.WipeUpgrades();
             UIManager.instance.SetUpgradesVisible(false);
@@ -361,7 +360,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         else
         {
             Level = 1;
-            Debug.Log("Spawning Normal Wave");
             generateWave();
             RandomizeWave();
 
@@ -377,7 +375,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void AddProModeFeatures()
     {
-        Debug.Log("call");
         if (gameManager.promodeLevel != 0)
         {
             for (int p = 0; p < gameManager.promodeLevel; p++)
@@ -598,7 +595,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public Chunk returnRandomChunk(List<Chunk> chunklist, int lessthan)
     {
-        Debug.Log("Chunk list count " + chunklist.Count);
         Chunk nextChunk = chunklist[Random.Range(0, chunklist.Count)];
         if (nextChunk.difficulty <= lessthan)
         {
@@ -609,7 +605,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             return returnRandomChunk(chunklist, lessthan);
         }
-        Debug.Log("Tried to access a chunk that didn't exist");
         return chunklist[0];
     }
 
@@ -625,7 +620,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         {
             return returnRandomChunk(chunklist, floor, ceiling);
         }
-        Debug.Log("Tried to access a chunk that didn't exist");
 
         return chunklist[0];
     }
@@ -675,7 +669,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 }
             }
             nextChunk.Generate(isTutorial);
-            Debug.Log("Spawning next chunk with " + globalWaveNumber + " enemies.");
             foreach (Mechanic m2 in currentMechanics)
             {
                 if (newMechanics.Contains(m2))
@@ -683,7 +676,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                     newMechanics.Remove(m2);
                 }
             }
-            Debug.Log(nextChunk.name);
             currentChunks.Add(nextChunk);
         }
         enemiesToSpawn = currentWave.Count - 1;
@@ -705,7 +697,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             }
             else
             {
-                Debug.Log("Eg");
                 UIManager.instance.SetupChunkPreview(nextChunk, 3);
             }
             bool isTutorial = false;
@@ -719,7 +710,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 }
             }
             nextChunk.Generate(isTutorial);
-            Debug.Log("Spawning next chunk with " + globalWaveNumber + " enemies.");
             foreach (Mechanic m2 in currentMechanics)
             {
                 if (newMechanics.Contains(m2))
@@ -775,7 +765,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void SetupNextWave()
     {
-        Debug.Log("Next Wave =================");
         if (Level == 0 && WaveSpawningSystem.instance.tutorialStage == 0)
         {
             generateFirstWave();
@@ -815,7 +804,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             WaveObject tmp = currentWave[j];
             if (tmp.isTutorial)
             {
-                Debug.Log("Tutorial found");
                 currentWave[j] = currentWave[tutorialIndex];
                 currentWave[tutorialIndex] = tmp;
                 tutorialIndex++;
@@ -925,7 +913,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
                 UIManager.instance.AddWaveMod(UIManager.WaveModifier.DIFFICULT);
                 break;
             case 3:
-                Debug.Log("Eh: " + (1 - modelGame.baseWaveMonochrome));
                 globalRainbowMult *= (1 - modelGame.baseWaveMonochrome);
                 UIManager.instance.AddWaveMod(UIManager.WaveModifier.MONOCHROME);
                 break;
@@ -963,7 +950,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     {
         availableChunks.Clear();
         availableSpecialChunks.Clear();
-        Debug.Log("Repopulating Chunks");
 
         //enemy types
         addAllChunkColors(new BasicChunk(new[] { GameModel.GameColor.NONE }, false), false);
@@ -1862,9 +1848,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
-        Debug.Log("Spawning System loading data");
         Level = data.currentLevel;
-        Debug.Log("Loaded Level :" + Level);
         currentMechanics = data.currentMechanics;
         newMechanics = data.currentNewMechanics;
         medMechanics = data.undiscoveredMedMechanics;

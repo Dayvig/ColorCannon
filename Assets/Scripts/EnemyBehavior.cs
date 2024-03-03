@@ -41,7 +41,6 @@ public class EnemyBehavior : MonoBehaviour
     {
         if (colors.Count == 0)
         {
-            Debug.Log("empty color array");
             return GameModel.GameColor.RED;
         }
         if (colors.Count == 1)

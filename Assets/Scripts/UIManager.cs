@@ -300,7 +300,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
         {
             if (currentAnimationTarget == PostUIRect)
             {
-                Debug.Log("Destination State: " + (swingIn ? GameState.POSTWAVE : GameState.WAVE));
                 animationUpdate(start, swingMid, end, rotStart, swingRotMid, rotEnd, swingIn ? GameState.POSTWAVE : GameState.WAVE);
             }
             else if (currentAnimationTarget == WinRect || currentAnimationTarget == LoseRect)
@@ -551,16 +550,13 @@ public class UIManager : MonoBehaviour, IDataPersistence
         ConstructAllWaveModPreviews();
         foreach (Upgrade u in player.upgrades)
         {
-            Debug.Log(u.name);
             if (u.color.Equals(GameModel.GameColor.NONE) && currentUpgradeRows[3].childCount >= 2)
             {
-                Debug.Log("Hit");
                 AddNewPlayerUpgradeToPreview(u, 4);
                 updateUpgradeChevrons(u, 4);
             }
             else
             {
-                Debug.Log("Hit2");
                 AddNewPlayerUpgradeToPreview(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
                 updateUpgradeChevrons(u, GameModel.instance.GetPlayerUpgradePreviewColorRowFromColor(u.color));
             }
@@ -668,7 +664,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     void createNewPlayerUpgradePreview (GameManager.Upgrade u, int rowToCreateIn)
     {
-        Debug.Log("Creating new upgrade preview in row " + rowToCreateIn);  
         GameObject newUpgradePreview = Instantiate(WaveModPreview, currentUpgradeRows[rowToCreateIn]);
         newUpgradePreview.name = u.type.ToString();
         Image upImage = newUpgradePreview.transform.GetChild(0).GetChild(0).GetComponent<Image>();
@@ -753,7 +748,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void HideWaveMods()
     {
-        Debug.Log("Destroying Wave Mods");
         for (int i = 0; i < WaveModPanelRow.childCount; i++)
         {
             Destroy(WaveModPanelRow.GetChild(i).gameObject);
@@ -780,7 +774,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void HideWaveModsOnly()
     {
-        Debug.Log("Destroying Wave Mods");
         for (int i = 0; i < WaveModPanelRow.childCount; i++)
         {
             Destroy(WaveModPanelRow.GetChild(i).gameObject);
