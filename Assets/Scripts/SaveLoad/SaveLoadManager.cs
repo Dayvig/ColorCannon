@@ -83,7 +83,6 @@ public class SaveLoadManager : MonoBehaviour
 
     public void LoadGame()
     {
-        Debug.Log("Current Undiscovered med Mechanics" + WaveSpawningSystem.instance.medMechanics.Count);
         if (!isWebGL)
         {
             this.gameData = dataHandler.Load();
@@ -102,7 +101,6 @@ public class SaveLoadManager : MonoBehaviour
         { 
             saveLoadObj.LoadData(gameData);
         }
-        Debug.Log("Current Undiscovered med Mechanics" + WaveSpawningSystem.instance.medMechanics.Count);
     }
 
     public void LoadSettings()

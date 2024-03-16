@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class refreshUpgrades : MonoBehaviour
 {
-    //public Button refresh;
+    public Button refresh;
     public GameManager manager;
     public UIManager uiManager;
     public bool infinite;
 
     void Start()
     {
-        //refresh.onClick.AddListener(TaskOnClick);
+        refresh.onClick.AddListener(TaskOnClick);
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         uiManager = GameObject.Find("GameManager").GetComponent<UIManager>();
     }
@@ -21,6 +21,7 @@ public class refreshUpgrades : MonoBehaviour
     {
         UIManager.instance.WipeUpgrades();
         manager.currentOfferedUpgrades.Clear();
+        WaveSpawningSystem.instance.Level = 4;
         if (WaveSpawningSystem.instance.Level % 2 == 0)
         {
             manager.GenerateUpgrades();

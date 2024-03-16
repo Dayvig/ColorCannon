@@ -829,15 +829,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
         WaveSpawningSystem.instance.Level = 0;
 
         SaveLoadManager.instance.WipeMidRunDataOnly();
-        SaveLoadManager.instance.SaveGame();
         SoundManager.instance.mainMusic.Stop();
         SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[5]);
+        SaveLoadManager.instance.LoadGame();
     }
 
     public void Win()
     {
         maxProModeLevelUnlocked++;
-        GameManager.instance.rainbowInk += 2000;
+        GameManager.instance.rainbowInk += 5000;
+
 
         UIManager.instance.deactivatePostWaveUI();
         WipeAllEnemiesAndBullets();
@@ -845,7 +846,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.activateWinLoseAnimations(true, true);
         SoundManager.instance.mainMusic.Stop();
         SaveLoadManager.instance.WipeMidRunDataOnly();
-        SaveLoadManager.instance.SaveGame();
+        SaveLoadManager.instance.LoadGame();
     }
 
     public void PlayAgain()

@@ -156,6 +156,7 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 RocketFire(rocketColors);
                 rocketTimer = 0.0f;
+                configureWeapon();
             }
         }
         if (pulseShield)

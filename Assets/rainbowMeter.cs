@@ -23,7 +23,7 @@ public class rainbowMeter : MonoBehaviour
     public bool selected = false;
     public float ringAnimTimer = 0.0f;
     public float ringAnimInterval = 0.06f;
-    public int state = 2;
+    public int state;
     //0- grow
     //1- shrink
     //2- nothing
@@ -38,6 +38,7 @@ public class rainbowMeter : MonoBehaviour
         rainbows.fillAmount = 0;
         trans = rainbows.gameObject.transform;
         targetScale = baseScale;
+        state = 2;
     }
 
     // Update is called once per frame

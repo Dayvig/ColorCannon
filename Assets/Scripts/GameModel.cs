@@ -406,8 +406,7 @@ public class GameModel : MonoBehaviour
                 returnText = UpgradeTexts[14] + upgrade.factor * 2 +" "+ upgrade.color.ToString().ToLower() + UpgradeTexts[15] + rocketInterval + "s";
                 break;
             case GameManager.UpgradeType.RAINBOWMULT:
-                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17] + upgrade.factor;
-                returnText += (upgrade.factor == 1 ? UpgradeTexts[21] : UpgradeTexts[22]);
+                returnText = UpgradeTexts[16] + upgrade.factor * gameModel.meterMultInc * 100 + UpgradeTexts[17];
                 break;
             case GameManager.UpgradeType.PULSE:
                 returnText = UpgradeTexts[19] + (5 - upgrade.factor) + UpgradeTexts[20];

@@ -136,6 +136,14 @@ public class ringScript : MonoBehaviour
         Vector3 newMousePos = new Vector3(mousePos.x, mousePos.y, 0);
         float yDiff = newMousePos.y - transform.position.y;
         float xDiff = newMousePos.x - transform.position.x;
+        if (Mathf.Abs(xDiff) > ringScale * 5f || Mathf.Abs(yDiff) > ringScale * 5f)
+        {
+            player.mouseTimer = -1f;
+            player.clicks = 0;
+            Close();
+            return;
+        }
+
         if (yDiff > ringScale/2 && Mathf.Abs(yDiff) > Mathf.Abs(xDiff))
         {
             player.setColor(0);

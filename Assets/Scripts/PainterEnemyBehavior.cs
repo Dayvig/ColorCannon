@@ -16,8 +16,8 @@ public class PainterEnemyBehavior : EnemyBehavior
     public Behavior paintBehavior;
     public Vector3 playerPos;
     public float nextAngle;
-    private float paintRange = 0.75f;
-    private float paintArea = 0.4f;
+    private float paintRange = 0.8f;
+    private float paintArea = 0.8f;
 
     public enum Behavior
     {
@@ -38,12 +38,10 @@ public class PainterEnemyBehavior : EnemyBehavior
     {
         if (GameModel.instance.isInBoundsPercent(currentPos, 0.8f))
         {
-            Debug.Log("Moving Randomly");
             return currentPos + (Vector3)(Random.insideUnitCircle * moveSpeed * moveInterval);
         }
         else
         {
-            Debug.Log("Moving Towards Player");
             return playerPos;
         }
     }
@@ -65,6 +63,7 @@ public class PainterEnemyBehavior : EnemyBehavior
             }
         }
         GameManager.instance.createSplatter(currentPos + paintPos, GameModel.instance.ColorToColor(enemyColor), paintArea);
+        SoundManager.instance.PlaySFX(GameManager.instance.gameAudio, GameModel.instance.enemySounds[4], -0.1f, 0.1f);
 
     }
 
