@@ -9,7 +9,7 @@ public class AsyncLoader : MonoBehaviour
 
     [SerializeField] private Slider loadingSlider;
     private float loadingTimer = 0.0f;
-    private float loadingBuffer = 1.0f;
+    private float loadingBuffer = 0.25f;
 
     private void Update()
     {

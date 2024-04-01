@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 
 public class FileDataHandler
@@ -54,11 +55,11 @@ public class FileDataHandler
             {
                 Debug.LogError("Error occurred while trying to load data :" + fullPath + "\n" + e);
             }
+            loadedData.undiscoveredEasyMechanics = loadedData.undiscoveredEasyMechanics.Distinct().ToList();
+            loadedData.undiscoveredMedMechanics = loadedData.undiscoveredMedMechanics.Distinct().ToList();
+            loadedData.currentMechanics = loadedData.currentMechanics.Distinct().ToList();
 
         }
-        loadedData.undiscoveredEasyMechanics = loadedData.undiscoveredEasyMechanics.Distinct().ToList();
-        loadedData.undiscoveredMedMechanics = loadedData.undiscoveredMedMechanics.Distinct().ToList();
-        loadedData.currentMechanics = loadedData.currentMechanics.Distinct().ToList();
 
         return loadedData;
     }
@@ -123,23 +124,45 @@ public class FileDataHandler
 
     public void Save(GameData data)
     {
-        Debug.Log("Saving Game " + data.currentLevel);
-        string fullPath = Path.Combine(dataDirPath, dataFileName);
-        try
+        if (!SaveLoadManager.instance.isAndroidBuild)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-            string DataToStore = JsonConvert.SerializeObject(data);
-            using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+            Debug.Log("Saving Game " + data.currentLevel);
+            string fullPath = Path.Combine(dataDirPath, dataFileName);
+            try
             {
-                using (StreamWriter writer = new StreamWriter(stream))
+                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                string DataToStore = JsonConvert.SerializeObject(data);
+                using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+                {
+                    using (StreamWriter writer = new StreamWriter(stream))
+                    {
+                        writer.Write(DataToStore);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error occurred while trying to save data to file :" + fullPath + "\n" + e);
+            }
+        }
+        else
+        {
+            Debug.Log("Saving Game " + data.currentLevel);
+            string fullPath = Path.Combine(dataDirPath, dataFileName);
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                string DataToStore = JsonConvert.SerializeObject(data);
+                using (StreamWriter writer = new StreamWriter(fullPath))
                 {
                     writer.Write(DataToStore);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("Error occurred while trying to save data to file :" + fullPath + "\n" + e);
+            catch (Exception e)
+            {
+                Debug.LogError("Error occurred while trying to save data to file :" + fullPath + "\n" + e);
+            }
+
         }
     }
 

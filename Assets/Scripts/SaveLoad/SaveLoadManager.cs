@@ -20,10 +20,12 @@ public class SaveLoadManager : MonoBehaviour
     public List<IDataPersistence> saveLoadObjects = new List<IDataPersistence>();
     private FileDataHandler dataHandler;
     public bool isWebGL;
+    public bool isAndroidBuild;
     public void initialize()
     {
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, Application.persistentDataPath, settingsFileName, Application.persistentDataPath, unlocksFileName);
         this.saveLoadObjects = FindAllSaveLoadObjects();
+
         LoadGame();
         LoadSettings();
         LoadUnlocks();
@@ -138,6 +140,7 @@ public class SaveLoadManager : MonoBehaviour
         GameManager.instance.unlockedArenas = unlockData.arenas;
         GameManager.instance.arena = unlockData.currentArena;
         GameManager.instance.lastValidArena = unlockData.currentArena;
+        GameManager.instance.maxProModeLevelUnlocked = unlockData.maxProMode;
     }
 
     public int getRainbowInk()
@@ -193,6 +196,7 @@ public class SaveLoadManager : MonoBehaviour
         unlockData.rainbowInk = GameManager.instance.rainbowInk;
         unlockData.arenas = GameManager.instance.unlockedArenas;
         unlockData.currentArena = GameManager.instance.arena;
+        unlockData.maxProMode = GameManager.instance.maxProModeLevelUnlocked;
         dataHandler.SaveUnlocks(unlockData);
     }
 }

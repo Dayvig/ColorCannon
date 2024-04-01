@@ -19,7 +19,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager instance { get; private set; }
 
-    public SoundManager()
+    void Awake()
     {
         instance = this;
     }

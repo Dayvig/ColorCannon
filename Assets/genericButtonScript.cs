@@ -8,6 +8,7 @@ public class genericButtonScript : MonoBehaviour, IPointerEnterHandler
 {
     public AudioSource audioSource;
     public Button thisButton;
+    public bool muteAudio;
 
     void Start()
     {
@@ -18,7 +19,10 @@ public class genericButtonScript : MonoBehaviour, IPointerEnterHandler
 
     public void TaskOnClick()
     {
-        SoundManager.instance.PlaySFX(audioSource, GameModel.instance.uiSounds[1], -0.02f, 0.02f);
+        if (!muteAudio)
+        {
+            SoundManager.instance.PlaySFX(audioSource, GameModel.instance.uiSounds[1], -0.02f, 0.02f);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

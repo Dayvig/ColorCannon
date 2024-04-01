@@ -13,7 +13,7 @@ public class PlayGameButton : MonoBehaviour
     public TextMeshProUGUI waveText;
 
 
-    void Start()
+    void Awake()
     {
         nextWave.onClick.AddListener(TaskOnClick);
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();

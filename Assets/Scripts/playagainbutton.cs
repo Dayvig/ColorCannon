@@ -9,7 +9,7 @@ public class playagainbutton : MonoBehaviour
     public GameManager manager;
     public UIManager uiManager;
     
-    void Start()
+    void Awake()
     {
         again.onClick.AddListener(TaskOnClick);
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();

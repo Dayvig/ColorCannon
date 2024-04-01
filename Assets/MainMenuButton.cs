@@ -11,7 +11,7 @@ public class MainMenuButton : MonoBehaviour
     public PauseButton pauseButton;
     public bool playMusic;
 
-    void Start()
+    void Awake()
     {
         menuButton.onClick.AddListener(TaskOnClick);
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();

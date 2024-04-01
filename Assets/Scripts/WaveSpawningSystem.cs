@@ -338,11 +338,11 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         instance = this;
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        tutorialSpacing = modelGame.baseTutorialSpacing;
     }
 
     public void initialize()
-    { 
+    {
+        tutorialSpacing = modelGame.baseTutorialSpacing;
         repopulateChunks();
         populateDemoChunks();
         

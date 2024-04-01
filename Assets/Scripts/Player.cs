@@ -851,6 +851,7 @@ public class Player : MonoBehaviour, IDataPersistence
             configureWeapon();
             rainbowReminder.Hide();
             rainbowRushReminderTimer = 0.0f;
+            SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[6]);
         }
         else
         {

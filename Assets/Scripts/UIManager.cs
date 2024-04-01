@@ -148,9 +148,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
         MONOCHROME
     }
 
-    void Start(){
-    }
-
     public void Awake()
     {
         if (instance != null)
@@ -159,8 +156,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
         }
         instance = this;
         player = GameObject.Find("Player").GetComponent<Player>();
-
-
     }
 
     public void initSettings()

@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<Upgrade> currentOfferedUpgrades = new List<Upgrade>();
     public List<WaveSpawningSystem.Mechanic> encounteredEnemies = new List<WaveSpawningSystem.Mechanic>();
 
-    public GameState currentState = GameState.POSTWAVE;
+    public GameState currentState = GameState.MAINMENU;
     public GameState returnState = GameState.POSTWAVE;
     private Upgrade noUpgrade = new Upgrade("None", UpgradeType.NONE);
     public Upgrade selectedUpgrade = new Upgrade("None", UpgradeType.NONE);
@@ -312,17 +312,19 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         Trash();
     }
-    
-    void Start()
+
+    void Awake()
     {
         instance = this;
         gameAudio = GetComponent<AudioSource>();
-
-        SaveLoadManager.instance.initialize();
-        player = GameObject.Find("Player").GetComponent<Player>();
         spawningSystem = GetComponent<WaveSpawningSystem>();
         gameModel = GetComponent<GameModel>();
-        
+        player = GameObject.Find("Player").GetComponent<Player>();
+    }
+
+    void Start()
+    {
+        SaveLoadManager.instance.initialize();
         UIManager.instance.initialize();
         spawningSystem.initialize();
         currentState = GameState.MAINMENU;
@@ -839,13 +841,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
         maxProModeLevelUnlocked++;
         GameManager.instance.rainbowInk += 5000;
 
-
         UIManager.instance.deactivatePostWaveUI();
         WipeAllEnemiesAndBullets();
         UIManager.instance.activateWinScreen();
         UIManager.instance.activateWinLoseAnimations(true, true);
         SoundManager.instance.mainMusic.Stop();
         SaveLoadManager.instance.WipeMidRunDataOnly();
+        SaveLoadManager.instance.SaveUnlocks();
+        SaveLoadManager.instance.LoadUnlocks();
         SaveLoadManager.instance.LoadGame();
     }
 
@@ -888,7 +891,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentOfferedUpgrades = data.currentUpgradesOffered;
         encounteredEnemies = data.encounteredEnemies;
         promodeLevel = data.promodeLevel;
-        maxProModeLevelUnlocked = data.maxProModeLevel;
     }
 
     public void SaveData(ref GameData data)
@@ -896,6 +898,5 @@ public class GameManager : MonoBehaviour, IDataPersistence
         data.currentUpgradesOffered = currentOfferedUpgrades;
         data.encounteredEnemies = encounteredEnemies;
         data.promodeLevel = promodeLevel;
-        data.maxProModeLevel = maxProModeLevelUnlocked;
     }
 }

@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEditor.Experimental;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
+
 
 public class Bullet : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class Bullet : MonoBehaviour
     public Vector3 positionTarget;
     private Vector3 positionCurrent;
     public SpriteRenderer ren;
-    public Light2D lightRen;
+    public UnityEngine.Rendering.Universal.Light2D lightRen;
     public float baseScale = 0.2f;
 
     public GameModel.GameColor bulletColor;
@@ -35,7 +34,7 @@ public class Bullet : MonoBehaviour
     EnemyBehavior targetBehavior;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         modelGame = GameObject.Find("GameManager").GetComponent<GameModel>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
