@@ -25,6 +25,7 @@ public class SplitterBlobBehavior : EnemyBehavior
         thisBehavior = Behavior.SPLIT;
         originalDestination = des;
         Debug.Log("1");
+        immuneToDamage = true;
     }
 
     public void initializeSplit(bool isLeft)
@@ -53,11 +54,11 @@ public class SplitterBlobBehavior : EnemyBehavior
     {
         if (Vector3.Distance(this.transform.position, destination) < 0.01f)
         {
-            Debug.Log("Are you being called?");
             thisBehavior = Behavior.MOVE;
             enableSway = true;
             moveSpeed = WaveSpawningSystem.globalWaveSpeed;
             destination = originalDestination;
+            immuneToDamage = false;
         }
         base.Move();
     }

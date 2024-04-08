@@ -21,6 +21,7 @@ public class EnemyBehavior : MonoBehaviour
 
     public bool isDarkened;
     public List<Bullet> immuneBullets = new List<Bullet>();
+    public bool immuneToDamage;
     public bool knockBack = false;
     public float knockBackTimer;
     public float knockBackDuration = 1f;
@@ -291,7 +292,7 @@ public class EnemyBehavior : MonoBehaviour
 
     public virtual void touchBullet(Bullet bullet)
     {
-        if (bullet.immuneEnemies.Count > 0 && bullet.immuneEnemies.Contains(this))
+        if (bullet.immuneEnemies.Count > 0 && bullet.immuneEnemies.Contains(this) || immuneToDamage)
         {
             return;
         }

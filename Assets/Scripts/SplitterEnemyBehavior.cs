@@ -34,6 +34,7 @@ public class SplitterEnemyBehavior : EnemyBehavior
         {
             thisBehavior = Behavior.MOVE;
         }
+        immuneToDamage = true;
     }
 
     public override void initialize(Vector3 des, GameModel.GameColor color, bool dark, WaveSpawningSystem.WaveObject.Type type)
@@ -109,6 +110,7 @@ public class SplitterEnemyBehavior : EnemyBehavior
             enableSway = true;
             moveSpeed = WaveSpawningSystem.globalWaveSpeed;
             destination = originalDestination;
+            immuneToDamage = false;
         }
         base.Move();
     }
