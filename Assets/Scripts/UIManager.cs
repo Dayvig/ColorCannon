@@ -139,6 +139,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public TextMeshProUGUI arenaText;
     public UnlockButton unlockButton;
     public NotebookArrowScript incArrow;
+    public MenuRainbowInkDisplay notebookInkDisplay;
     public enum WaveModifier
     {
         NUMEROUS,

@@ -10,6 +10,7 @@ public class UnlockButton : MonoBehaviour
     public Button unlock;
     public TextMeshProUGUI rainbowCost;
     public AudioSource thisSource;
+    public UnlockTextScript arenaUnlockedText;
     void Start()
     {
         unlock.onClick.AddListener(TaskOnClick);
@@ -21,11 +22,13 @@ public class UnlockButton : MonoBehaviour
         {
             //purchase fanfare
             SoundManager.instance.PlaySFX(thisSource, GameModel.instance.bulletSounds[5]);
+            arenaUnlockedText.flash();
 
             SaveLoadManager.instance.spendRainbowInk(GameModel.instance.arenaCosts[GameManager.instance.arena]);
             SaveLoadManager.instance.unlockArena(GameManager.instance.arena);
             GameManager.instance.lastValidArena = GameManager.instance.arena;
             setupUnlockButton();
+            UIManager.instance.notebookInkDisplay.SetTextColorTransition(Color.red);
         }
         else
         {

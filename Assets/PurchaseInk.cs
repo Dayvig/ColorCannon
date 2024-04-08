@@ -13,5 +13,6 @@ public class PurchaseInk : MonoBehaviour
         SaveLoadManager.instance.SaveUnlocks();
         SoundManager.instance.PlaySFX(source, GameModel.instance.bulletSounds[5]);
         UIManager.instance.unlockButton.setupUnlockButton();
+        UIManager.instance.notebookInkDisplay.SetTextColorTransition(Color.green);
     }
 }

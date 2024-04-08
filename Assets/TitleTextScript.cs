@@ -24,7 +24,7 @@ public class TitleTextScript : MonoBehaviour
     {
         fade = true;
         fadeInTimer = 0.0f;
-        StartCoroutine(ColorRainbow());
+        //StartCoroutine(ColorRainbow());
     }
 
 
