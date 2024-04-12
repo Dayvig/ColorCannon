@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour
     private float baseOuterRadius = 4.2f;
 
     public bool isSeeking;
-    private float seekingFactor = 0.05f;
+    //private float seekingFactor = 0.05f;
     public GameObject seekingTarget = null;
     private float lifeTime = 0.0f;
     EnemyBehavior targetBehavior;

@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 using Color = UnityEngine.Color;
 
@@ -12,7 +9,6 @@ public class EnemyBehavior : MonoBehaviour
     public Vector3 currentPos;
     public float moveSpeed;
     public float knockbackSpeed = 2f;
-    private float SPEED = 0.6f;
 
     public GameModel.GameColor enemyColor;
     public List<GameModel.GameColor> enemyColors = new List<GameModel.GameColor>();
@@ -26,7 +22,7 @@ public class EnemyBehavior : MonoBehaviour
     public float knockBackTimer;
     public float knockBackDuration = 1f;
     public WaveSpawningSystem.WaveObject.Type enemyType;
-    private bool hitTaken = false;
+    //private bool hitTaken = false;
 
     public AudioSource enemySource;
     public float lifeTime = 0.0f;

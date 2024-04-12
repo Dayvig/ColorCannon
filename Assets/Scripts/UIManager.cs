@@ -58,8 +58,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public bool refreshActive = true;
 
     //Note: put in game model
-    private float xBounds = 3;
-    private float yBounds = 5;
+    //private float xBounds = 3;
+    //private float yBounds = 5;
     public float toolTipTimer;
     private float toolTipDissappearInterval = 0.05f;
 
@@ -562,7 +562,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void ClearSpecialUpgrades()
     {
-        Transform found;
         List<Transform> toMove = new List<Transform>();
         for (int i = 0; i < currentUpgradeRows[3].childCount; i++)
         {
@@ -701,7 +700,6 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void WipeUpgrades()
     {
-        Transform found;
         List<Transform> toMove = new List<Transform>();
         for (int i = 0; i < UpgradePreviewPanel.transform.childCount; i++)
         {

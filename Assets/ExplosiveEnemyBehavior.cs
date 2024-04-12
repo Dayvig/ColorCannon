@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ExplosiveEnemyBehavior : EnemyBehavior
 {
-    private float paintRange = 0f;
     private float paintArea = 1f;
     public AudioSource source2;
     public override void TakeHit(GameModel.GameColor bulletColor)

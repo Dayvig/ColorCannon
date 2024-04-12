@@ -12,7 +12,7 @@ public class ZigZagEnemyBehavior : EnemyBehavior
     private float WAITINTERVAL = 0.05f;
     private float SNEAKSPEEDMULT = 1.5f;
     private float EXTENSIONVALMULT = 0.4f;
-    private float extension = 0.4f;
+    //private float extension = 0.4f;
     private Vector3 originalDestination;
     private int flipped = 1;
     private bool firstMove = true;
