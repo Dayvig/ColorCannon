@@ -190,7 +190,6 @@ public class Bullet : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Enemy"))
         {
-            Debug.Assert(col.gameObject.GetComponent<EnemyBehavior>() != null);
             EnemyBehavior enemy = col.gameObject.GetComponent<EnemyBehavior>();
             enemy.touchBullet(this);
         }

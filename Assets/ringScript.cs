@@ -43,10 +43,6 @@ public class ringScript : MonoBehaviour
             r.enabled = activated;
         }
         ren.enabled = activated;
-
-        Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x, this.transform.position.y + (ringScale / 2), 0f), Color.green, 1f);
-        Debug.DrawLine(this.transform.position, new Vector3(this.transform.position.x+0.1f, this.transform.position.y + ringScale, 0f), Color.red, 1f);
-
     }
 
     public void StartAnimation(bool inout)

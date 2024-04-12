@@ -24,7 +24,6 @@ public class ExplosiveEnemyBehavior : EnemyBehavior
         {
             if (c.gameObject.CompareTag("Enemy"))
             {
-                Debug.Assert(c.gameObject.GetComponent<EnemyBehavior>() != null);
                 EnemyBehavior enemy = c.gameObject.GetComponent<EnemyBehavior>();
                 foreach (GameModel.GameColor nextColor in enemyColors)
                 {

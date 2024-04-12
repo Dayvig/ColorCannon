@@ -57,7 +57,6 @@ public class SwooperEnemyBehavior : EnemyBehavior
         {
             flight *= 1.2f;
         }
-        Debug.DrawLine(currentPos, flight, Color.red, 4f);
         destination = flight;
         angle = Mathf.Rad2Deg * Mathf.Atan2(destination.y - currentPos.y,
         destination.x - currentPos.x) - 90;

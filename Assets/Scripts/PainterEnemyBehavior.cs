@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Cryptography;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
-using static UnityEngine.UI.Image;
 
 public class PainterEnemyBehavior : EnemyBehavior
 {
@@ -54,7 +52,6 @@ public class PainterEnemyBehavior : EnemyBehavior
         {
             if (c.gameObject.CompareTag("Enemy"))
             {
-                Debug.Assert(c.gameObject.GetComponent<EnemyBehavior>() != null);
                 EnemyBehavior enemy = c.gameObject.GetComponent<EnemyBehavior>();
                 foreach (GameModel.GameColor nextColor in enemyColors)
                 {
@@ -103,7 +100,6 @@ public class PainterEnemyBehavior : EnemyBehavior
             stateTimer = 0.0f;
             moveSpeed = WaveSpawningSystem.globalWaveSpeed;
             destination = ChooseNewDirection();
-            Debug.Log(destination);
         }
 
         base.Move();

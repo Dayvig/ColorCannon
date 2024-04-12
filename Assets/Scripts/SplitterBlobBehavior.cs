@@ -24,13 +24,11 @@ public class SplitterBlobBehavior : EnemyBehavior
         swayAngle = 5;
         thisBehavior = Behavior.SPLIT;
         originalDestination = des;
-        Debug.Log("1");
         immuneToDamage = true;
     }
 
     public void initializeSplit(bool isLeft)
     {
-        Debug.Log("2");
         left = isLeft;
         setNewDestination();
     }
@@ -41,13 +39,9 @@ public class SplitterBlobBehavior : EnemyBehavior
         int flipped = left ? 1 : -1;
 
         Vector3 newDest = currentPos + (new Vector3(flipped * -currentPos.y, flipped * currentPos.x, 0).normalized * splitDistance);
-        Debug.DrawLine(currentPos, newDest, Color.red, 4f);
         setDestination(newDest);
         enableSway = false;
         moveSpeed = WaveSpawningSystem.globalWaveSpeed * 5f;
-
-        Debug.Log("Setting new Destination " + newDest);
-        Debug.Log("New Destination" + destination);
     }
 
     public override void Move()

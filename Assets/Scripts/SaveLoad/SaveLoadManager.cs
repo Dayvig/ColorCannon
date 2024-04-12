@@ -35,6 +35,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (instance != null)
         {
+            
             Debug.Log("Multiple SaveLoadManagers Detected.");
         }
         instance = this;
@@ -53,9 +54,7 @@ public class SaveLoadManager : MonoBehaviour
 
     public void WipeMidRunDataOnly()
     {
-        Debug.Log("Starting new Run");
         gameData.currentLevel = 0;
-        Debug.Log("Level" + gameData.currentLevel);
         gameData.refreshActive = true;
         gameData.undiscoveredEasyMechanics.Clear();
         gameData.undiscoveredMedMechanics.Clear();

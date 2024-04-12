@@ -23,7 +23,6 @@ public class nextWaveButton : MonoBehaviour
         {
             GameManager.instance.Win();
             GameManager.instance.SetState(GameManager.GameState.WIN);
-            Debug.Log("Win");
         }
         else
         {

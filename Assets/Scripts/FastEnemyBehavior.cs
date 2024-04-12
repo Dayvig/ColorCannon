@@ -27,7 +27,6 @@ public class FastEnemyBehavior : EnemyBehavior
         base.initialize(des, color, darkened, eType);
         fastBehavior = Behavior.WINDUP;
         windUpTime = 0.0f;
-        Debug.Log("Initialized to " + windUpTime + "Behavior: "+fastBehavior);
         
         //Sets rotation to look at player
         Quaternion rot = gameObject.transform.rotation;

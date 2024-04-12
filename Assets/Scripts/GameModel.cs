@@ -123,9 +123,7 @@ public class GameModel : MonoBehaviour
 
     public bool isInBoundsPercent(Vector3 location, float percentage)
     {
-        Debug.Log(-(xBounds * percentage));
-        Debug.Log(-(yBounds * percentage));
-        return location.x <= (xBounds * percentage) && location.x > (-xBounds * percentage) && location.y > (-yBounds * percentage) && location.y <= (yBounds * percentage);
+         return location.x <= (xBounds * percentage) && location.x > (-xBounds * percentage) && location.y > (-yBounds * percentage) && location.y <= (yBounds * percentage);
     }
 
     public Color ColorToColor(GameColor col)
@@ -303,7 +301,6 @@ public class GameModel : MonoBehaviour
             case GameColor.NONE:
                 return 3;
         }
-        Debug.Log("Heck");
         return 0;
     }
 

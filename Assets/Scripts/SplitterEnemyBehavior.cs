@@ -72,7 +72,6 @@ public class SplitterEnemyBehavior : EnemyBehavior
         }
         else if (enemyColors.Count == 1)
         {
-            Debug.Log("Spawning Position " + transform.position);
             CreateNewSplitterBlob(new GameModel.GameColor[] { enemyColors[0] }, true, transform.position);
             CreateNewSplitterBlob(new GameModel.GameColor[] { enemyColors[0] }, false, transform.position);
             Die(false);
@@ -122,12 +121,9 @@ public class SplitterEnemyBehavior : EnemyBehavior
         int flipped = isLeft ? 1 : -1;
 
         Vector3 newDest = currentPos + (new Vector3(flipped * -currentPos.y, flipped * currentPos.x, 0).normalized * splitDistance);
-        Debug.DrawLine(currentPos, newDest, Color.red, 4f);
+        
         setDestination(newDest);
         enableSway = false;
         moveSpeed = WaveSpawningSystem.globalWaveSpeed * 5f;
-
-        Debug.Log("Setting new Destination " + newDest);
-        Debug.Log("New Destination" + destination);
     }
 }

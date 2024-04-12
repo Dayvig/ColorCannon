@@ -126,7 +126,6 @@ public class FileDataHandler
     {
         if (!SaveLoadManager.instance.isAndroidBuild)
         {
-            Debug.Log("Saving Game " + data.currentLevel);
             string fullPath = Path.Combine(dataDirPath, dataFileName);
             try
             {
@@ -147,7 +146,6 @@ public class FileDataHandler
         }
         else
         {
-            Debug.Log("Saving Game " + data.currentLevel);
             string fullPath = Path.Combine(dataDirPath, dataFileName);
             try
             {

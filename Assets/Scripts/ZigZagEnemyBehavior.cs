@@ -40,9 +40,7 @@ public class ZigZagEnemyBehavior : EnemyBehavior
     public void setNewDestination()
     {
             Vector3 origin = Vector3.Lerp(this.transform.position, originalDestination, 0.5f);
-            Debug.DrawLine(this.transform.position, origin, Color.white, 4f);
             Vector3 newDest = origin + (new Vector3(flipped * -origin.y, flipped * origin.x, origin.z) * (firstMove ? EXTENSIONVALMULT : EXTENSIONVALMULT * 2f));
-            Debug.DrawLine(origin, newDest, Color.red, 4f);   
             flipped *= -1;
         if (Vector3.Distance(newDest, originalDestination) <= 0.4f)
         {

@@ -67,7 +67,6 @@ public class EnemyBehavior : MonoBehaviour
         {
             return GameModel.GameColor.WHITE;
         }
-        Debug.Log("Something went wrong");
         return GameModel.GameColor.RED;
     }
     
@@ -283,7 +282,6 @@ public class EnemyBehavior : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Player"))
         {
-            Debug.Assert(col.GetComponent<Player>() != null, "Player doesn't have correct component");
             Player player = col.GetComponent<Player>();
             player.TakeHit();
             Die(false);
