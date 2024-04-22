@@ -108,6 +108,8 @@ public class GameModel : MonoBehaviour
 
     public int xBounds = 3;
     public int yBounds = 5;
+    public float fastEnemyXB = 2.5f;
+    public float fastEnemyYB = 4.5f;
 
     public static GameModel instance { get; private set; }
     // Start is called before the first frame update
@@ -119,6 +121,11 @@ public class GameModel : MonoBehaviour
     public bool isInBounds(Vector3 location)
     {
         return location.x <= xBounds && location.x >= -xBounds && location.y >= -yBounds && location.y <= yBounds;
+    }
+
+    public bool inFastEnemyArea(Vector3 location)
+    {
+        return location.x <= fastEnemyXB && location.x >= -fastEnemyXB && location.y >= -fastEnemyYB && location.y <= fastEnemyYB;
     }
 
     public bool isInBoundsPercent(Vector3 location, float percentage)

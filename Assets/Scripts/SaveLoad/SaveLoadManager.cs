@@ -86,21 +86,22 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (!isWebGL)
         {
-            this.gameData = dataHandler.Load();
+            if (this.gameData == null)
+            {
+                NewGame();
+            }
+            else
+            {
+                this.gameData = dataHandler.Load();
+                foreach (IDataPersistence saveLoadObj in saveLoadObjects)
+                {
+                    saveLoadObj.LoadData(gameData);
+                }
+            }
         }
         else
         {
             NewGame();
-        }
-
-        if (this.gameData == null)
-        {
-            NewGame();
-        }
-
-        foreach (IDataPersistence saveLoadObj in saveLoadObjects)
-        { 
-            saveLoadObj.LoadData(gameData);
         }
     }
 

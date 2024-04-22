@@ -38,26 +38,22 @@ public class FastEnemyBehavior : EnemyBehavior
 
     public override void Move()
     {
-        windUpTime += Time.deltaTime;
-        if (windUpTime > windUpInterval &&  windUpTime < (waitInterval+windUpInterval))
-        {
-            fastBehavior = Behavior.WAIT;
-        }
-        else if (windUpTime > (waitInterval+windUpInterval))
-        {
-            fastBehavior = Behavior.FASTMOVEMENT;
-        }
-        else
-        {
-            fastBehavior = Behavior.WINDUP;
-        }
         switch (fastBehavior)
         {
             case Behavior.WINDUP:
                 moveSpeed = WINDUPSPEED;
+                if (GameModel.instance.inFastEnemyArea(transform.position))
+                {
+                    fastBehavior = Behavior.WAIT;
+                }
                 break;
             case Behavior.WAIT:
+                windUpTime += Time.deltaTime;
                 moveSpeed = 0.0f;
+                if (windUpTime > waitInterval)
+                {
+                    fastBehavior = Behavior.FASTMOVEMENT;
+                }
                 break;
             case Behavior.FASTMOVEMENT:
                 moveSpeed = WaveSpawningSystem.globalWaveSpeed * FASTSPEEDMULT;

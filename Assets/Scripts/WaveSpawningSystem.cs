@@ -380,11 +380,12 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             for (int p = 0; p < gameManager.promodeLevel; p++)
             {
                 AddWaveMod();
+                AddWaveMod();
             }
         }
-        if (gameManager.promodeLevel >= 3)
+        if (gameManager.promodeLevel >= 2)
         {
-            for (int u = 0; u < (int)gameManager.promodeLevel / 3; u++)
+            for (int u = 0; u < (int)gameManager.promodeLevel / 2; u++)
             {
                 gameManager.GivePlayerRandomUpgrade();
             }

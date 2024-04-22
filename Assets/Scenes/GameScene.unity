@@ -2257,10 +2257,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1724595259}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 261.213, y: -38.45671}
+  m_SizeDelta: {x: 512.426, y: 66.91342}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &215176460
 MonoBehaviour:
@@ -6672,10 +6672,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1724595259}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 261.213, y: -83.44071}
+  m_SizeDelta: {x: 512.426, y: 33.05458}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &610362776
 MonoBehaviour:
@@ -18756,8 +18756,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: c47b53c399c75204394211660309f1eb, type: 3}
   - {fileID: 21300000, guid: c403a8c30ef3b8e4398f4037a650715a, type: 3}
   - {fileID: 21300000, guid: a76059c70e12807409c5c86415a19b4e, type: 3}
+  - {fileID: 21300000, guid: 5f20c8b2ef5ade34788c0365df4878fa, type: 3}
+  - {fileID: 21300000, guid: 717734000c2713245b3f626f8032302d, type: 3}
   - {fileID: 21300000, guid: d5fb77373c455104a8ffdf630e1be525, type: 3}
-  arenaCosts: 00000000a8610000a861000050c3000050c3000050c30000a0860100a086010020a10700
+  arenaCosts: 00000000a8610000a861000050c3000050c3000050c30000a0860100a0860100a0860100a086010020a10700
   arenaNames:
   - Basic
   - Worn
@@ -18767,6 +18769,8 @@ MonoBehaviour:
   - Pharaohs
   - Geometric
   - Floorboards
+  - Framed
+  - Nature
   - Bismuth
   giblets:
   - {fileID: 21300000, guid: a2b4ecebe98b9684ab36f5c98432f23f, type: 3}

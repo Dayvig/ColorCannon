@@ -40,6 +40,6 @@ public class UnlockButton : MonoBehaviour
     {
         this.gameObject.SetActive(!SaveLoadManager.instance.getUnlockedArenas().Contains(GameManager.instance.arena));
         rainbowCost.text = ""+GameModel.instance.arenaCosts[GameManager.instance.arena];
-        rainbowCost.color = (GameModel.instance.arenaCosts[GameManager.instance.arena] >= GameManager.instance.rainbowInk) ? Color.red : Color.yellow;
+        rainbowCost.color = (GameModel.instance.arenaCosts[GameManager.instance.arena] >= SaveLoadManager.instance.getRainbowInk()) ? Color.red : Color.yellow;
     }
 }

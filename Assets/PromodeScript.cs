@@ -48,19 +48,15 @@ public class PromodeScript : MonoBehaviour
 
             if (GameManager.instance.promodeLevel == 1)
             {
-                reminderText.text = "Makes waves harder with a random modifier.";
+                reminderText.text = "Makes waves harder with " + GameManager.instance.promodeLevel*2 + " random modifiers.";
             }
-            else if (GameManager.instance.promodeLevel == 2)
+            else if (GameManager.instance.promodeLevel < 4)
             {
-                reminderText.text = "Makes waves harder with " + GameManager.instance.promodeLevel + " random modifiers.";
-            }
-            else if (GameManager.instance.promodeLevel < 6)
-            {
-                reminderText.text = "Makes waves harder with " + GameManager.instance.promodeLevel + " random modifiers. Gain a random upgrade at the start.";
+                reminderText.text = "Makes waves harder with " + GameManager.instance.promodeLevel*2 + " random modifiers. Gain a random upgrade at the start.";
             }
             else
             {
-                reminderText.text = "Makes waves harder with " + GameManager.instance.promodeLevel + " random modifiers. Gain " + (int)GameManager.instance.promodeLevel / 3 + " random upgrades at the start.";
+                reminderText.text = "Makes waves harder with " + GameManager.instance.promodeLevel*2 + " random modifiers. Gain " + (int)GameManager.instance.promodeLevel / 2 + " random upgrades at the start.";
             }
         }
 
