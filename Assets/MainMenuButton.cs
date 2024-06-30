@@ -25,6 +25,8 @@ public class MainMenuButton : MonoBehaviour
         GameManager.instance.arena = GameManager.instance.lastValidArena;
         UIManager.instance.setArenaImage();
         pauseButton.HideUI();
+        SaveLoadManager.instance.SaveUnlocks();
+        SaveLoadManager.instance.LoadUnlocks();
         UIManager.instance.activateNotebookUI(false);
         uiManager.titleTextScript.Reset();
         uiManager.playButton.initialize();

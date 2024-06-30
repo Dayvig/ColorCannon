@@ -43,5 +43,6 @@ public class PlayGameButton : MonoBehaviour
         WaveSpawningSystem.instance.tutorialStage = -2;
         GameManager.instance.SetState(GameManager.GameState.POSTWAVE);
         PostProcessingManager.instance.SetBlur(false);
+        GameManager.instance.player.rainbowReminder.Hide();
     }
 }

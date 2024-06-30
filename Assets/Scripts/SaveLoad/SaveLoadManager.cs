@@ -26,9 +26,9 @@ public class SaveLoadManager : MonoBehaviour
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, Application.persistentDataPath, settingsFileName, Application.persistentDataPath, unlocksFileName);
         this.saveLoadObjects = FindAllSaveLoadObjects();
 
-        LoadGame();
         LoadSettings();
         LoadUnlocks();
+        LoadGame();
     }
 
     public void Awake()
@@ -86,22 +86,26 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (!isWebGL)
         {
+            this.gameData = dataHandler.Load();
+
             if (this.gameData == null)
             {
                 NewGame();
-            }
-            else
-            {
                 this.gameData = dataHandler.Load();
-                foreach (IDataPersistence saveLoadObj in saveLoadObjects)
-                {
-                    saveLoadObj.LoadData(gameData);
-                }
+            }
+            foreach (IDataPersistence saveLoadObj in saveLoadObjects)
+            {
+                saveLoadObj.LoadData(gameData);
             }
         }
         else
         {
             NewGame();
+            this.gameData = dataHandler.Load();
+            foreach (IDataPersistence saveLoadObj in saveLoadObjects)
+            {
+                saveLoadObj.LoadData(gameData);
+            }
         }
     }
 

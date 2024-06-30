@@ -93,7 +93,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void EnemyUpdate()
     {
-        if (tutorialStage == -2)
+        if (tutorialStage == -2 || GameManager.instance.currentState == GameState.MAINMENU)
         {
             enemyTimer -= Time.deltaTime;
             if (enemyTimer <= 0.0f && currentWaveIndex < currentWave.Count - 1)
@@ -342,13 +342,13 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
 
     public void initialize()
     {
+        clearWave();
+
         tutorialSpacing = modelGame.baseTutorialSpacing;
         repopulateChunks();
         populateDemoChunks();
-        
-        gameManager.addStartingUpgrades();
 
-        clearWave();
+        gameManager.addStartingUpgrades();
 
         if (Level == 0 && WaveSpawningSystem.instance.tutorialStage == 0)
         {
@@ -362,7 +362,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             Level = 1;
             generateWave();
             RandomizeWave();
-
         }
         enemyTimer = currentWave[0].delayUntilNext;
         currentWaveIndex = 0;
@@ -947,9 +946,10 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         }
     }
 
-    void repopulateChunks()
+    public void repopulateChunks()
     {
         availableChunks.Clear();
+        currentChunks.Clear();
         availableSpecialChunks.Clear();
 
         //enemy types

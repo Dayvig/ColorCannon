@@ -1,9 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour, IDataPersistence
@@ -83,7 +81,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public List<DeathEffect> markedForDeathSplatters = new List<DeathEffect>();
     public List<DeathEffect> markedForDeathGiblets = new List<DeathEffect>();
     public Player player;
-    public WaveSpawningSystem spawningSystem;
     public static GameModel gameModel;
     private List<Upgrade> possibleUpgrades = new List<Upgrade>();
     private List<Upgrade> specialUpgrades = new List<Upgrade>();
@@ -170,7 +167,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
         if (currentState == GameState.MAINMENU && nextState == GameState.POSTWAVE)
         {
-            spawningSystem.SetupNextWave();
+            WaveSpawningSystem.instance.SetupNextWave();
             SetupForWave();
             nextState = GameState.UIANIMATIONS;
         }
@@ -186,9 +183,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
-            spawningSystem.IncreaseDifficulty();
+            WaveSpawningSystem.instance.IncreaseDifficulty();
             currentOfferedUpgrades.Clear();
-            spawningSystem.SetupNextWave();
+            WaveSpawningSystem.instance.SetupNextWave();
             SetupForWave();
             nextState = GameState.UIANIMATIONS;
             SaveLoadManager.instance.SaveGame();
@@ -317,17 +314,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         instance = this;
         gameAudio = GetComponent<AudioSource>();
-        spawningSystem = GetComponent<WaveSpawningSystem>();
         gameModel = GetComponent<GameModel>();
         player = GameObject.Find("Player").GetComponent<Player>();
     }
 
     void Start()
     {
+        currentState = GameState.MAINMENU;
+
         SaveLoadManager.instance.initialize();
         UIManager.instance.initialize();
-        spawningSystem.initialize();
-        currentState = GameState.MAINMENU;
         SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
 
         selectedUpgrade = noUpgrade;
@@ -654,7 +650,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         foreach (EnemyBehavior ded in markedForDeathEnemies)
         {
             activeEnemies.Remove(ded);
-            spawningSystem.inactiveEnemies.Add(ded);
+            WaveSpawningSystem.instance.inactiveEnemies.Add(ded);
             ded.gameObject.SetActive(false);
         }
 
@@ -761,8 +757,13 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     void DemoUpdate()
     {
+        if (WaveSpawningSystem.instance.demoChunks.Count <= 0)
+        {
+            WaveSpawningSystem.instance.populateDemoChunks();
+            Debug.Log("Populating Demo Chunks");
+        }
         player.PlayerDemoUpdate();
-        spawningSystem.EnemyDemoUpdate();
+        WaveSpawningSystem.instance.EnemyDemoUpdate();
     }
 
     void SettingsUpdate()
@@ -778,8 +779,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
     void WaveUpdate()
     {
         player.PlayerUpdate();
-        spawningSystem.EnemyUpdate();
-        if ((spawningSystem.currentWaveIndex >= WaveSpawningSystem.currentWave.Count - 1) && (activeEnemies.Count <= 0))
+        WaveSpawningSystem.instance.EnemyUpdate();
+        if ((WaveSpawningSystem.instance.currentWaveIndex >= WaveSpawningSystem.currentWave.Count - 1) && (activeEnemies.Count <= 0))
         {
             if (WaveSpawningSystem.instance.Level == 0)
             {
@@ -829,6 +830,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.activateLoseScreen();
         UIManager.instance.activateWinLoseAnimations(true, false);
         WaveSpawningSystem.instance.Level = 0;
+        SaveLoadManager.instance.SaveUnlocks();
+        SaveLoadManager.instance.LoadUnlocks();
 
         SaveLoadManager.instance.WipeMidRunDataOnly();
         SoundManager.instance.mainMusic.Stop();
@@ -846,9 +849,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         UIManager.instance.activateWinScreen();
         UIManager.instance.activateWinLoseAnimations(true, true);
         SoundManager.instance.mainMusic.Stop();
-        SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.SaveUnlocks();
         SaveLoadManager.instance.LoadUnlocks();
+        SaveLoadManager.instance.WipeMidRunDataOnly();
         SaveLoadManager.instance.LoadGame();
     }
 
@@ -859,6 +862,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         PostProcessingManager.instance.SetBlur(false);
         UIManager.instance.deactivateWinLoseUI();
         SaveLoadManager.instance.WipeMidRunDataOnly();
+        SaveLoadManager.instance.SaveUnlocks();
+        SaveLoadManager.instance.LoadUnlocks();
         SaveLoadManager.instance.LoadGame();
         GameManager.instance.promodeLevel = prevProMode;
         WaveSpawningSystem.instance.Level = 0;
@@ -867,6 +872,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         PostProcessingManager.instance.SetRainbowRush(false);
         player.rainbowTimer = 0f;
         player.lives = 3;
+        player.rainbowReminder.Hide();
+        WaveSpawningSystem.instance.inactiveEnemies.Clear();
         WaveSpawningSystem.instance.initialize();
         WaveSpawningSystem.instance.AddProModeFeatures();
         /*if (WaveSpawningSystem.instance.tutorialStage == -1)

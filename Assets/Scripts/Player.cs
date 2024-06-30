@@ -780,21 +780,6 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 movementLocked = SelectorRing.activated;
 
-                if (clicks == 0)
-                {
-                    firstTapPos = touchPos;
-                }
-                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRingCenter(touchPos))
-                {
-                    nextColor();
-                    SelectorRing.Close();
-                }
-            }
-            //End click
-            //If the position is close to where it began, increment clicks
-            if (Input.touches[0].phase == TouchPhase.Ended)
-            {
-
                 if (Vector3.Distance(transform.position, touchPos) < 1f && rainbowMeter >= meterMax)
                 {
                     if (meter.selected)
@@ -814,7 +799,20 @@ public class Player : MonoBehaviour, IDataPersistence
                     meter.SetToSmall();
                 }
 
-
+                if (clicks == 0)
+                {
+                    firstTapPos = touchPos;
+                }
+                if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRingCenter(touchPos))
+                {
+                    nextColor();
+                    SelectorRing.Close();
+                }
+            }
+            //End click
+            //If the position is close to where it began, increment clicks
+            if (Input.touches[0].phase == TouchPhase.Ended)
+            {
                 clicks++;
                 mouseTimer = 0f;
                 if (clicks == 1 && Vector3.Distance(firstTapPos, touchPos) <= 0.4f && !SelectorRing.activated)
@@ -872,21 +870,7 @@ public class Player : MonoBehaviour, IDataPersistence
         //if one click has already been executed, switch color
         if (Input.GetMouseButtonDown(0))
         {
-
-            if (clicks == 0)
-            {
-                firstTapPos = mousePos;
-            }
-            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRingCenter(mousePos))
-            {
-                nextColor();
-            }
-        }
-        //End click
-        //If the position is close to where it began, increment clicks
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (Vector3.Distance(transform.position, mousePos) < 1f && rainbowMeter >= meterMax )
+            if (Vector3.Distance(transform.position, mousePos) < 1f && rainbowMeter >= meterMax)
             {
                 if (meter.selected)
                 {
@@ -905,7 +889,20 @@ public class Player : MonoBehaviour, IDataPersistence
                 meter.SetToSmall();
             }
 
+            if (clicks == 0)
+            {
+                firstTapPos = mousePos;
+            }
+            if (clicks > 0 && GameManager.instance.doubleTapCycle && SelectorRing.inRingCenter(mousePos))
+            {
+                nextColor();
+            }
 
+        }
+        //End click
+        //If the position is close to where it began, increment clicks
+        if (Input.GetMouseButtonUp(0))
+        {
             clicks++;
             mouseTimer = 0f;
             if (clicks == 1 && Vector3.Distance(firstTapPos, mousePos) <= 0.1f)
@@ -982,7 +979,7 @@ public class Player : MonoBehaviour, IDataPersistence
         if (!rainbowRush)
         {
             float fillAmnt = UnityEngine.Random.Range(meterMax / (60 / (meterMult)), meterMax / (45 / (meterMult)));
-            GameManager.instance.rainbowInk += (int)(fillAmnt * 50);
+
             rainbowMeter += fillAmnt;
             meter.targetFill = rainbowMeter / meterMax;
             meter.fillTimer = 0.0f;
@@ -990,6 +987,12 @@ public class Player : MonoBehaviour, IDataPersistence
             {
                 rainbowMeter = meterMax;
                 meter.targetFill = 1;
+            }
+
+            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+            {
+                GameManager.instance.rainbowInk += (int)(fillAmnt * 50);
+                SaveLoadManager.instance.SaveUnlocks();
             }
             rainbowInkScript.Appear();
         }

@@ -44,14 +44,9 @@ public class GameData
         playerLives = 3;
         rainbowMeter = 0.0f;
         rainbowMult = 1f;
-        promodeLevel = 0;
         if (SaveLoadManager.instance.isWebGL)
         {
             maxProModeLevel = 20;
-        }
-        else
-        {
-            maxProModeLevel = 0;
         }
     }
 }

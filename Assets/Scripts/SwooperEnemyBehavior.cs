@@ -19,10 +19,10 @@ public class SwooperEnemyBehavior : EnemyBehavior
     {
         base.initialize(des, color, dark, type);
         enableSway = false;
+        swoopCount = 0;
         setNewDestination();
         minSpeed = WaveSpawningSystem.globalWaveSpeed;
         maxSpeed = WaveSpawningSystem.globalWaveSpeed * 4f;
-        swoopCount = 0;
     }
 
     void setNewDestination()

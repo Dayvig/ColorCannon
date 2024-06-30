@@ -11,7 +11,7 @@ public class UnlockData
 
     public UnlockData()
     {
-        maxProMode = 0;
+        maxProMode = 1;
         rainbowInk = 0;
         arenas = new List<int> { 0 };
         currentArena = 0;
