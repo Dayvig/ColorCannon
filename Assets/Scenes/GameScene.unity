@@ -1117,10 +1117,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 773639242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 372.816, y: -241.39197}
-  m_SizeDelta: {x: 745.632, y: 160.92798}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 745.632, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &130674183
 MonoBehaviour:
@@ -5484,10 +5484,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 773639242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 372.816, y: -80.46399}
-  m_SizeDelta: {x: 745.632, y: 160.92798}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 745.632, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &520930941
 MonoBehaviour:
@@ -9563,10 +9563,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 51298277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 77.995, y: -36.1775}
-  m_SizeDelta: {x: 155.99, y: 72.355}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &914262297
 MonoBehaviour:
@@ -9625,10 +9625,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 51298277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 77.995, y: -108.5325}
-  m_SizeDelta: {x: 155.99, y: 72.355}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &923596319
 MonoBehaviour:
@@ -17347,7 +17347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1662487984
 RectTransform:
   m_ObjectHideFlags: 0
@@ -21513,7 +21513,7 @@ PrefabInstance:
       objectReference: {fileID: 1431926387}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: playerControlMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6828051733919904985, guid: adb6f34feacbfc142bcb1c62d8a87481, type: 3}
       propertyPath: shieldPulseRadius

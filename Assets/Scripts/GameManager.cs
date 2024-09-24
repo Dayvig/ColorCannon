@@ -787,7 +787,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 player.lives = 3;
             }
 
-            if (WaveSpawningSystem.instance.Level >= 15)
+            if (WaveSpawningSystem.instance.Level >= 10)
             {
                 Win();
                 GameManager.instance.SetState(GameState.WIN);

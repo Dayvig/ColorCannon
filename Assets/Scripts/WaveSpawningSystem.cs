@@ -650,7 +650,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             {
                 nextChunk = returnRandomChunk(availableChunks, chunkDifficulties[i]);
             }
-            if (i < 3)
+            if ((chunkDifficulties.Count > 3 && chunkDifficulties.Count < 6) ? i < 2 : i < 3)
             {
                 UIManager.instance.SetupChunkPreview(nextChunk, 1);
             }
@@ -814,16 +814,18 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     public void IncreaseDifficulty()
     {
         Level++;
-        if (Level > 15){
+        if (Level > 9){
             gameManager.SetState(GameManager.GameState.WIN);
             return;
         }
-        //Every wave spawns 3% faster.
+        //Every wave spawns 12% faster.
         globalWaveSpacing /= modelGame.baseWaveSpacingUpgrade;
 
+        //Every wave adds an additional enemy
+        globalWaveNumber += modelGame.baseWaveNumberUpgrade;
 
-        //Adds extra chunk on Wave 10 and 14
-        if (Level == 9 || Level == 13)
+        //Adds extra chunk on Wave 8
+        if (Level == 7)
         {
             double sum = 0;
             for (int k = 0; k < chunkDifficulties.Count; k++)
@@ -832,10 +834,9 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             }
             numChunks++;
             chunkDifficulties.Add((int)Math.Ceiling((sum/chunkDifficulties.Count)));
-            globalWaveNumber += modelGame.baseWaveNumberUpgrade;
         }
-        //starting on wave 3, every 7th wave adds a guaranteed unique chunk
-        if ((Level+4) % 7 == 0)
+        //starting on wave 3, every 4th wave adds a guaranteed unique chunk
+        if ((Level+4) % 4 == 0)
         {
             numUniqueChunks++;
         }
@@ -853,14 +854,14 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
             }
         }
 
-        //On wave 3, add secondary colors. On wave 10, adds white.
+        //On wave 3, add secondary colors. On wave 8, adds white.
         if (Level == 3)
         {
             newMechanics.Add(Mechanic.PURPLE);
             newMechanics.Add(Mechanic.GREEN);
             newMechanics.Add(Mechanic.ORANGE);
         }
-        if (Level == 10)
+        if (Level == 8)
         {
             newMechanics.Add(Mechanic.WHITE);
         }

@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public int[] baseToolTipSize = { 350, 150 };
     public int[] extendedToolTipSize = { 350, 230 };
 
-    public static string[] WaveUIText = new string[] { "Wave: ", " / 15" };
+    public static string[] WaveUIText = new string[] { "Wave: ", " / 10" };
 
     public float postWaveUITimer = 0.0f;
     public float postWaveUISwingInterval1;

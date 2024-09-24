@@ -10,7 +10,7 @@ public class NinjaEnemyBehavior : EnemyBehavior
     private float sneakInterval = 1.0f;
     private float SNEAKINTERVAL = 1.5f;
     private float WAITINTERVAL = 0.65f;
-    private float SNEAKSPEEDMULT = 2f;
+    private float SNEAKSPEEDMULT = 1.75f;
 
     public enum Behavior
     {
