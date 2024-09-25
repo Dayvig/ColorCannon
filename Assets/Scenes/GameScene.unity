@@ -1117,10 +1117,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 773639242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 745.632, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 372.816, y: -241.39197}
+  m_SizeDelta: {x: 745.632, y: 160.92798}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &130674183
 MonoBehaviour:
@@ -5484,10 +5484,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 773639242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 745.632, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 372.816, y: -80.46399}
+  m_SizeDelta: {x: 745.632, y: 160.92798}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &520930941
 MonoBehaviour:
@@ -9563,10 +9563,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 51298277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 77.995, y: -36.1775}
+  m_SizeDelta: {x: 155.99, y: 72.355}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &914262297
 MonoBehaviour:
@@ -9625,10 +9625,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 51298277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 77.995, y: -108.5325}
+  m_SizeDelta: {x: 155.99, y: 72.355}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &923596319
 MonoBehaviour:
@@ -17347,7 +17347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1662487984
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18830,7 +18830,7 @@ MonoBehaviour:
   - 
   - 
   shotSpeedMultiplier: 1.2
-  rapidFireMultiplier: 1.075
+  rapidFireMultiplier: 1.2
   spreadFireRateReductionMultiplier: 1.1
   shotSizeMultiplier: 1.55
   numShotsUpgrade: 1
@@ -18838,8 +18838,8 @@ MonoBehaviour:
   baseSpreadAngle: 12.5
   shieldPulseInc: 0.4
   baseGlobalWaveNumber: 5
-  baseGlobalWaveSpacing: 2
-  baseTutorialSpacing: 2
+  baseGlobalWaveSpacing: 1.86
+  baseTutorialSpacing: 4
   baseGlobalWaveSpeed: 0.4
   baseGlobalRainbowMult: 1
   baseNumChunks: 3
@@ -18853,8 +18853,8 @@ MonoBehaviour:
   meterMultInc: 0.3
   darkenedColorDivisor: 1.5
   baseWaveSpacingUpgrade: 1
-  baseNumerousSpacingUpgrade: 1.24
-  baseNumerousNumberUpgrade: 2
+  baseNumerousSpacingUpgrade: 1.2
+  baseNumerousNumberUpgrade: 3
   baseWaveSpeedUpgrade: 1.12
   baseWaveDifficultyUpgrade: 1.5
   baseWaveMonochrome: 0.3
@@ -18876,6 +18876,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 485c259de6092544b95811a6b6d15cd9, type: 3}
   - {fileID: 8300000, guid: 10d84476318987c43b23467beca4f114, type: 3}
   - {fileID: 8300000, guid: 7ef91a4a81b340f45af4d655dd264a69, type: 3}
+  - {fileID: 8300000, guid: 0363faf6d3cc65d4198d1c3ea4584a80, type: 3}
   enemySounds:
   - {fileID: 8300000, guid: 63d09fbb50df54245b28b08f82e893b9, type: 3}
   - {fileID: 8300000, guid: fdec4e36d3d546243bd93cea461274c6, type: 3}
@@ -19061,7 +19062,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8dd548d3f8823b847b3fef40a6e2b7db, type: 3}
   - {fileID: 21300000, guid: 4403fa27bfdb2c74ebf3a60867f377e4, type: 3}
   - {fileID: 21300000, guid: be6e4a8268e609d4491eb1e983c96ee3, type: 3}
-  WaveMods: 
   previousUpgrades: {fileID: 642733076}
   PostWaveUIPanel: {fileID: 1662487983}
   SettingsPanel: {fileID: 522148996}

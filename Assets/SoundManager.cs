@@ -17,6 +17,8 @@ public class SoundManager : MonoBehaviour
     public bool mainMusicPlaying = false;
     public bool isMuted;
 
+    public Dictionary<string, AudioSource> loopedSFX = new Dictionary<string, AudioSource>();
+
     public static SoundManager instance { get; private set; }
 
     void Awake()
@@ -86,6 +88,28 @@ public class SoundManager : MonoBehaviour
             StartCoroutine(PlaySFXWithDelay(source, clip, delaySeconds));
         }
     }
+
+    public void PlaySFXLooped(AudioSource source, AudioClip clip, string key)
+    {
+        if (!isMuted && !loopedSFX.ContainsKey(key))
+        {
+            source.volume = masterVolume * sfxVolume;
+            source.clip = clip;
+            source.loop = true;
+            source.Play();
+            loopedSFX.Add(key, source);
+        }
+    }
+
+    public void StopLoopedSFX(string key)
+    {
+        if (loopedSFX.ContainsKey(key))
+        {
+            loopedSFX[key].Stop();
+            loopedSFX.Remove(key);
+        }
+    }
+
 
     public void PlaySFX(AudioSource source, AudioClip clip, int priority)
     {

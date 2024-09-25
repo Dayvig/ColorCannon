@@ -183,6 +183,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
         if (currentState == GameState.WAVE && nextState == GameState.POSTWAVE)
         {
+            player.SetRainbowRush(false);
             WaveSpawningSystem.instance.IncreaseDifficulty();
             currentOfferedUpgrades.Clear();
             WaveSpawningSystem.instance.SetupNextWave();
@@ -240,16 +241,22 @@ public class GameManager : MonoBehaviour, IDataPersistence
         if (nextState == GameState.PAUSED)
         {
             SoundManager.instance.mainMusic.Pause();
+            SoundManager.instance.StopLoopedSFX("RapidFire");
         }
         if (currentState == GameState.PAUSED && nextState == GameState.WAVE)
         {
             SoundManager.instance.mainMusic.UnPause();
+            if (player.rainbowRush)
+            {
+                SoundManager.instance.PlaySFXLooped(player.playerAudio, GameModel.instance.bulletSounds[7], "RapidFire");
+            }
         }
         if ((currentState == GameState.PAUSED || currentState == GameState.WIN || currentState == GameState.LOSE || currentState == GameState.NOTEBOOK) && nextState == GameState.MAINMENU)
         {
             DisposeAllBullets();
             DisposeAllSplatters();
             DisposeAllEnemies();
+            player.SetRainbowRush(false);
             PostProcessingManager.instance.SetBlur(true);
             UIManager.instance.deactivateWaveUI();
             UIManager.instance.deactivateWinLoseUI();
@@ -325,11 +332,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SaveLoadManager.instance.initialize();
         UIManager.instance.initialize();
         SoundManager.instance.PlayMusicAndLoop(SoundManager.instance.mainMusic, GameModel.instance.music[0]);
+        addStartingUpgrades();
 
         selectedUpgrade = noUpgrade;
     }
     public void addStartingUpgrades()
     {
+        Debug.Log("Adding Starting Upgrades");
+
         //Red Firing Speed
         possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.RED, 3));
         //Blue Firing Speed
@@ -403,7 +413,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public Upgrade getRandomUpgrade(List<Upgrade> upgradeList)
     {
-        return upgradeList[Random.Range(0, upgradeList.Count)];
+        Debug.Log(specialUpgrades.Count);
+        Debug.Log(upgradeList.Count);
+        int random = (int)Random.Range(0, upgradeList.Count - 1);
+        return upgradeList[random];
     }
 
     void DisposeAllBullets()

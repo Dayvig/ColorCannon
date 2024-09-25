@@ -290,7 +290,7 @@ public class Player : MonoBehaviour, IDataPersistence
             gameManager.inactiveBullets.Remove(bulletScript);
 
             //Play firing sound
-            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU)
+            if (GameManager.instance.currentState != GameManager.GameState.MAINMENU && !rainbowRush)
             {
                 SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[0]);
             }
@@ -844,6 +844,7 @@ public class Player : MonoBehaviour, IDataPersistence
             rainbowReminder.Hide();
             rainbowRushReminderTimer = 0.0f;
             SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[6]);
+            SoundManager.instance.PlaySFXLooped(playerAudio, GameModel.instance.bulletSounds[7], "RapidFire");
         }
         else
         {
@@ -853,6 +854,9 @@ public class Player : MonoBehaviour, IDataPersistence
             PulseShield();
             configureWeapon();
             SoundManager.instance.PlaySFX(meter.source, GameModel.instance.uiSounds[4], 0.4f, 0.6f);
+
+            Debug.Log("Stopping SFX");
+            SoundManager.instance.StopLoopedSFX("RapidFire");
         }
         PostProcessingManager.instance.SetRainbowRush(on);
     }

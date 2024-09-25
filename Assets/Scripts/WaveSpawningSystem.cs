@@ -348,8 +348,6 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
         repopulateChunks();
         populateDemoChunks();
 
-        gameManager.addStartingUpgrades();
-
         if (Level == 0 && WaveSpawningSystem.instance.tutorialStage == 0)
         {
             generateFirstWave();
@@ -894,6 +892,7 @@ public class WaveSpawningSystem : MonoBehaviour, IDataPersistence
     {
         //Every other wave makes waves harder with a modifier.
         int randomWaveMod = Random.Range(0, 4);
+
         switch (randomWaveMod)
         {
             case 0:

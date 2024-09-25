@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class genericPreviewScript : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class genericPreviewScript : MonoBehaviour
     void Start()
     {
         thisCollider = GetComponent<BoxCollider2D>();
+        setupCollider();
     }
 
     public void setupCollider()
@@ -33,6 +35,5 @@ public class genericPreviewScript : MonoBehaviour
         {
             UIManager.instance.renderToolTip(modText);
         }
-        setupCollider();
     }
 }

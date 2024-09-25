@@ -8,7 +8,7 @@ public class GameData
     public int currentLevel;
     public List<GameManager.Upgrade> playerUpgrades = new List<GameManager.Upgrade>();
     public float rainbowMeter;
-    public List<UIManager.WaveModifier> waveUpgrades = new List<UIManager.WaveModifier>();
+    public List<UIManager.WaveMod> waveUpgrades = new List<UIManager.WaveMod>();
     public List<GameManager.Upgrade> currentUpgradesOffered = new List<GameManager.Upgrade>();
     public List<WaveSpawningSystem.Mechanic> currentNewMechanics = new List<WaveSpawningSystem.Mechanic>();
     public List<WaveSpawningSystem.Mechanic> currentMechanics = new List<WaveSpawningSystem.Mechanic>();

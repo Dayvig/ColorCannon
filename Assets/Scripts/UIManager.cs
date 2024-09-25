@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public static UIManager instance { get; set; }
 
     public List<Sprite> EnemySprites = new List<Sprite>();
-    public List<WaveModifier> WaveMods = new List<WaveModifier>();
+    public List<WaveMod> WaveMods = new List<WaveMod>();
     public GameObject previousUpgrades;
     public GameObject PostWaveUIPanel;
     public GameObject SettingsPanel;
@@ -140,6 +141,27 @@ public class UIManager : MonoBehaviour, IDataPersistence
     public UnlockButton unlockButton;
     public NotebookArrowScript incArrow;
     public MenuRainbowInkDisplay notebookInkDisplay;
+
+
+    public class WaveMod
+    {
+        public WaveModifier modifier;
+        public bool isNew;
+
+        [JsonConstructor]
+        public WaveMod(WaveModifier modifier, bool isNew)
+        {
+            this.modifier = modifier;
+            this.isNew = isNew;
+        }
+
+        public WaveMod(WaveModifier modifier)
+        {
+            this.modifier = modifier;
+            this.isNew = false;
+        }
+    }
+
     public enum WaveModifier
     {
         NUMEROUS,
@@ -406,7 +428,10 @@ public class UIManager : MonoBehaviour, IDataPersistence
 
     public void AddWaveMod(WaveModifier waveMod)
     {
-        WaveMods.Add(waveMod);
+        foreach (WaveMod mod in WaveMods){
+            mod.isNew = false;
+        }
+        WaveMods.Add(new WaveMod(waveMod, true));
     }
 
     public void activateWinScreen()
@@ -590,11 +615,13 @@ public class UIManager : MonoBehaviour, IDataPersistence
     void ConstructWaveModifierPreview(WaveModifier mod)
     {
         int count = 0;
-        foreach (WaveModifier nextMod in WaveMods)
+        bool showGlow = false;
+        foreach (WaveMod nextMod in WaveMods)
         {
-            if (nextMod == mod)
+            if (nextMod.modifier.Equals(mod))
             {
                 count++;
+                showGlow = nextMod.isNew;
             }
         }
         if (count > 0)
@@ -603,6 +630,8 @@ public class UIManager : MonoBehaviour, IDataPersistence
             Image modImage = newWaveModPreview.transform.GetChild(0).GetChild(0).GetComponent<Image>();
             Image chevronImage = newWaveModPreview.transform.GetChild(1).GetComponent<Image>();
             chevronImage.sprite = count < 7 ? modelGame.UpgradeImages[count + 5] : modelGame.UpgradeImages[11];
+            Transform glowObject = newWaveModPreview.transform.GetChild(3);
+            glowObject.gameObject.SetActive(showGlow);
             if (count >= 7)
             {
                 newWaveModPreview.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "" + count;
@@ -823,6 +852,5 @@ public class UIManager : MonoBehaviour, IDataPersistence
     {
         data.waveUpgrades = WaveMods;
         data.refreshActive = refreshActive;
-        data.waveUpgrades = WaveMods;
     }
 }

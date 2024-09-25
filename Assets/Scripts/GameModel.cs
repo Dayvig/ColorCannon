@@ -275,21 +275,13 @@ public class GameModel : MonoBehaviour
             case UIManager.WaveModifier.DIFFICULT:
                 return WaveModTexts[0];
             case UIManager.WaveModifier.FASTER:
-                return WaveModTexts[1] + (count * 20) + WaveModTexts[2];
+                return WaveModTexts[1] + (int)(count * ((1 - gameModel.baseWaveSpeedUpgrade) * 100)) + WaveModTexts[2];
             case UIManager.WaveModifier.NUMEROUS:
-                if (count == 1)
-                {
-                    return WaveModTexts[3] + (count * 12) + WaveModTexts[4] + count + WaveModTexts[5];
-                }
-                else
-                {
-                    return WaveModTexts[3] + (count * 12) + WaveModTexts[4] + count + WaveModTexts[6];
-                }
+                return WaveModTexts[3] + (int)(count * ((1-gameModel.baseNumerousSpacingUpgrade) * 100)) + WaveModTexts[4] + count * baseNumerousNumberUpgrade + WaveModTexts[6];
             case UIManager.WaveModifier.BIGGER_WAVE:
                 return WaveModTexts[3];
             case UIManager.WaveModifier.MONOCHROME:
-                String returnText = WaveModTexts[7] + baseWaveMonochrome * count * 100 + WaveModTexts[8];
-                return returnText;
+                return WaveModTexts[7] + (int)(baseWaveMonochrome * count * 100) + WaveModTexts[8];
             default:
                 return "Huh";
         }
