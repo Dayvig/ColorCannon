@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             SoundManager.instance.mainMusic.UnPause();
             if (player.rainbowRush)
             {
-                SoundManager.instance.PlaySFXLooped(player.playerAudio, GameModel.instance.bulletSounds[7], "RapidFire");
+                SoundManager.instance.PlaySFXLooped(player.RRAudio, GameModel.instance.bulletSounds[7], "RapidFire");
             }
         }
         if ((currentState == GameState.PAUSED || currentState == GameState.WIN || currentState == GameState.LOSE || currentState == GameState.NOTEBOOK) && nextState == GameState.MAINMENU)
@@ -339,8 +339,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
     }
     public void addStartingUpgrades()
     {
-        Debug.Log("Adding Starting Upgrades");
-
         //Red Firing Speed
         possibleUpgrades.Add(new Upgrade("Rate of Fire", UpgradeType.ATTACKSPEED, GameModel.GameColor.RED, 3));
         //Blue Firing Speed
@@ -414,8 +412,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public Upgrade getRandomUpgrade(List<Upgrade> upgradeList)
     {
-        Debug.Log(specialUpgrades.Count);
-        Debug.Log(upgradeList.Count);
         int random = (int)Random.Range(0, upgradeList.Count - 1);
         return upgradeList[random];
     }
@@ -774,7 +770,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         if (WaveSpawningSystem.instance.demoChunks.Count <= 0)
         {
             WaveSpawningSystem.instance.populateDemoChunks();
-            Debug.Log("Populating Demo Chunks");
         }
         player.PlayerDemoUpdate();
         WaveSpawningSystem.instance.EnemyDemoUpdate();

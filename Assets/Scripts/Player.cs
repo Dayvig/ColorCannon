@@ -856,7 +856,6 @@ public class Player : MonoBehaviour, IDataPersistence
             configureWeapon();
             SoundManager.instance.PlaySFX(meter.source, GameModel.instance.uiSounds[4], 0.4f, 0.6f);
 
-            Debug.Log("Stopping SFX");
             SoundManager.instance.StopLoopedSFX("RapidFire");
         }
         PostProcessingManager.instance.SetRainbowRush(on);

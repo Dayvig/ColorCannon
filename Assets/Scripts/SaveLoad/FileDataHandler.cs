@@ -95,7 +95,6 @@ public class FileDataHandler
 
     public UnlockData LoadUnlocks()
     {
-        Debug.Log("Loading Unlocks");
         string fullPath = Path.Combine(unlockDirPath, unlockFileName);
         UnlockData loadedData = null;
         if (File.Exists(fullPath))
@@ -188,8 +187,6 @@ public class FileDataHandler
 
     public void SaveUnlocks(UnlockData data)
     {
-        Debug.Log("Saving Unlocks");
-
         string fullPath = Path.Combine(unlockDirPath, unlockFileName);
         try
         {
