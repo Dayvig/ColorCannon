@@ -67,6 +67,7 @@ public class Player : MonoBehaviour, IDataPersistence
     public List<GameManager.Upgrade> upgrades = new List<GameManager.Upgrade>();
 
     public AudioSource playerAudio;
+    public AudioSource RRAudio;
 
     public float orbAnimTimer = 0.0f;
     public float orbAnimInterval = 1.0f;
@@ -166,7 +167,7 @@ public class Player : MonoBehaviour, IDataPersistence
         if (rainbowMeter >= meterMax && !rainbowRush && !rainbowReminder.active)
         {
             rainbowRushReminderTimer += Time.deltaTime;
-            if (rainbowRushReminderTimer >= rainbowRushReminderInterval)
+            if (rainbowRushReminderTimer >= rainbowRushReminderInterval * (GameManager.instance.rainbowRushRemindersShown+1) && GameManager.instance.rainbowRushRemindersShown < 5)
             {
                 rainbowReminder.Initialize();
             }
@@ -844,7 +845,7 @@ public class Player : MonoBehaviour, IDataPersistence
             rainbowReminder.Hide();
             rainbowRushReminderTimer = 0.0f;
             SoundManager.instance.PlaySFX(playerAudio, GameModel.instance.bulletSounds[6]);
-            SoundManager.instance.PlaySFXLooped(playerAudio, GameModel.instance.bulletSounds[7], "RapidFire");
+            SoundManager.instance.PlaySFXLooped(RRAudio, GameModel.instance.bulletSounds[7], "RapidFire");
         }
         else
         {

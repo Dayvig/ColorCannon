@@ -111,6 +111,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public int lastValidArena = 0;
     public List<int> unlockedArenas = new List<int>();
 
+    public int rainbowRushRemindersShown = 0;
     void SetupForWave()
     {
         UIManager.instance.activatePostWaveUI();
@@ -911,6 +912,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         currentOfferedUpgrades = data.currentUpgradesOffered;
         encounteredEnemies = data.encounteredEnemies;
         promodeLevel = data.promodeLevel;
+        rainbowRushRemindersShown = data.timesReminderShown;
     }
 
     public void SaveData(ref GameData data)
@@ -918,5 +920,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         data.currentUpgradesOffered = currentOfferedUpgrades;
         data.encounteredEnemies = encounteredEnemies;
         data.promodeLevel = promodeLevel;
+        data.timesReminderShown = rainbowRushRemindersShown;
     }
 }

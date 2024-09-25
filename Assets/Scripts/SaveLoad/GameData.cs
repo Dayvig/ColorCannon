@@ -30,6 +30,8 @@ public class GameData
     public int maxProModeLevel;
     public bool refreshActive;
 
+    public int timesReminderShown = 0;
+
     public GameData(){
         currentLevel = 0;
         refreshActive = true;
@@ -44,6 +46,7 @@ public class GameData
         playerLives = 3;
         rainbowMeter = 0.0f;
         rainbowMult = 1f;
+        timesReminderShown = 0;
         if (SaveLoadManager.instance.isWebGL)
         {
             maxProModeLevel = 20;
